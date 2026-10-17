@@ -1,6 +1,35 @@
+"""Schritt 1 der Kostenanalyse: stündliche PV- und Windprofile von renewables.ninja.
+
+Ruft für jeden Standort aus ``PV_WIND_50_Punkte.xlsx`` die Erzeugung 2019 einer
+1-kW-Anlage ab (PV: MERRA-2, Neigung 35°, Süd, 10 % Verluste; Wind: Vestas
+V136 3450, 150 m Nabenhöhe), hängt sie als Spalten ``electricity_PV_i`` /
+``electricity_Wind_i`` an die vorhandene CSV an und berechnet daraus die
+Volllaststunden (Jahressumme).
+
+Eingaben:
+    Data/PV_WIND_50_Punkte.xlsx    Blatt PV_Punkte (Latitude, Longitude)
+    Data/pv_wind_electricity.csv   bisher abgerufene Profile (wird erweitert)
+
+Ausgaben:
+    Data/pv_wind_electricity.csv   stündliche Profile, 8760 Zeilen
+    Data/flh_re.csv                FLH_PV, FLH_Wind für die Standorte 0–49
+
+Hinweise:
+    - Braucht einen API-Token in ``H2_Morocco/.env`` als ``RENEWABLES_NINJA_TOKEN``
+      (Vorlage: ``.env.example``). Limit 50 Anfragen pro Stunde; die Schleife
+      (``range(1)``) ist für schrittweisen Abruf gedacht.
+    - Es wird nur das Blatt PV_Punkte gelesen; Volllaststunden werden nur für die
+      ersten 50 Standorte berechnet.
+    - Ausführen aus ``Cost_analysis/``: ``python re_data.py``
+"""
+
+import os
+from pathlib import Path
+
 import requests
 import pandas as pd
 import json
+from dotenv import load_dotenv
 
 # Get location-specific profiles in morocco from renewables ninja 
 
@@ -9,7 +38,11 @@ df_electricity = pd.read_csv('Data/pv_wind_electricity.csv', index_col=0)
 df_electricity.reset_index(drop=True, inplace=True)
 #df_electricity = pd.DataFrame()
 
-token = 'XXX' # please use your own token from renewables.ninja, see: https://www.renewables.ninja/api/
+# API token from renewables.ninja (https://www.renewables.ninja/api/), stored in H2_Morocco/.env
+load_dotenv(Path(__file__).resolve().parent.parent / '.env')
+token = os.getenv('RENEWABLES_NINJA_TOKEN')
+if not token:
+    raise SystemExit('RENEWABLES_NINJA_TOKEN fehlt: .env.example nach .env kopieren und Token eintragen.')
 api_base = 'https://www.renewables.ninja/api/'
 
 s = requests.session()
@@ -81,4 +114,4 @@ for i in range(0, 50):
     df_flh.at[i, 'FLH_Wind'] = wind
 
 df_flh.to_csv('Data/flh_re.csv', index=False)
-df_electricity.to_csv('pv_wind_electricity.csv')
+df_electricity.to_csv('Data/pv_wind_electricity.csv')

@@ -1,3 +1,24 @@
+"""MCA-Kriterium Erreichbarkeit: Länge von Straßen und Schienen je Klasse und Zelle.
+
+Fasst OSM-Straßen und -Schienen zusammen, filtert 12 Klassen (motorway …
+unclassified, railway) und summiert je Zelle die Länge [m] jeder Klasse
+innerhalb der Zelle. Die Gewichtung der Klassen erfolgt erst in
+``mca_maps.py`` (``dict_weights_roads``); ``weights_roads`` hier wird nicht
+verwendet.
+
+Eingaben:
+    Grid_morocco/grid_morocco_clear.shp
+    Data/Landuse/gis_osm_roads_free_1.shp      (Spalte fclass)
+    Data/Landuse/gis_osm_railways_free_1.shp
+
+Ausgaben:
+    results/results_accessibility.csv   12 Spalten (eine je Klasse), zeilengleich mit dem Raster
+
+Hinweise:
+    - Schleife über alle Zellen ohne räumlichen Index, läuft lange.
+    - Ausführen aus ``MCA/``: ``python accesibility.py``
+"""
+
 import geopandas as gpd
 import pandas as pd
 
@@ -9,9 +30,9 @@ gdf_grid = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
 
     # Accessibility
     # Source: OSM, downloaded via QGIS
-gdf_railways_utm29n = gpd.read_file('Data\Landuse\gis_osm_railways_free_1.shp').to_crs("EPSG:32629")
+gdf_railways_utm29n = gpd.read_file('Data/Landuse/gis_osm_railways_free_1.shp').to_crs("EPSG:32629")
 gdf_railways_utm29n['fclass'] = 'railway'
-gdf_roads_utm29n = gpd.read_file('Data\Landuse\gis_osm_roads_free_1.shp').to_crs("EPSG:32629")
+gdf_roads_utm29n = gpd.read_file('Data/Landuse/gis_osm_roads_free_1.shp').to_crs("EPSG:32629")
 
 gdf_roads_railsways = gpd.GeoDataFrame(pd.concat([gdf_roads_utm29n, gdf_railways_utm29n], ignore_index=True), crs=gdf_roads_utm29n.crs)
 

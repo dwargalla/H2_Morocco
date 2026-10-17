@@ -1,3 +1,30 @@
+"""MCA-Endergebnis: gewichteter Eignungs-Score 2025 und 2050 plus Karten.
+
+Liest alle Kriterien-CSVs aus ``results/``, skaliert sie auf 0–100
+(Landwirtschaft und Stadt invertiert; Wasser und Nicht-Konflikt sind bereits
+skaliert), gewichtet sie mit ``dict_weights_category`` und multipliziert die
+Summe mit der No-Go-Maske. Für 2050 ändern sich nur Landnutzung und Wasser.
+
+Eingaben:
+    Grid_morocco/grid_morocco_clear.shp
+    Data/morocco_Morocco_Country_Boundary.shp
+    results/results_*.csv   alle Kriterien (PV, Wind, Erreichbarkeit, Landwirtschaft,
+                            Stadt, Industrie, ländlich, Wasser, Nicht-Konflikt, No-Go)
+
+Ausgaben:
+    results/results_mca_morocco_2025_2050.csv   Spalten MCA_Morocco_2025, MCA_Morocco_2050
+    Maps/mca_morocco_{2025,2050,diff}.{png,pdf}
+    Maps/pie_chart_weights.{png,pdf}
+
+Hinweise:
+    - Die Werte im Tortendiagramm sind fest eingetragen und weichen von
+      ``dict_weights_category`` ab.
+    - Die Straßengewichte werden rein positionell auf die Spalten von
+      results_accessibility.csv angewandt (Reihenfolge muss stimmen).
+    - ``plt.show()`` blockiert ohne grafische Oberfläche (``MPLBACKEND=Agg`` setzen).
+    - Ausführen aus ``MCA/``: ``python mca_maps.py``
+"""
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import geopandas as gpd
@@ -7,9 +34,11 @@ import matplotlib.colors as mcolors
 
 # Min-Max_scale-funtion
 def min_max_scale(df):
+    """Skaliert jede Spalte linear auf 0–1 (Minimum → 0, Maximum → 1)."""
     return (df - df.min())/(df.max()-df.min())
 
 def inverted_min_max_scale(df):
+    """Skaliert jede Spalte invertiert auf 0–1 (Maximum → 0, Minimum → 1)."""
     df = -df
     return (df - df.min())/(df.max()-df.min())
 

@@ -1,3 +1,21 @@
+"""Karte der Infrastruktur: Straßen, Schienen und Industriehäfen (2025 und neue Häfen 2050).
+
+Nur Abbildung, kein Einfluss auf die Ergebnisse. Die Linienfarben je
+Straßenklasse sind zufällig (``np.random``), die Karte sieht also bei jedem Lauf
+anders aus.
+
+Eingaben:
+    Data/Landuse/gis_osm_{roads,railways}_free_1.shp
+    Data/Landuse/morocco_Morocco_Country_Boundary.shp
+    Data/industrial_ports_morocco_{2025,2050}.shp
+
+Ausgaben:
+    Maps/morocco_infrastructure.{pdf,eps}
+
+Hinweise:
+    - Ausführen aus ``MCA/``: ``python infra_map.py``
+"""
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import geopandas as gpd
@@ -5,9 +23,9 @@ import contextily as cx
 import numpy as np
 
 # Data
-gdf_railways_utm29n = gpd.read_file('Data\Landuse\gis_osm_railways_free_1.shp').to_crs("EPSG:32629")
+gdf_railways_utm29n = gpd.read_file('Data/Landuse/gis_osm_railways_free_1.shp').to_crs("EPSG:32629")
 gdf_railways_utm29n['fclass'] = 'railway'
-gdf_roads_utm29n = gpd.read_file('Data\Landuse\gis_osm_roads_free_1.shp').to_crs("EPSG:32629")
+gdf_roads_utm29n = gpd.read_file('Data/Landuse/gis_osm_roads_free_1.shp').to_crs("EPSG:32629")
 
 gdf_roads_railsways = gpd.GeoDataFrame(pd.concat([gdf_roads_utm29n, gdf_railways_utm29n], ignore_index=True), crs=gdf_roads_utm29n.crs)
 
@@ -17,7 +35,7 @@ classes = ['motorway', 'trunk', 'primary', 'secondary',
 gdf_roads_railsways = gdf_roads_railsways[gdf_roads_railsways['fclass'].isin(classes)]
 
 # Comparison of ports in 2025 and 2050
-gdf_morocco_boundary    = gpd.read_file('Data\Landuse\morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
+gdf_morocco_boundary    = gpd.read_file('Data/Landuse/morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
 gdf_ports_2025 = gpd.read_file('Data/industrial_ports_morocco_2025.shp').to_crs("EPSG:32629")
 gdf_ports_2050 = gpd.read_file('Data/industrial_ports_morocco_2050.shp').to_crs("EPSG:32629")
 ports_2025 = set(gdf_ports_2025['name'])

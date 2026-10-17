@@ -1,3 +1,20 @@
+"""MCA-Kriterium PV-Ertrag: mittlerer spezifischer PV-Ertrag je Rasterzelle.
+
+Verschneidet das Raster mit den PV-Polygonen aus dem Global Solar Atlas
+(räumlicher Join, ``intersects``) und bildet je Zelle den Mittelwert von
+``pv_yeald`` [kWh/kWp]. Zellen ohne Treffer erhalten 0.
+
+Eingaben:
+    Grid_morocco/grid_morocco_clear.shp
+    Data/Morocco_GISdata_LTAy_YearlyMonthlyTotals_GlobalSolarAtlas-v2_GEOTIFF/PV_yeald_clear_ma_we.shp
+
+Ausgaben:
+    results/results_pv_yeald.csv   eine Spalte ``pv_yeald``, zeilengleich mit dem Raster
+
+Hinweise:
+    - Ausführen aus ``MCA/``: ``python pv_analysis.py``
+"""
+
 import geopandas as gpd
 
 # Data
@@ -5,7 +22,7 @@ import geopandas as gpd
 gdf_grid = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
     # PV
     # Source: Global solar atlas
-gdf_pv_morocco_utm29n = gpd.read_file('Data\Morocco_GISdata_LTAy_YearlyMonthlyTotals_GlobalSolarAtlas-v2_GEOTIFF\PV_yeald_clear_ma_we.shp').to_crs("EPSG:32629")
+gdf_pv_morocco_utm29n = gpd.read_file('Data/Morocco_GISdata_LTAy_YearlyMonthlyTotals_GlobalSolarAtlas-v2_GEOTIFF/PV_yeald_clear_ma_we.shp').to_crs("EPSG:32629")
 
 # Spatial join: alle PV-Geometrien auf die Grid-Zellen mappen
 joined = gpd.sjoin(gdf_grid,

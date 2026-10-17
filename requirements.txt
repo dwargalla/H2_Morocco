@@ -1,0 +1,17 @@
+# MCA/ and Cost_analysis/ (Python >= 3.10)
+pandas>=2.0
+numpy>=1.24
+geopandas>=1.0          # GeoSeries.union_all() in cost_analysis_h2_morocco.py
+shapely>=2.0
+pyogrio>=0.7            # shapefile I/O backend for geopandas
+matplotlib>=3.7
+contextily>=1.5         # basemaps in the *_map(s).py scripts
+openpyxl>=3.1           # pd.read_excel on Data/PV_WIND_50_Punkte.xlsx
+
+# Cost_analysis/re_data.py (renewables.ninja API)
+requests>=2.31
+python-dotenv>=1.0      # liest RENEWABLES_NINJA_TOKEN aus .env
+
+# Cost_analysis/FLH_el.py (needs a Gurobi license)
+pypsa>=0.25             # Network.optimize()
+gurobipy>=11.0

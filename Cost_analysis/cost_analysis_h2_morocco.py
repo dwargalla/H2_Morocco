@@ -1,3 +1,43 @@
+"""Schritt 4 der Kostenanalyse: Wasserstoffkosten je Rasterzelle für 2025 und 2050 (Hauptmodell).
+
+Betrachtet einen 100-MW-PEM-Elektrolyseur. Ablauf:
+    1. Abstände aller Zellen untereinander (7219 × 7219) und zum nächsten
+       Industriehafen berechnen.
+    2. Jahreskosten für Elektrolyseur, PV, Wind, HGÜ-Leitung (je km) plus
+       Konverterpaar und H2-Pipeline (je km) aus den Annahmen im Kopf berechnen
+       (CAPEX, OPEX, Lebensdauer, Zins 8 %, Quellen in den Kommentaren).
+    3. Jeder Zelle den repräsentativen Standort zuordnen, dessen (FLH_PV,
+       FLH_Wind) ihren eigenen Werten am nächsten liegt.
+    4. Für jede Bedarfszelle die günstigste Produktionszelle wählen
+       (Strom + Elektrolyse + Netz über die Entfernung + Pipeline zum Hafen).
+    5. Wasserkosten addieren: 13 kg Wasser je kg H2, bezogen in der Reihenfolge
+       Oberflächenwasser → Grundwasser → Entsalzung (nur Küste) → Transport aus
+       der nächsten Zelle mit Wasser.
+
+Eingaben:
+    Data/grid_morocco_clear.shp
+    Data/industrial_ports_morocco_{2025,2050}.shp
+    Data/data_re_flh_electrolyzer.shp   aus assignment_re_data.py
+    Data/flh_re.csv                     aus re_data.py
+    Data/cell_flh_re.csv                FLH je Zelle (nicht per Skript erzeugt, vermutlich QGIS)
+    Data/Data/morocco_coast_line.shp
+    Data/water_availability_{sw,gw}.csv, Data/water_availability_{sw,gw}_2050.csv
+                                        (eigene Kopien, weichen von MCA/Data ab)
+
+Ausgaben:
+    Data/results_cost_2025.csv   je Zelle: Produktionszelle, FLH, Kostenanteile
+    Data/results_cost_2050.csv   (Wasser, Elektrolyse, EE, Netz, Pipeline) und
+                                 Gesamtpreis in €/MWh_H2
+
+Hinweise:
+    - Die Distanzmatrix und ihre Sortierung brauchen mehrere GB Arbeitsspeicher.
+    - Bekannte Fehler laut Korrekturplan (Patch in Korrektur/code_fixes.patch):
+      PV/Wind-Leistung in % als MW gelesen (F-04), Konverterkosten auch bei
+      Distanz 0 (F-05), PV-Jahreskosten mit CAPEX statt OPEX (F-07).
+    - Der 2050-Block rechnet Wasser mit den 2025-Preisvariablen (Werte derzeit gleich).
+    - Ausführen aus ``Cost_analysis/``: ``python cost_analysis_h2_morocco.py``
+"""
+
 import geopandas as gpd 
 import numpy as np
 import pandas as pd

@@ -1,12 +1,29 @@
+"""Karte der No-Go-Gebiete: Militär, Naturschutz, Erholungsgebiete (OSM) und Steilhänge (Topografie).
+
+Nur Abbildung, kein Einfluss auf die Ergebnisse (die Maske selbst erzeugt
+no_go_zones.py).
+
+Eingaben:
+    Data/morocco_Morocco_Country_Boundary.shp
+    Data/Landuse/gis_osm_landuse_a_free_1.shp
+    Data/ToPo_1500.shp
+
+Ausgaben:
+    Maps/morocco_nogos.png
+
+Hinweise:
+    - Ausführen aus ``MCA/``: ``python nogo_maps.py``
+"""
+
 import matplotlib.pyplot as plt
 import geopandas as gpd
 import contextily as cx
 import matplotlib.patches as mpatches
 
-gdf_morocco_boundary    = gpd.read_file('Data\morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
+gdf_morocco_boundary    = gpd.read_file('Data/morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
 # Data 
 ###
-gdf_landuse_utm29n = gpd.read_file('Data\Landuse\gis_osm_landuse_a_free_1.shp').to_crs("EPSG:32629")
+gdf_landuse_utm29n = gpd.read_file('Data/Landuse/gis_osm_landuse_a_free_1.shp').to_crs("EPSG:32629")
 
     # NO-GO Zones: Military, Nature Reserve, Recreation Ground
 gdf_nogo_zones = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['military', 'nature_reserve', 'recreation_ground'])]

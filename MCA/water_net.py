@@ -1,10 +1,32 @@
+"""MCA-Kriterium Wasser 2025: Wasser-Score 0–100 je Zelle.
+
+Score = 50 × min-max(Dargebot) + 50 × min-max(Überschuss), mit
+Dargebot = Grund- + Oberflächenwasser und Überschuss = Dargebot − Verbrauch
+(Überschuss ≤ 0 ergibt 0 Punkte). Zellen, die die Küstenlinie berühren,
+erhalten pauschal 100 (Meerwasserentsalzung möglich).
+
+Eingaben:
+    Grid_morocco/grid_morocco_clear.shp
+    Data/morocco_coast_line.shp        (derzeit eine Rekonstruktion, siehe
+                                        Data/README_Datenherkunft.md)
+    Data/water_availability_gw.csv     aus water_exploitable_gw.py
+    Data/water_availability_sw.csv     aus water_exploitable_sw.py
+    Data/Water_Consumption_2025.csv    aus water_consumption.py
+
+Ausgaben:
+    results/results_water_res_available.csv   eine Spalte, zeilengleich mit dem Raster
+
+Hinweise:
+    - Ausführen aus ``MCA/``: ``python water_net.py``
+"""
+
 import geopandas as gpd
 import numpy as np
 import pandas as pd
 
 gdf_grid = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
 
-gdf_coast = gpd.read_file('Data\morocco_coast_line.shp').to_crs("EPSG:32629")        
+gdf_coast = gpd.read_file('Data/morocco_coast_line.shp').to_crs("EPSG:32629")        
 
 # Today
 df_gw_availability = pd.read_csv('Data/water_availability_gw.csv')

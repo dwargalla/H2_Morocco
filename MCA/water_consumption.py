@@ -1,3 +1,28 @@
+"""Heutiger und künftiger Wasserverbrauch je Zelle (2025, 2050) in Mrd. m³/a.
+
+Verteilt den nationalen Wasserverbrauch (15,9 bzw. 24,223 Mrd. m³/a) nach
+Sektoranteilen auf Flächen:
+    - Landwirtschaft (87 % / 75 %): GlobCover-Klassen 11–13 voll, 20–21 zu 70 %,
+      30–32 zu 30 % gewichtet
+    - Städte (10,4 % / 22,3 %): GlobCover-Klasse 190
+    - Industrie (2,6 % / 2,7 %): OSM-Klasse industrial (in beiden Jahren der heutige Stand)
+und summiert je Zelle die Anteile der darin liegenden Flächen.
+
+Eingaben:
+    Grid_morocco/grid_morocco_clear.shp
+    Data/Landuse/gis_osm_landuse_a_free_1.shp
+    Data/mar_gc_adg/mar_gc_adg.shp, Data/wsa_gc_adg/wsa_gc_adg.shp
+    Data/morocco_landuse_2050.shp   aus forecast_landuse.py
+
+Ausgaben:
+    Data/Water_Consumption_2025.csv   Indexspalte + ``Water_Consumption[BCM]``
+    Data/Water_Consumption_2050.csv
+
+Hinweise:
+    - Regenfeldbau wird nicht vom Agrarwasser ausgenommen (Korrekturplan F-21).
+    - Ausführen aus ``MCA/``: ``python water_consumption.py``
+"""
+
 import geopandas as gpd
 import pandas as pd
 
@@ -6,14 +31,14 @@ from custom import list_index
 gdf_grid_morocco        = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
     # Industrial landuse
     # Source: OSM, via QGIS
-gdf_landuse_utm29n      = gpd.read_file('Data\Landuse\gis_osm_landuse_a_free_1.shp').to_crs("EPSG:32629")
+gdf_landuse_utm29n      = gpd.read_file('Data/Landuse/gis_osm_landuse_a_free_1.shp').to_crs("EPSG:32629")
 
     # Landuse
     # Source: FAO, via: https://data.apps.fao.org/catalog/dataset/fad3f475-8973-463f-b56a-e6b6535c1db5  --> Morocco
     # Source: FAO, via: https://data.apps.fao.org/catalog/iso/75aaf5c5-d579-425a-97fb-aa4580536df2      --> Western Sahara
 
-gdf_landuse_mar         = gpd.read_file('Data\mar_gc_adg\mar_gc_adg.shp').to_crs("EPSG:32629") 
-gdf_landuse_wsa         = gpd.read_file('Data\wsa_gc_adg\wsa_gc_adg.shp').to_crs("EPSG:32629")
+gdf_landuse_mar         = gpd.read_file('Data/mar_gc_adg/mar_gc_adg.shp').to_crs("EPSG:32629") 
+gdf_landuse_wsa         = gpd.read_file('Data/wsa_gc_adg/wsa_gc_adg.shp').to_crs("EPSG:32629")
 gdf_landuse_concat      = gpd.GeoDataFrame(pd.concat([gdf_landuse_mar, gdf_landuse_wsa])) #Landuse today
 
     # Same source, but for future landuse (from forecast_landuse.py)

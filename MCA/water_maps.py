@@ -1,3 +1,23 @@
+"""Karten zum Wasser: Grundwasser-Aquifere, Oberflächenwasser, Fließakkumulation, Einzugsgebiete, klimatische Wasserbilanz.
+
+Nur Abbildung, kein Einfluss auf die Ergebnisse.
+
+Eingaben:
+    Grid_morocco/grid_morocco_clear.shp
+    Data/morocco_Morocco_Country_Boundary.shp
+    Data/Morocco/Morocco_HG.shp, Data/Morocco/WSahara/WesternSahara_HG.shp
+    Data/water_availability_sw.csv   aus water_exploitable_sw.py
+    Data/flow_direction_grid.shp
+    Data/watershead_morocco.shp
+    Data/cwb.shp                     aus water_forecast.py
+
+Ausgaben:
+    Maps/morocco_{groundwater,surfacewater,flow_direction,watersheds,cwb}.png
+
+Hinweise:
+    - Ausführen aus ``MCA/``: ``python water_maps.py``
+"""
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import geopandas as gpd
@@ -6,10 +26,10 @@ import numpy as np
 import matplotlib.patches as mpatches
 from matplotlib.colors import LinearSegmentedColormap
 
-gdf_morocco_boundary    = gpd.read_file('Data\morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
+gdf_morocco_boundary    = gpd.read_file('Data/morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
 # Data
-gdf_groundwater_morocco_utm29n = gpd.read_file('Data\Morocco\Morocco_HG.shp').to_crs("EPSG:32629")
-gdf_groundwater_western_sahara_utm29n = gpd.read_file('Data\Morocco\WSahara\WesternSahara_HG.shp').to_crs("EPSG:32629")
+gdf_groundwater_morocco_utm29n = gpd.read_file('Data/Morocco/Morocco_HG.shp').to_crs("EPSG:32629")
+gdf_groundwater_western_sahara_utm29n = gpd.read_file('Data/Morocco/WSahara/WesternSahara_HG.shp').to_crs("EPSG:32629")
 gdf_groundwater_morocco_concat = pd.concat([gdf_groundwater_morocco_utm29n, gdf_groundwater_western_sahara_utm29n.rename(columns = 
                                                                                      {'WSGLG': 'MorGLG', 'WSHGComb': 'MorHGComb'})], 
                                            ignore_index=True)

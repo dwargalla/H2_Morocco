@@ -69,3 +69,20 @@ MCA/Data/hotosm_mar_waterways_gpkg/*.gpkg
 *.lyr
 *.avl
 *.qpj
+
+# Lokale Umgebung / System
+.venv/
+.env
+.env.*
+!.env.example
+.DS_Store
+__pycache__/
+!requirements.txt
+
+# KI-Assistenten
+CLAUDE.md
+CLAUDE.local.md
+.claude/
+AGENTS.md
+.cursor/
+.cursorrules

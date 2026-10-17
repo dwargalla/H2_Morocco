@@ -1,10 +1,28 @@
+"""Karten des PV- und Windpotenzials je Rasterzelle.
+
+Nur Abbildung, kein Einfluss auf die Ergebnisse.
+
+Eingaben:
+    Grid_morocco/grid_morocco_clear.shp
+    Data/morocco_Morocco_Country_Boundary.shp
+    results/results_pv_yeald.csv   aus pv_analysis.py
+    results/results_wind_flh.csv   aus wind_analysis.py
+
+Ausgaben:
+    Maps/morocco_photovoltaic_potential.png
+    Maps/morocco_wind_potential.png
+
+Hinweise:
+    - Ausführen aus ``MCA/``: ``python re_potential_map.py``
+"""
+
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import contextily as cx
 import pandas as pd
 
 # Data
-gdf_morocco_boundary    = gpd.read_file('Data\morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
+gdf_morocco_boundary    = gpd.read_file('Data/morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
 df_pv = pd.read_csv('results/results_pv_yeald.csv')
 gdf_grid = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
 gdf_grid['PV'] = df_pv['pv_yeald']

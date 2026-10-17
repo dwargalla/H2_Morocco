@@ -1,3 +1,26 @@
+"""Schritt 2 der Kostenanalyse: kostenoptimale Auslegung von PV, Wind und Elektrolyseur je Standort.
+
+Baut mit PyPSA ein Modell aus Strom- und Wasserstoffbus: PV und Wind (Profile
+aus ``pv_wind_electricity.csv``) speisen über einen Elektrolyseur (Wirkungsgrad
+0,7) eine feste jährliche H2-Abgabe von 3,1 TWh. Die Leistungen werden über
+annualisierte Kosten (Zins 4 %) minimiert. Das wird für alle 100 Standorte
+wiederholt.
+
+Eingaben:
+    Data/pv_wind_electricity.csv   aus re_data.py
+
+Ausgaben:
+    Data/FLH_electrolyzer.csv   je Standort: FLH_electrolyzer [h/a],
+                                PV und Wind in % der optimierten H2-Abgabeleistung
+
+Hinweise:
+    - Solver fest auf Gurobi (Lizenz nötig); HiGHS wäre eine freie Alternative.
+    - Annahmen (Wirkungsgrad, Zins, Lebensdauer, OPEX) weichen von
+      cost_analysis_h2_morocco.py ab (Korrekturplan F-06). PV/Wind werden in %
+      gespeichert, dort aber als MW gelesen (F-04).
+    - Ausführen aus ``Cost_analysis/``: ``python FLH_el.py``
+"""
+
 import pandas as pd
 import pypsa
 
@@ -27,7 +50,7 @@ lifetime_wind = 25 # years
 r_wind = 0.04 # discount rate
 annuity_wind = ((1 + r_wind) ** lifetime_wind * r_wind) / ((1 + r_wind) ** lifetime_wind - 1) * capex_wind + opex_wind # €/kWp
 
-df_pv_wind = pd.read_csv('pv_wind_electricity.csv')
+df_pv_wind = pd.read_csv('Data/pv_wind_electricity.csv')
 df_wind_el = df_pv_wind[f'electricity_Wind_{0}']
 df_pv_el = df_pv_wind[f'electricity_PV_{0}']
 
@@ -76,4 +99,4 @@ for i in range(1, 100):
     df_flh_electrolyzer.at[i, 'PV'] = pv
     df_flh_electrolyzer.at[i, 'Wind'] = wind
 
-df_flh_electrolyzer.to_csv('FLH_electrolyzer.csv')
+df_flh_electrolyzer.to_csv('Data/FLH_electrolyzer.csv')

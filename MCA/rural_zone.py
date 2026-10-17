@@ -1,3 +1,24 @@
+"""MCA-Kriterium ländliche Fläche: Anteil Wald/Busch/Grasland/Brache je Zelle für 2025 und 2050.
+
+Wählt die GlobCover-Klassen 40–185 und 200–230 und berechnet je Zelle den
+Flächenanteil (0–1) für die heutige und die fortgeschriebene Landnutzung.
+
+Eingaben:
+    Grid_morocco/grid_morocco_clear.shp
+    Data/mar_gc_adg/mar_gc_adg.shp   GlobCover Marokko
+    Data/wsa_gc_adg/wsa_gc_adg.shp   GlobCover Westsahara
+    Data/morocco_landuse_2050.shp    aus forecast_landuse.py
+
+Ausgaben:
+    results/results_rural.csv        2025
+    results/results_rural_2050.csv   2050
+
+Hinweise:
+    - Die Klassenliste enthält auch 230 (No Data), was als positive Fläche zählt
+      (Korrekturplan F-20).
+    - Ausführen aus ``MCA/``: ``python rural_zone.py``
+"""
+
 import pandas as pd
 import geopandas as gpd
 import numpy as np
@@ -11,8 +32,8 @@ gdf_grid = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
     # Source: FAO, via: https://data.apps.fao.org/catalog/dataset/fad3f475-8973-463f-b56a-e6b6535c1db5  --> Morocco
     # Source: FAO, via: https://data.apps.fao.org/catalog/iso/75aaf5c5-d579-425a-97fb-aa4580536df2      --> Western Sahara
 
-gdf_landuse_mar         = gpd.read_file('Data\mar_gc_adg\mar_gc_adg.shp').to_crs("EPSG:32629") 
-gdf_landuse_wsa         = gpd.read_file('Data\wsa_gc_adg\wsa_gc_adg.shp').to_crs("EPSG:32629")
+gdf_landuse_mar         = gpd.read_file('Data/mar_gc_adg/mar_gc_adg.shp').to_crs("EPSG:32629") 
+gdf_landuse_wsa         = gpd.read_file('Data/wsa_gc_adg/wsa_gc_adg.shp').to_crs("EPSG:32629")
 gdf_landuse_concat      = gpd.GeoDataFrame(pd.concat([gdf_landuse_mar, gdf_landuse_wsa]))       #Today
 
     # Same source, but for future landuse (from forecast_landuse.py)

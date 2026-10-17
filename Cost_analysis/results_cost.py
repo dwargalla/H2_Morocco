@@ -1,3 +1,21 @@
+"""Schritt 5 der Kostenanalyse: Kostenkarten, Balkendiagramme und zusammengefasste Ergebnis-CSV.
+
+Eingaben:
+    ../MCA/Data/morocco_Morocco_Country_Boundary.shp
+    ../MCA/Grid_morocco/grid_morocco_clear.shp
+    Data/results_cost_{2025,2050}.csv   aus cost_analysis_h2_morocco.py
+
+Ausgaben:
+    Maps/cost_map_{2025,2050}.{pdf,png}                 H2-Kosten je Zelle
+    Maps/bar_cost_components_morocco_seperate.{pdf,png} mittlere Kostenanteile, nebeneinander
+    Maps/bar_cost_components_morocco.{pdf,png}          mittlere Kostenanteile, gestapelt
+    Data/results_cost_morocco_2025_2050.csv             Gesamtpreis 2025 und 2050 je Zelle
+
+Hinweise:
+    - ``plt.show()`` blockiert ohne grafische Oberfläche (``MPLBACKEND=Agg`` setzen).
+    - Ausführen aus ``Cost_analysis/``: ``python results_cost.py``
+"""
+
 import geopandas as gpd
 import numpy as np 
 import pandas as pd

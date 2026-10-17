@@ -1,3 +1,21 @@
+"""Schritt 3 der Kostenanalyse: Standortkoordinaten an die PyPSA-Ergebnisse anhängen.
+
+Verknüpft die Zeilen von ``FLH_electrolyzer.csv`` positionell mit den
+Koordinaten (Zeilen 0–49: PV-Punkte, 50–99: Wind-Punkte) und speichert sie als
+Punkt-Shapefile (EPSG:4326).
+
+Eingaben:
+    Data/FLH_electrolyzer.csv      aus FLH_el.py
+    Data/PV_WIND_50_Punkte.xlsx    Blätter PV_Punkte und Wind_Punkte
+
+Ausgaben:
+    Data/data_re_flh_electrolyzer.shp   (Shapefile kürzt Spaltennamen auf 10 Zeichen,
+                                         z. B. FLH_electr)
+
+Hinweise:
+    - Ausführen aus ``Cost_analysis/``: ``python assignment_re_data.py``
+"""
+
 import pandas as pd
 import geopandas as gpd
 from shapely.geometry import Point

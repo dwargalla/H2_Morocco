@@ -1,3 +1,34 @@
+"""MCA-Kriterium Wasser 2050: Wasser-Score 0–100 je Zelle unter Klimawandel.
+
+1. Bildet die klimatische Wasserbilanz CWB = Niederschlag − PET 2050 als
+   Verschneidung der beiden Projektions-Layer und speichert sie.
+2. Setzt das Gesamtdargebot 2050 fest auf 8535 Mio. m³/a und verteilt den
+   Rückgang gegenüber 2025 proportional zu CWB × Fläche auf die Zellen.
+3. Berechnet den Score wie water_net.py (50 % Dargebot, 50 % Überschuss nach
+   Abzug des Verbrauchs 2050), skaliert mit den 2025-Maxima als Referenz.
+   Küstenzellen erhalten 100.
+
+Eingaben:
+    Grid_morocco/grid_morocco_clear.shp
+    Data/Precipitation_morocco_2050_corr.shp   (Spalte Precipitat)
+    Data/PET_morocco_2050_corr.shp             (Spalte PET)
+    Data/morocco_coast_line.shp
+    Data/water_availability_{sw,gw}.csv
+    Data/Water_Consumption_{2025,2050}.csv
+
+Ausgaben:
+    Data/cwb.shp                                   klimatische Wasserbilanz (für water_maps.py)
+    results/results_water_res_availabil_2050.csv   eine Spalte, zeilengleich mit dem Raster
+
+Hinweise:
+    - Das Dargebot 2050 ist hartkodiert (Korrekturplan F-22); der Rückgang
+      belastet gerade die trockensten Zellen am stärksten (F-23).
+    - Die Wasserverfügbarkeit 2050 je Zelle wird nicht als CSV gespeichert;
+      die Kostenanalyse nutzt eigene, ältere Dateien.
+    - Doppelte Schleifen ohne räumlichen Index, läuft sehr lange.
+    - Ausführen aus ``MCA/``: ``python water_forecast.py``
+"""
+
 import geopandas as gpd
 import pandas as pd
 import numpy as np
@@ -6,10 +37,10 @@ gdf_grid = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
 
 # Precipitation and PET data
 # Source: Future projection of droughts in Morocco and potential impact on agriculture (PDF in Teams)
-gdf_precipitation   = gpd.read_file('Data\Precipitation_morocco_2050_corr.shp').to_crs('EPSG:32629')
-gdf_pet             = gpd.read_file('Data\PET_morocco_2050_corr.shp').to_crs('EPSG:32629')
+gdf_precipitation   = gpd.read_file('Data/Precipitation_morocco_2050_corr.shp').to_crs('EPSG:32629')
+gdf_pet             = gpd.read_file('Data/PET_morocco_2050_corr.shp').to_crs('EPSG:32629')
 
-gdf_coast = gpd.read_file('Data\morocco_coast_line.shp').to_crs("EPSG:32629")        
+gdf_coast = gpd.read_file('Data/morocco_coast_line.shp').to_crs("EPSG:32629")        
 df_water_2025_sw    = pd.read_csv('Data/water_availability_sw.csv')
 df_water_2025_gw    = pd.read_csv('Data/water_availability_gw.csv')
 df_water_consumption_2025 = pd.read_csv('Data/Water_Consumption_2025.csv')
