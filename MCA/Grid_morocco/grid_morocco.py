@@ -21,7 +21,7 @@ import geopandas as gpd
 import numpy as np
 from shapely.geometry import Polygon
 
-gdf_morocco_boundary = gpd.read_file("../Data/morocco_Morocco_Country_Boundary.shp")
+gdf_morocco_boundary = gpd.read_file("../../data/raw/boundaries/morocco_Morocco_Country_Boundary.shp")
 gdf_morocco_boundary_utm29N = gdf_morocco_boundary.to_crs("EPSG:32629")
 
 # gdf_morocco_boundary.plot()

@@ -33,7 +33,7 @@ gdf_grid = gpd.read_file('../data/interim/grid/grid_morocco_clear.shp')
 
     # No-Go Zones
     # Source: OSM, via QGIS
-gdf_landuse_utm29n = gpd.read_file('Data/Landuse/gis_osm_landuse_a_free_1.shp').to_crs("EPSG:32629")
+gdf_landuse_utm29n = gpd.read_file('../data/raw/osm/gis_osm_landuse_a_free_1.shp').to_crs("EPSG:32629")
 
     # NO-GO Zones: Military, Nature Reserve, Recreation Ground
 gdf_nogo_zones = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['military', 'nature_reserve', 'recreation_ground'])]

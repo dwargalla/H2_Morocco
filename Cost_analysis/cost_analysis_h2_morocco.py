@@ -48,8 +48,8 @@ gdf_grid_morocco            = gpd.read_file('../data/interim/grid/grid_morocco_c
 gdf_grid_centroid           = gdf_grid_morocco.geometry.centroid
     # Industrial ports
     # Source: OSM, via QGIS
-gdf_ports_2025              = gpd.read_file("Data/industrial_ports_morocco_2025.shp").to_crs(gdf_grid_morocco.crs)
-gdf_ports_2050              = gpd.read_file("Data/industrial_ports_morocco_2050.shp").to_crs(gdf_grid_morocco.crs)
+gdf_ports_2025              = gpd.read_file("../data/raw/infrastructure/industrial_ports_morocco_2025.shp").to_crs(gdf_grid_morocco.crs)
+gdf_ports_2050              = gpd.read_file("../data/raw/infrastructure/industrial_ports_morocco_2050.shp").to_crs(gdf_grid_morocco.crs)
     # RE and Eletrolysis data, FLH electrolyzer, flh pv und wind, Leistung PV und Wind
     # Via Pypsa
 gdf_re_data                 = gpd.read_file('../data/interim/re_profiles/data_re_flh_electrolyzer.shp').to_crs(gdf_grid_morocco.crs)

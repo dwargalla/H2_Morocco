@@ -37,8 +37,8 @@ gdf_grid = gpd.read_file('../data/interim/grid/grid_morocco_clear.shp')
 
 # Precipitation and PET data
 # Source: Future projection of droughts in Morocco and potential impact on agriculture (PDF in Teams)
-gdf_precipitation   = gpd.read_file('Data/Precipitation_morocco_2050_corr.shp').to_crs('EPSG:32629')
-gdf_pet             = gpd.read_file('Data/PET_morocco_2050_corr.shp').to_crs('EPSG:32629')
+gdf_precipitation   = gpd.read_file('../data/raw/climate/Precipitation_morocco_2050_corr.shp').to_crs('EPSG:32629')
+gdf_pet             = gpd.read_file('../data/raw/climate/PET_morocco_2050_corr.shp').to_crs('EPSG:32629')
 
 gdf_coast = gpd.read_file('../data/interim/qgis/morocco_coast_line.shp').to_crs("EPSG:32629")        
 df_water_2025_sw    = pd.read_csv('../data/interim/water/water_availability_sw.csv')

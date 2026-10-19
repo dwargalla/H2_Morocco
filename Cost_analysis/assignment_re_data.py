@@ -22,8 +22,8 @@ from shapely.geometry import Point
 
 df_re_data = pd.read_csv('../data/interim/re_profiles/FLH_electrolyzer.csv')
 
-df_coordinates_pv = pd.read_excel('Data/PV_WIND_50_Punkte.xlsx', sheet_name='PV_Punkte')
-df_coordinates_wind = pd.read_excel('Data/PV_WIND_50_Punkte.xlsx', sheet_name='Wind_Punkte')
+df_coordinates_pv = pd.read_excel('../data/raw/renewables/PV_WIND_50_Punkte.xlsx', sheet_name='PV_Punkte')
+df_coordinates_wind = pd.read_excel('../data/raw/renewables/PV_WIND_50_Punkte.xlsx', sheet_name='Wind_Punkte')
 
 df_coordinates = pd.concat([df_coordinates_pv, df_coordinates_wind], ignore_index=True)
 

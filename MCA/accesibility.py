@@ -30,9 +30,9 @@ gdf_grid = gpd.read_file('../data/interim/grid/grid_morocco_clear.shp')
 
     # Accessibility
     # Source: OSM, downloaded via QGIS
-gdf_railways_utm29n = gpd.read_file('Data/Landuse/gis_osm_railways_free_1.shp').to_crs("EPSG:32629")
+gdf_railways_utm29n = gpd.read_file('../data/raw/osm/gis_osm_railways_free_1.shp').to_crs("EPSG:32629")
 gdf_railways_utm29n['fclass'] = 'railway'
-gdf_roads_utm29n = gpd.read_file('Data/Landuse/gis_osm_roads_free_1.shp').to_crs("EPSG:32629")
+gdf_roads_utm29n = gpd.read_file('../data/raw/osm/gis_osm_roads_free_1.shp').to_crs("EPSG:32629")
 
 gdf_roads_railsways = gpd.GeoDataFrame(pd.concat([gdf_roads_utm29n, gdf_railways_utm29n], ignore_index=True), crs=gdf_roads_utm29n.crs)
 

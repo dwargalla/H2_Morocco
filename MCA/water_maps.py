@@ -26,10 +26,10 @@ import numpy as np
 import matplotlib.patches as mpatches
 from matplotlib.colors import LinearSegmentedColormap
 
-gdf_morocco_boundary    = gpd.read_file('Data/morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
+gdf_morocco_boundary    = gpd.read_file('../data/raw/boundaries/morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
 # Data
-gdf_groundwater_morocco_utm29n = gpd.read_file('Data/Morocco/Morocco_HG.shp').to_crs("EPSG:32629")
-gdf_groundwater_western_sahara_utm29n = gpd.read_file('Data/Morocco/WSahara/WesternSahara_HG.shp').to_crs("EPSG:32629")
+gdf_groundwater_morocco_utm29n = gpd.read_file('../data/raw/groundwater/Morocco_HG.shp').to_crs("EPSG:32629")
+gdf_groundwater_western_sahara_utm29n = gpd.read_file('../data/raw/groundwater/WesternSahara_HG.shp').to_crs("EPSG:32629")
 gdf_groundwater_morocco_concat = pd.concat([gdf_groundwater_morocco_utm29n, gdf_groundwater_western_sahara_utm29n.rename(columns = 
                                                                                      {'WSGLG': 'MorGLG', 'WSHGComb': 'MorHGComb'})], 
                                            ignore_index=True)
@@ -41,7 +41,7 @@ gdf_grid['Surface Water'] = df_sw['water_availability_sw[MCM]']
 
 gdf_water_direction = gpd.read_file('../data/interim/qgis/flow_direction_grid.shp')
 
-gdf_watershead_morocco = gpd.read_file('Data/watershead_morocco.shp')
+gdf_watershead_morocco = gpd.read_file('../data/raw/hydrology/watershead_morocco.shp')
 
 gdf_cwb = gpd.read_file('../data/interim/water/cwb.shp')
 

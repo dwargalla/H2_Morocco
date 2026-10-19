@@ -22,7 +22,7 @@ import contextily as cx
 import pandas as pd
 
 # Data
-gdf_morocco_boundary    = gpd.read_file('Data/morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
+gdf_morocco_boundary    = gpd.read_file('../data/raw/boundaries/morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
 df_pv = pd.read_csv('../data/interim/mca_criteria/results_pv_yeald.csv')
 gdf_grid = gpd.read_file('../data/interim/grid/grid_morocco_clear.shp')
 gdf_grid['PV'] = df_pv['pv_yeald']

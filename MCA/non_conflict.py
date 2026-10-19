@@ -29,9 +29,9 @@ import numpy as np
 gdf_grid = gpd.read_file('../data/interim/grid/grid_morocco_clear.shp')
 gdf_cells_centroid = gdf_grid.centroid
     # non_conflict
-gdf_morocco = gpd.read_file('Data/morocco.geojson').to_crs("EPSG:32629")
+gdf_morocco = gpd.read_file('../data/raw/boundaries/morocco.geojson').to_crs("EPSG:32629")
     # conflict --> Western Sahara
-gdf_conflict = gpd.read_file('Data/conflict_area.shp').to_crs("EPSG:32629")
+gdf_conflict = gpd.read_file('../data/raw/boundaries/conflict_area.shp').to_crs("EPSG:32629")
 
 ds_distance_to_morocco = gdf_cells_centroid.distance(gdf_morocco.geometry[0])
 ds_distance_to_conflict_area = gdf_cells_centroid.distance(gdf_conflict.geometry[0])

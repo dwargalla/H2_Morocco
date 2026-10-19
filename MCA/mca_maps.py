@@ -43,7 +43,7 @@ def inverted_min_max_scale(df):
     return (df - df.min())/(df.max()-df.min())
 
 # Grid morocco
-gdf_morocco_boundary    = gpd.read_file('Data/morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
+gdf_morocco_boundary    = gpd.read_file('../data/raw/boundaries/morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
 gdf_mca_morocco_2025 = gpd.read_file('../data/interim/grid/grid_morocco_clear.shp').to_crs("EPSG:32629")
 gdf_mca_morocco_2050 = gdf_mca_morocco_2025.copy()
 

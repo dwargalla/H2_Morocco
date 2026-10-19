@@ -33,7 +33,7 @@ from dotenv import load_dotenv
 
 # Get location-specific profiles in morocco from renewables ninja 
 
-coordinates = pd.read_excel('Data/PV_WIND_50_Punkte.xlsx', sheet_name='PV_Punkte')
+coordinates = pd.read_excel('../data/raw/renewables/PV_WIND_50_Punkte.xlsx', sheet_name='PV_Punkte')
 df_electricity = pd.read_csv('../data/interim/re_profiles/pv_wind_electricity.csv', index_col=0)
 df_electricity.reset_index(drop=True, inplace=True)
 #df_electricity = pd.DataFrame()
