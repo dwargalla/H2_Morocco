@@ -1,51 +1,10 @@
-# GIS / generierte Outputs
-MCA/Maps/*.eps
-MCA/Maps/*.pdf
-MCA/Maps/*.png
+# Rohdaten: externe Downloads bleiben lokal, Herkunft und Links in data/README.md.
+# Bereits getrackte kleine Dateien (Häfen, Legenden, PV/Wind-Standorte) bleiben getrackt.
+data/raw/**
+!data/raw/**/
+!data/raw/**/README*
 
-MCA/Data/*.shp
-MCA/Data/*.dbf
-MCA/Data/*.shx
-MCA/Data/*.prj
-MCA/Data/*.cpg
-MCA/Data/*.qmd
-
-Cost_analysis/Maps/*.eps
-Cost_analysis/Maps/*.pdf
-Cost_analysis/Maps/*.png
-
-Cost_analysis/Data/*.shp
-Cost_analysis/Data/*.dbf
-Cost_analysis/Data/*.shx
-Cost_analysis/Data/*.prj
-Cost_analysis/Data/*.cpg
-Cost_analysis/Data/*.qmd
-
-MCA/Maps/Esri Shapefile/*.eps
-MCA/Maps/Esri Shapefile/*.pdf
-MCA/Maps/Esri Shapefile/*.png
-MCA/Data/Esri Shapefile/*.shp
-MCA/Data/Esri Shapefile/*.dbf
-MCA/Data/Esri Shapefile/*.shx
-MCA/Data/Esri Shapefile/*.prj
-MCA/Data/Esri Shapefile/*.cpg
-MCA/Data/Esri Shapefile/*.qmd
-MCA/Data/Esri Shapefile/*.gpkg
-
-
-MCA/Maps/hotosm_mar_waterways_gpkg/*.eps
-MCA/Maps/hotosm_mar_waterways_gpkg/*.pdf
-MCA/Maps/hotosm_mar_waterways_gpkg/*.png
-MCA/Data/hotosm_mar_waterways_gpkg/*.shp
-MCA/Data/hotosm_mar_waterways_gpkg/*.dbf
-MCA/Data/hotosm_mar_waterways_gpkg/*.shx
-MCA/Data/hotosm_mar_waterways_gpkg/*.prj
-MCA/Data/hotosm_mar_waterways_gpkg/*.cpg
-MCA/Data/hotosm_mar_waterways_gpkg/*.qmd
-MCA/Data/hotosm_mar_waterways_gpkg/*.gpkg
-
-
-# große Ergebnisse
+# GIS-Dateien und Abbildungen allgemein (einzelne Dateien sind bewusst getrackt)
 *.tif
 *.geojson
 *.gpkg
