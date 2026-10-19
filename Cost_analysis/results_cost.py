@@ -21,6 +21,14 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import contextily as cx
+import os
+from dotenv import load_dotenv
+
+# Hintergrundkarte: CARTO-Kacheln brauchen einen API-Key (CARTO_API_KEY in H2_Morocco/.env)
+load_dotenv('../.env')
+if not os.getenv('CARTO_API_KEY'):
+    raise SystemExit('CARTO_API_KEY fehlt: .env.example nach .env kopieren und Key eintragen.')
+basemap = cx.providers.CartoDB.Positron(apikey=os.getenv('CARTO_API_KEY'))
 
 
 gdf_morocco_boundary    = gpd.read_file('../data/raw/boundaries/morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
@@ -43,7 +51,7 @@ gdf_north = gdf_grid_morocco[gdf_grid_morocco.geometry.centroid.y >= y_limit]
 fig, ax = plt.subplots(figsize=(15, 10))
 gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=2)
 gdf_grid_morocco.plot(ax=ax, cmap=theme_rating, column=df_res_2025['H2_Price_2025 [EUR/MWh_h2]'], legend=True, legend_kwds={"label": r"$\mathrm{[€/MWh_{H_2}]}$", "orientation": "vertical"})
-cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
+cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=basemap)
 plt.axis('off')
 cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=10)
@@ -56,7 +64,7 @@ plt.show()
 fig, ax = plt.subplots(figsize=(15, 10))
 gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=2)
 gdf_grid_morocco.plot(ax=ax, cmap=theme_rating, column=df_res_2050['H2_Price_2050 [EUR/MWh_h2]'], legend=True, legend_kwds={"label": r"$\mathrm{[€/MWh_{H_2}]}$", "orientation": "vertical"})
-cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
+cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=basemap)
 plt.axis('off')
 cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=10)

@@ -19,6 +19,14 @@ import matplotlib.pyplot as plt
 import geopandas as gpd
 import contextily as cx
 import matplotlib.patches as mpatches
+import os
+from dotenv import load_dotenv
+
+# Hintergrundkarte: CARTO-Kacheln brauchen einen API-Key (CARTO_API_KEY in H2_Morocco/.env)
+load_dotenv('../.env')
+if not os.getenv('CARTO_API_KEY'):
+    raise SystemExit('CARTO_API_KEY fehlt: .env.example nach .env kopieren und Key eintragen.')
+basemap = cx.providers.CartoDB.Positron(apikey=os.getenv('CARTO_API_KEY'))
 
 gdf_morocco_boundary    = gpd.read_file('../data/raw/boundaries/morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
 # Data
@@ -47,7 +55,7 @@ gdf_landuse_rural.plot(ax = ax, color='sandybrown', label='Rural land', alpha = 
 gdf_landuse_urban.plot(ax = ax, color='b', label='Urban land')
 gdf_industrie_morocco.plot(ax = ax, color='red', label='Industrial area', markersize=100)
 gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=1)
-cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
+cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=basemap)
 plt.axis('off')
 legend_handles = [
     mpatches.Patch(color='lightgreen', label='Agricultural land'),

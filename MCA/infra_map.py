@@ -21,6 +21,14 @@ import matplotlib.pyplot as plt
 import geopandas as gpd
 import contextily as cx
 import numpy as np
+import os
+from dotenv import load_dotenv
+
+# Hintergrundkarte: CARTO-Kacheln brauchen einen API-Key (CARTO_API_KEY in H2_Morocco/.env)
+load_dotenv('../.env')
+if not os.getenv('CARTO_API_KEY'):
+    raise SystemExit('CARTO_API_KEY fehlt: .env.example nach .env kopieren und Key eintragen.')
+basemap = cx.providers.CartoDB.Positron(apikey=os.getenv('CARTO_API_KEY'))
 
 # Data
 gdf_railways_utm29n = gpd.read_file('../data/raw/osm/gis_osm_railways_free_1.shp').to_crs("EPSG:32629")
@@ -78,7 +86,7 @@ for track_class in classes:
         gdf_roads_railsways[gdf_roads_railsways['fclass'] == track_class].plot(ax=ax, linewidth=0.1, color = np.random.rand(3,))
 gdf_ports_2025.plot(ax=ax, color='blue', marker='o', markersize=50, label='Current ports of Morocco')
 gdf_ports_new.plot(ax=ax, color='red', marker='o', markersize=50, label='Future ports of Morocco')
-cx.add_basemap(ax, crs=gdf_roads_railsways.crs, source=cx.providers.CartoDB.Positron)
+cx.add_basemap(ax, crs=gdf_roads_railsways.crs, source=basemap)
 plt.axis('off')
 plt.legend(loc = 'lower right', fontsize = 12)
 plt.tight_layout()

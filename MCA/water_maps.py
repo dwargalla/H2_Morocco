@@ -25,6 +25,14 @@ import contextily as cx
 import numpy as np
 import matplotlib.patches as mpatches
 from matplotlib.colors import LinearSegmentedColormap
+import os
+from dotenv import load_dotenv
+
+# Hintergrundkarte: CARTO-Kacheln brauchen einen API-Key (CARTO_API_KEY in H2_Morocco/.env)
+load_dotenv('../.env')
+if not os.getenv('CARTO_API_KEY'):
+    raise SystemExit('CARTO_API_KEY fehlt: .env.example nach .env kopieren und Key eintragen.')
+basemap = cx.providers.CartoDB.Positron(apikey=os.getenv('CARTO_API_KEY'))
 
 gdf_morocco_boundary    = gpd.read_file('../data/raw/boundaries/morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
 # Data
@@ -49,7 +57,7 @@ gdf_cwb = gpd.read_file('../data/interim/water/cwb.shp')
 fig, ax = plt.subplots(figsize=(15, 10))
 gdf_groundwater.plot(ax = ax, color='steelblue',alpha = 0.6, label='Groundwater potential')
 gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=1)
-cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
+cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=basemap)
 plt.axis('off')
 cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=14)
@@ -72,7 +80,7 @@ new_cmap = LinearSegmentedColormap.from_list(
 fig, ax = plt.subplots(figsize=(15, 10))
 gdf_grid.plot(ax = ax, column='Surface Water', cmap = new_cmap, label='Surface Water potential',legend = True, legend_kwds={"label": "Surface Water Availability [MCM]", "orientation": "vertical"})
 gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=1)
-cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
+cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=basemap)
 plt.axis('off')
 cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=14)
@@ -85,7 +93,7 @@ plt.show()
 fig, ax = plt.subplots(figsize=(15, 10))
 gdf_water_direction.plot(ax = ax, column='_sum', cmap = 'Blues', legend=True, legend_kwds={"label": "Number of cells flowing into one cell", "orientation": "vertical"})
 gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=1)
-cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
+cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=basemap)
 plt.axis('off')
 cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=14)
@@ -98,7 +106,7 @@ plt.show()
 fig, ax = plt.subplots(figsize=(15, 10))
 gdf_watershead_morocco.plot(ax = ax, column='name',alpha=0.5,edgecolor='black', cmap = 'Paired', legend=True, legend_kwds={'loc': 'lower right'})
 gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=1)
-cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
+cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=basemap)
 plt.axis('off')
 cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=14)
@@ -111,7 +119,7 @@ plt.show()
 fig, ax = plt.subplots(figsize=(15, 10))
 gdf_cwb.plot(ax = ax, column='CWB',alpha=0.9, cmap = 'Blues', legend=True, legend_kwds={"label": "Climate Water Balance [MCM]", "orientation": "vertical"})
 gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=1)
-cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
+cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=basemap)
 plt.axis('off')
 cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=14)

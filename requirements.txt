@@ -10,7 +10,7 @@ openpyxl>=3.1           # pd.read_excel on Data/PV_WIND_50_Punkte.xlsx
 
 # Cost_analysis/re_data.py (renewables.ninja API)
 requests>=2.31
-python-dotenv>=1.0      # liest RENEWABLES_NINJA_TOKEN aus .env
+python-dotenv>=1.0      # liest RENEWABLES_NINJA_TOKEN und CARTO_API_KEY aus .env
 
 # Cost_analysis/FLH_el.py (needs a Gurobi license)
 pypsa>=0.25             # Network.optimize()

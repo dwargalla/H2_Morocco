@@ -16,8 +16,10 @@ Alle Eingangs- und Zwischendaten von MCA und Kostenanalyse liegen in diesem Ordn
 | Datei | Quelle | Spalten | Lokal |
 |---|---|---|---|
 | `osm/gis_osm_{landuse_a,roads,railways}_free_1.shp` | OpenStreetMap über Geofabrik, Stand 29.01.2025 (aus `General/04_Recherche/QGIS/morocco-latest-free.shp.zip`); Lizenz ODbL, siehe `osm/README` | `fclass` | ✓ |
-| `globcover/mar_gc_adg/mar_gc_adg.shp` | FAO GlobCover Marokko: https://data.apps.fao.org/catalog/dataset/fad3f475-8973-463f-b56a-e6b6535c1db5 | `GRIDCODE` | fehlt (Legenden-.xls im Repo) |
-| `globcover/wsa_gc_adg/wsa_gc_adg.shp` | FAO GlobCover Westsahara: https://data.apps.fao.org/catalog/iso/75aaf5c5-d579-425a-97fb-aa4580536df2 | `GRIDCODE` | fehlt (Legenden-.xls im Repo) |
+| `globcover/mar_gc_adg/mar_gc_adg.shp` | FAO GlobCover Marokko (Download 19.10.2026): https://data.apps.fao.org/catalog/dataset/fad3f475-8973-463f-b56a-e6b6535c1db5 | `GRIDCODE` | ✓ (Legenden-.xls im Repo) |
+| `globcover/wsa_gc_adg/wsa_gc_adg.shp` | FAO GlobCover Westsahara (Download 19.10.2026): https://data.apps.fao.org/catalog/iso/75aaf5c5-d579-425a-97fb-aa4580536df2 | `GRIDCODE` | ✓ (Legenden-.xls im Repo) |
+
+Kontrolle GlobCover: Der 2025-Teil von `urban_zone.py` liefert damit dieselben 171 Stadtzellen wie `interim/mca_criteria/results_urban.csv` (max. Abweichung 1·10⁻¹³, Rundung). Es sind also die Originaldaten.
 | `boundaries/morocco_Morocco_Country_Boundary.shp` | `General/04_Recherche/QGIS/Marokko karte vollständig/Morocco Country Boundary.shp.zip` | – | ✓ |
 | `boundaries/morocco.geojson` | Kernmarokko, `General/04_Recherche/QGIS/Datein/Daten/morocco.geojson` | – | ✓ |
 | `boundaries/Regions.shp` | 12 Verwaltungsregionen (Gliederung ab 2015). GADM 4.1 hat noch die 15 alten Regionen und passt nicht. | `Nom_Region` | fehlt |

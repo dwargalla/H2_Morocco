@@ -31,6 +31,8 @@ import geopandas as gpd
 import contextily as cx
 import numpy as np
 import matplotlib.colors as mcolors
+import os
+from dotenv import load_dotenv
 
 # Min-Max_scale-funtion
 def min_max_scale(df):
@@ -165,6 +167,12 @@ df_mca.to_csv('../results/mca/results_mca_morocco_2025_2050.csv', index=False)
 
 ### MAPS ###
 
+# Hintergrundkarte: CARTO-Kacheln brauchen einen API-Key (CARTO_API_KEY in H2_Morocco/.env)
+load_dotenv('../.env')
+if not os.getenv('CARTO_API_KEY'):
+    raise SystemExit('CARTO_API_KEY fehlt: .env.example nach .env kopieren und Key eintragen.')
+basemap = cx.providers.CartoDB.Positron(apikey=os.getenv('CARTO_API_KEY'))
+
 theme_rating = 'jet_r'
 theme_diff   = 'OrRd_r'
 
@@ -172,7 +180,7 @@ theme_diff   = 'OrRd_r'
 fig, ax = plt.subplots(figsize=(15, 10))
 gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=1)
 gdf_mca_morocco_2025.plot(ax=ax, cmap = theme_rating, column= 'Hydrogen_potential', legend=True, legend_kwds={"label": "Relativ hydrogen potential", "orientation": "vertical"})
-cx.add_basemap(ax, crs=gdf_mca_morocco_2025.crs, source=cx.providers.CartoDB.Positron)
+cx.add_basemap(ax, crs=gdf_mca_morocco_2025.crs, source=basemap)
 plt.axis('off')
 cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=14)
@@ -186,7 +194,7 @@ plt.show()
 fig, ax = plt.subplots(figsize=(15, 10))
 gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=1)
 gdf_mca_morocco_2050.plot(ax=ax, cmap = theme_rating, column= 'Hydrogen_potential', legend=True, legend_kwds={"label": "Relativ hydrogen potential", "orientation": "vertical"})
-cx.add_basemap(ax, crs=gdf_mca_morocco_2050.crs, source=cx.providers.CartoDB.Positron)
+cx.add_basemap(ax, crs=gdf_mca_morocco_2050.crs, source=basemap)
 plt.axis('off')
 cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=14)
@@ -207,7 +215,7 @@ fig, ax = plt.subplots(figsize=(15, 10))
 gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=1)
 gdf_mca_morocco_diff.plot(ax=ax,vmax = 0, cmap = theme_diff, column= 'Hydrogen_potential', legend=True, alpha=gdf_mca_morocco_diff['alpha'],
                           legend_kwds={"label": "Relativ change in hydrogen potential", "orientation": "vertical"})
-cx.add_basemap(ax, crs=gdf_mca_morocco_2025.crs, source=cx.providers.CartoDB.Positron)
+cx.add_basemap(ax, crs=gdf_mca_morocco_2025.crs, source=basemap)
 plt.axis('off')
 cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=14)

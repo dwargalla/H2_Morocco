@@ -63,6 +63,7 @@ pip install -r requirements.txt
 
 - `FLH_el.py` braucht zusätzlich eine **Gurobi-Lizenz** (für Hochschulen kostenlos).
 - `re_data.py` braucht einen **API-Token von [renewables.ninja](https://www.renewables.ninja/api/)**. Er wird aus `.env` gelesen: `cp .env.example .env` und `RENEWABLES_NINJA_TOKEN` eintragen. `.env` ist per `.gitignore` vom Repo ausgeschlossen.
+- Die Kartenskripte (`*_map(s).py`, `results_cost.py`) brauchen einen **CARTO-API-Key** für die Hintergrundkarte ([anfordern](https://carto.com/basemaps/apikey/)), ebenfalls in `.env` als `CARTO_API_KEY`. Ohne Key liefert CARTO die Kacheln mit dem Wasserzeichen „API KEY REQUIRED“ aus.
 
 **Wichtig:** Alle Skripte verwenden relative Pfade (`../data/...`, `../results/...`) und müssen **aus ihrem eigenen Ordner** gestartet werden:
 

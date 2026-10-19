@@ -20,6 +20,14 @@ import geopandas as gpd
 import matplotlib.pyplot as plt
 import contextily as cx
 import pandas as pd
+import os
+from dotenv import load_dotenv
+
+# Hintergrundkarte: CARTO-Kacheln brauchen einen API-Key (CARTO_API_KEY in H2_Morocco/.env)
+load_dotenv('../.env')
+if not os.getenv('CARTO_API_KEY'):
+    raise SystemExit('CARTO_API_KEY fehlt: .env.example nach .env kopieren und Key eintragen.')
+basemap = cx.providers.CartoDB.Positron(apikey=os.getenv('CARTO_API_KEY'))
 
 # Data
 gdf_morocco_boundary    = gpd.read_file('../data/raw/boundaries/morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
@@ -33,7 +41,7 @@ gdf_grid['Wind'] = df_wind['FLH_wind']
 # Map PV
 fig, ax = plt.subplots(figsize=(15, 10))
 gdf_grid.plot(ax = ax, column='PV', cmap='turbo', legend=True, vmin=1000, legend_kwds={"label": "kWh/kWp", "orientation": "vertical"})
-cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
+cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=basemap)
 plt.axis('off')
 cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=14)
@@ -45,7 +53,7 @@ plt.show()
 # Map Wind
 fig, ax = plt.subplots(figsize=(15, 10))
 gdf_grid.plot(ax = ax, column='Wind', cmap='turbo', legend=True, legend_kwds={"label": "Hours [h]", "orientation": "vertical"})
-cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=cx.providers.CartoDB.Positron)
+cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=basemap)
 plt.axis('off')
 cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=14)
