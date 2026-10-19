@@ -61,4 +61,4 @@ gdf_morocco_gird = grid_cration(polygon=gdf_morocco_boundary_utm29N, cell_size=g
 
 gdf_morocco_gird.plot()
 
-gdf_morocco_gird.to_file("grid_morocco.shp", driver='ESRI Shapefile')
+gdf_morocco_gird.to_file("../../data/interim/grid/grid_morocco.shp", driver='ESRI Shapefile')

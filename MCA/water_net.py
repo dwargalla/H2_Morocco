@@ -24,14 +24,14 @@ import geopandas as gpd
 import numpy as np
 import pandas as pd
 
-gdf_grid = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
+gdf_grid = gpd.read_file('../data/interim/grid/grid_morocco_clear.shp')
 
-gdf_coast = gpd.read_file('Data/morocco_coast_line.shp').to_crs("EPSG:32629")        
+gdf_coast = gpd.read_file('../data/interim/qgis/morocco_coast_line.shp').to_crs("EPSG:32629")        
 
 # Today
-df_gw_availability = pd.read_csv('Data/water_availability_gw.csv')
-df_sw_availability = pd.read_csv('Data/water_availability_sw.csv')
-df_water_consumption = pd.read_csv('Data/Water_Consumption_2025.csv')
+df_gw_availability = pd.read_csv('../data/interim/water/water_availability_gw.csv')
+df_sw_availability = pd.read_csv('../data/interim/water/water_availability_sw.csv')
+df_water_consumption = pd.read_csv('../data/interim/water/Water_Consumption_2025.csv')
 
 # 50/50 between Wateravailability and Wateravailability residual
 ds_water_res = (- df_water_consumption['Water_Consumption[BCM]'] * 10**9 
@@ -66,4 +66,4 @@ for i in range(len(gdf_grid)):
 
 df_water = pd.DataFrame(data = list_water)
 
-df_water.to_csv('results/results_water_res_available.csv', index=False)
+df_water.to_csv('../data/interim/mca_criteria/results_water_res_available.csv', index=False)

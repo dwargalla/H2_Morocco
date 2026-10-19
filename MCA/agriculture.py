@@ -29,7 +29,7 @@ from custom import list_index
 
 # Data
     # Grid morocco
-gdf_grid = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
+gdf_grid = gpd.read_file('../data/interim/grid/grid_morocco_clear.shp')
 
     # Agriculture
     # Source: FAO, via: https://data.apps.fao.org/catalog/dataset/fad3f475-8973-463f-b56a-e6b6535c1db5  --> Morocco
@@ -40,7 +40,7 @@ gdf_landuse_wsa         = gpd.read_file('Data/Landuse/wsa_gc_adg/wsa_gc_adg.shp'
 gdf_landuse_concat      = gpd.GeoDataFrame(pd.concat([gdf_landuse_mar, gdf_landuse_wsa])) #Today
 
     # Same source, but for future landuse (from forecast_landuse.py)
-gdf_landuse_concat_2050      = gpd.read_file('Data/morocco_landuse_2050.shp')    #Landuse 2050
+gdf_landuse_concat_2050      = gpd.read_file('../data/interim/landuse/morocco_landuse_2050.shp')    #Landuse 2050
 
 gdf_landuse_agri        = gdf_landuse_concat[gdf_landuse_concat['GRIDCODE'].isin([11, 12, 13, 14, 15, 16, 20, 21, 30, 31, 32])]
 gdf_landuse_agri_2050   = gdf_landuse_concat_2050[gdf_landuse_concat_2050['GRIDCODE'].isin([11, 12, 13, 14, 15, 16, 20, 21, 30, 31, 32])]
@@ -60,7 +60,7 @@ df_agriculture = pd.DataFrame(data = list_agriculture)
 df_agriculture_2050 = pd.DataFrame(data = list_agriculture_2050)
 
 # 2025
-df_agriculture.to_csv('results/results_agriculture.csv', index=False)
+df_agriculture.to_csv('../data/interim/mca_criteria/results_agriculture.csv', index=False)
 
 # 2050
-df_agriculture_2050.to_csv('results/results_agriculture_2050.csv', index=False)
+df_agriculture_2050.to_csv('../data/interim/mca_criteria/results_agriculture_2050.csv', index=False)

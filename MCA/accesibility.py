@@ -26,7 +26,7 @@ from custom import list_index
 
 # Data
     # Current potential, from previous MCA
-gdf_grid = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
+gdf_grid = gpd.read_file('../data/interim/grid/grid_morocco_clear.shp')
 
     # Accessibility
     # Source: OSM, downloaded via QGIS
@@ -66,4 +66,4 @@ for i in range(len(gdf_grid)):
         a = df[df['class'] == y]['length'].sum()
         df_accessibility.loc[i, y] = a
 
-df_accessibility.to_csv('results/results_accessibility.csv', index=False)
+df_accessibility.to_csv('../data/interim/mca_criteria/results_accessibility.csv', index=False)

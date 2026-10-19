@@ -50,7 +50,7 @@ lifetime_wind = 25 # years
 r_wind = 0.04 # discount rate
 annuity_wind = ((1 + r_wind) ** lifetime_wind * r_wind) / ((1 + r_wind) ** lifetime_wind - 1) * capex_wind + opex_wind # €/kWp
 
-df_pv_wind = pd.read_csv('Data/pv_wind_electricity.csv')
+df_pv_wind = pd.read_csv('../data/interim/re_profiles/pv_wind_electricity.csv')
 df_wind_el = df_pv_wind[f'electricity_Wind_{0}']
 df_pv_el = df_pv_wind[f'electricity_PV_{0}']
 
@@ -99,4 +99,4 @@ for i in range(1, 100):
     df_flh_electrolyzer.at[i, 'PV'] = pv
     df_flh_electrolyzer.at[i, 'Wind'] = wind
 
-df_flh_electrolyzer.to_csv('Data/FLH_electrolyzer.csv')
+df_flh_electrolyzer.to_csv('../data/interim/re_profiles/FLH_electrolyzer.csv')

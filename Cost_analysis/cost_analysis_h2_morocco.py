@@ -44,7 +44,7 @@ import pandas as pd
 
 # Data
     # Current cost map
-gdf_grid_morocco            = gpd.read_file('Data/grid_morocco_clear.shp').to_crs("EPSG:32629")
+gdf_grid_morocco            = gpd.read_file('../data/interim/grid/grid_morocco_clear.shp').to_crs("EPSG:32629")
 gdf_grid_centroid           = gdf_grid_morocco.geometry.centroid
     # Industrial ports
     # Source: OSM, via QGIS
@@ -52,16 +52,16 @@ gdf_ports_2025              = gpd.read_file("Data/industrial_ports_morocco_2025.
 gdf_ports_2050              = gpd.read_file("Data/industrial_ports_morocco_2050.shp").to_crs(gdf_grid_morocco.crs)
     # RE and Eletrolysis data, FLH electrolyzer, flh pv und wind, Leistung PV und Wind
     # Via Pypsa
-gdf_re_data                 = gpd.read_file('Data/data_re_flh_electrolyzer.shp').to_crs(gdf_grid_morocco.crs)
-df_re_flh                   = pd.read_csv('Data/flh_re.csv')
-df_re_flh_cell              = pd.read_csv('Data/cell_flh_re.csv')
+gdf_re_data                 = gpd.read_file('../data/interim/re_profiles/data_re_flh_electrolyzer.shp').to_crs(gdf_grid_morocco.crs)
+df_re_flh                   = pd.read_csv('../data/interim/re_profiles/flh_re.csv')
+df_re_flh_cell              = pd.read_csv('../data/interim/qgis/cell_flh_re.csv')
 
 # Wateravaulability each cell
-gdf_coast       = gpd.read_file('Data/Data/morocco_coast_line.shp').to_crs("EPSG:32629")        
-df_sw_2025      = pd.read_csv('Data/water_availability_sw.csv')
-df_gw_2025      = pd.read_csv('Data/water_availability_gw.csv')
-df_sw_2050      = pd.read_csv('Data/water_availability_sw_2050.csv')
-df_gw_2050      = pd.read_csv('Data/water_availability_gw_2050.csv')
+gdf_coast       = gpd.read_file('../data/interim/qgis/morocco_coast_line.shp').to_crs("EPSG:32629")        
+df_sw_2025      = pd.read_csv('../data/interim/water_cost/water_availability_sw.csv')
+df_gw_2025      = pd.read_csv('../data/interim/water_cost/water_availability_gw.csv')
+df_sw_2050      = pd.read_csv('../data/interim/water_cost/water_availability_sw_2050.csv')
+df_gw_2050      = pd.read_csv('../data/interim/water_cost/water_availability_gw_2050.csv')
 index_sw_2050_with_water = df_sw_2050[df_sw_2050['0'] > 0 ].index
 index_gw_2050_with_water = df_gw_2050[df_gw_2050['0'] > 0 ].index
 

@@ -30,7 +30,7 @@ gdf_nogo_zones = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['military
 gdf_nogo_zones.reset_index(drop=True, inplace=True)
 gdf_nogo_zones.index = range(len(gdf_nogo_zones))
 ###
-gdf_topo_utm29n = gpd.read_file('Data/ToPo_1500.shp').to_crs("EPSG:32629")   #Already 1 or 0, done in QGIS with grid-statistics
+gdf_topo_utm29n = gpd.read_file('../data/interim/qgis/ToPo_1500.shp').to_crs("EPSG:32629")   #Already 1 or 0, done in QGIS with grid-statistics
 
 
 # Map MCA diff

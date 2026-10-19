@@ -28,7 +28,7 @@ import pandas as pd
 
 from custom import list_index
 
-gdf_grid_morocco        = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
+gdf_grid_morocco        = gpd.read_file('../data/interim/grid/grid_morocco_clear.shp')
     # Industrial landuse
     # Source: OSM, via QGIS
 gdf_landuse_utm29n      = gpd.read_file('Data/Landuse/gis_osm_landuse_a_free_1.shp').to_crs("EPSG:32629")
@@ -42,7 +42,7 @@ gdf_landuse_wsa         = gpd.read_file('Data/wsa_gc_adg/wsa_gc_adg.shp').to_crs
 gdf_landuse_concat      = gpd.GeoDataFrame(pd.concat([gdf_landuse_mar, gdf_landuse_wsa])) #Landuse today
 
     # Same source, but for future landuse (from forecast_landuse.py)
-gdf_landuse_concat_2050      = gpd.read_file('Data/morocco_landuse_2050.shp')    #Landuse 2050
+gdf_landuse_concat_2050      = gpd.read_file('../data/interim/landuse/morocco_landuse_2050.shp')    #Landuse 2050
 
 # List for itteration
 list_gdf_landuse = [gdf_landuse_concat, gdf_landuse_concat_2050]
@@ -107,4 +107,4 @@ for gdf_landuse, agri, urban, indust, water_consumption, suffix in zip(list_gdf_
         gdf_grid_morocco.at[i, 'Water_Consumption[BCM]'] = sum_water_consumption
 
     # Save the results to a CSV file
-    gdf_grid_morocco['Water_Consumption[BCM]'].to_csv(f'Data/Water_Consumption{suffix}.csv')
+    gdf_grid_morocco['Water_Consumption[BCM]'].to_csv(f'../data/interim/water/Water_Consumption{suffix}.csv')

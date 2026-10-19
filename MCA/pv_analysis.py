@@ -19,10 +19,10 @@ import geopandas as gpd
 
 # Data
     # Current potential
-gdf_grid = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
+gdf_grid = gpd.read_file('../data/interim/grid/grid_morocco_clear.shp')
     # PV
     # Source: Global solar atlas
-gdf_pv_morocco_utm29n = gpd.read_file('Data/Morocco_GISdata_LTAy_YearlyMonthlyTotals_GlobalSolarAtlas-v2_GEOTIFF/PV_yeald_clear_ma_we.shp').to_crs("EPSG:32629")
+gdf_pv_morocco_utm29n = gpd.read_file('../data/interim/qgis/PV_yeald_clear_ma_we.shp').to_crs("EPSG:32629")
 
 # Spatial join: alle PV-Geometrien auf die Grid-Zellen mappen
 joined = gpd.sjoin(gdf_grid,
@@ -35,4 +35,4 @@ df_mean = joined.groupby(joined.index)['pv_yeald'].mean()
 df_mean = df_mean.fillna(0)
 
 # CSV
-df_mean.to_csv('results/results_pv_yeald.csv', index=False)
+df_mean.to_csv('../data/interim/mca_criteria/results_pv_yeald.csv', index=False)

@@ -35,15 +35,15 @@ gdf_groundwater_morocco_concat = pd.concat([gdf_groundwater_morocco_utm29n, gdf_
                                            ignore_index=True)
 gdf_groundwater = gdf_groundwater_morocco_concat[gdf_groundwater_morocco_concat['MorHGComb'].isin(['CSIF-M/H', 'CSFK-H/VH', 'U-L/H'])]
 
-gdf_grid = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
-df_sw = pd.read_csv('Data/water_availability_sw.csv')
+gdf_grid = gpd.read_file('../data/interim/grid/grid_morocco_clear.shp')
+df_sw = pd.read_csv('../data/interim/water/water_availability_sw.csv')
 gdf_grid['Surface Water'] = df_sw['water_availability_sw[MCM]']
 
-gdf_water_direction = gpd.read_file('Data/flow_direction_grid.shp')
+gdf_water_direction = gpd.read_file('../data/interim/qgis/flow_direction_grid.shp')
 
 gdf_watershead_morocco = gpd.read_file('Data/watershead_morocco.shp')
 
-gdf_cwb = gpd.read_file('Data/cwb.shp')
+gdf_cwb = gpd.read_file('../data/interim/water/cwb.shp')
 
 # Map Ground Water
 fig, ax = plt.subplots(figsize=(15, 10))

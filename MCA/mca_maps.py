@@ -44,7 +44,7 @@ def inverted_min_max_scale(df):
 
 # Grid morocco
 gdf_morocco_boundary    = gpd.read_file('Data/morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
-gdf_mca_morocco_2025 = gpd.read_file('Grid_morocco/grid_morocco_clear.shp').to_crs("EPSG:32629")
+gdf_mca_morocco_2025 = gpd.read_file('../data/interim/grid/grid_morocco_clear.shp').to_crs("EPSG:32629")
 gdf_mca_morocco_2050 = gdf_mca_morocco_2025.copy()
 
 # weights
@@ -73,23 +73,23 @@ dict_weights_roads = {'motorway': 0.25,
 
 # Read results
     # 2025
-df_pv_yeald = pd.read_csv('results/results_pv_yeald.csv')
-df_wind_flh = pd.read_csv('results/results_wind_flh.csv')
-df_accessibility = pd.read_csv('results/results_accessibility.csv')
-df_agriculture = pd.read_csv('results/results_agriculture.csv')
-df_urban = pd.read_csv('results/results_urban.csv')
-df_industrie = pd.read_csv('results/results_industrie.csv')
-df_rural = pd.read_csv('results/results_rural.csv')
-df_water = pd.read_csv('results/results_water_res_available.csv')
-df_non_conflict_areas = pd.read_csv('results/results_non_conflict_areas.csv')
+df_pv_yeald = pd.read_csv('../data/interim/mca_criteria/results_pv_yeald.csv')
+df_wind_flh = pd.read_csv('../data/interim/mca_criteria/results_wind_flh.csv')
+df_accessibility = pd.read_csv('../data/interim/mca_criteria/results_accessibility.csv')
+df_agriculture = pd.read_csv('../data/interim/mca_criteria/results_agriculture.csv')
+df_urban = pd.read_csv('../data/interim/mca_criteria/results_urban.csv')
+df_industrie = pd.read_csv('../data/interim/mca_criteria/results_industrie.csv')
+df_rural = pd.read_csv('../data/interim/mca_criteria/results_rural.csv')
+df_water = pd.read_csv('../data/interim/mca_criteria/results_water_res_available.csv')
+df_non_conflict_areas = pd.read_csv('../data/interim/mca_criteria/results_non_conflict_areas.csv')
 
-df_nogo_zones = pd.read_csv('results/results_nogo_zones.csv')
+df_nogo_zones = pd.read_csv('../data/interim/mca_criteria/results_nogo_zones.csv')
 
     # 2050
-df_agriculture_2050 = pd.read_csv('results/results_agriculture_2050.csv')
-df_urban_2050 = pd.read_csv('results/results_urban_2050.csv')
-df_rural_2050 = pd.read_csv('results/results_rural_2050.csv')
-df_water_2050 = pd.read_csv('results/results_water_res_availabil_2050.csv')
+df_agriculture_2050 = pd.read_csv('../data/interim/mca_criteria/results_agriculture_2050.csv')
+df_urban_2050 = pd.read_csv('../data/interim/mca_criteria/results_urban_2050.csv')
+df_rural_2050 = pd.read_csv('../data/interim/mca_criteria/results_rural_2050.csv')
+df_water_2050 = pd.read_csv('../data/interim/mca_criteria/results_water_res_availabil_2050.csv')
 
 # Scale results.
 # Water and non conflict already scored

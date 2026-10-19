@@ -34,7 +34,7 @@ from dotenv import load_dotenv
 # Get location-specific profiles in morocco from renewables ninja 
 
 coordinates = pd.read_excel('Data/PV_WIND_50_Punkte.xlsx', sheet_name='PV_Punkte')
-df_electricity = pd.read_csv('Data/pv_wind_electricity.csv', index_col=0)
+df_electricity = pd.read_csv('../data/interim/re_profiles/pv_wind_electricity.csv', index_col=0)
 df_electricity.reset_index(drop=True, inplace=True)
 #df_electricity = pd.DataFrame()
 
@@ -100,7 +100,7 @@ for i in range(1):   # Nur sechs Anfragen pro Min (2*3), um API-Limits zu beacht
     df_electricity = pd.concat([df_electricity, df_concat], axis=1)
 
 # Calculation of Fullloadhours of pv and wind for locaions
-# df_re = pd.read_csv('Data/pv_wind_electricity.csv')
+# df_re = pd.read_csv('../data/interim/re_profiles/pv_wind_electricity.csv')
 # df_re = df_re.drop(columns= ['Unnamed: 0'])
 
 ds_sum = df_electricity.sum()
@@ -113,5 +113,5 @@ for i in range(0, 50):
     df_flh.at[i, 'FLH_PV'] = pv
     df_flh.at[i, 'FLH_Wind'] = wind
 
-df_flh.to_csv('Data/flh_re.csv', index=False)
-df_electricity.to_csv('Data/pv_wind_electricity.csv')
+df_flh.to_csv('../data/interim/re_profiles/flh_re.csv', index=False)
+df_electricity.to_csv('../data/interim/re_profiles/pv_wind_electricity.csv')

@@ -29,7 +29,7 @@ from custom import list_index
 
 # Data
     # Current potential
-gdf_grid = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
+gdf_grid = gpd.read_file('../data/interim/grid/grid_morocco_clear.shp')
 
     # No-Go Zones
     # Source: OSM, via QGIS
@@ -42,7 +42,7 @@ gdf_nogo_zones.index = range(len(gdf_nogo_zones))
 
     # No-Go Zones: Topography
     # Source: QGIS, via grid-statistics, origin source for topography: Soufiane fragen
-gdf_topo_utm29n = gpd.read_file('Data/ToPo_1500.shp').to_crs("EPSG:32629")   #Already 1 or 0, done in QGIS with grid-statistics
+gdf_topo_utm29n = gpd.read_file('../data/interim/qgis/ToPo_1500.shp').to_crs("EPSG:32629")   #Already 1 or 0, done in QGIS with grid-statistics
 
 list_nogo = []
 for i in range(len(gdf_grid)):
@@ -64,4 +64,4 @@ array_nogo = np.minimum(array_nogo, gdf_topo_utm29n['NoGo'])
 
 df_nogo_zones = pd.DataFrame(data = array_nogo)
 
-df_nogo_zones.to_csv('results/results_nogo_zones.csv', index=False)
+df_nogo_zones.to_csv('../data/interim/mca_criteria/results_nogo_zones.csv', index=False)

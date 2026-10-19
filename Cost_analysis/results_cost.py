@@ -24,7 +24,7 @@ import contextily as cx
 
 
 gdf_morocco_boundary    = gpd.read_file('../MCA/Data/morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
-gdf_grid_morocco        = gpd.read_file('../MCA/Grid_morocco/grid_morocco_clear.shp').to_crs("EPSG:32629")
+gdf_grid_morocco        = gpd.read_file('../data/interim/grid/grid_morocco_clear.shp').to_crs("EPSG:32629")
 
 df_res_2025             = pd.read_csv('../results/cost/results_cost_2025.csv')
 df_res_2050             = pd.read_csv('../results/cost/results_cost_2050.csv')

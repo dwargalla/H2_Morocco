@@ -33,18 +33,18 @@ import geopandas as gpd
 import pandas as pd
 import numpy as np
 
-gdf_grid = gpd.read_file('Grid_morocco/grid_morocco_clear.shp')
+gdf_grid = gpd.read_file('../data/interim/grid/grid_morocco_clear.shp')
 
 # Precipitation and PET data
 # Source: Future projection of droughts in Morocco and potential impact on agriculture (PDF in Teams)
 gdf_precipitation   = gpd.read_file('Data/Precipitation_morocco_2050_corr.shp').to_crs('EPSG:32629')
 gdf_pet             = gpd.read_file('Data/PET_morocco_2050_corr.shp').to_crs('EPSG:32629')
 
-gdf_coast = gpd.read_file('Data/morocco_coast_line.shp').to_crs("EPSG:32629")        
-df_water_2025_sw    = pd.read_csv('Data/water_availability_sw.csv')
-df_water_2025_gw    = pd.read_csv('Data/water_availability_gw.csv')
-df_water_consumption_2025 = pd.read_csv('Data/Water_Consumption_2025.csv')
-df_water_consumption_2050 = pd.read_csv('Data/Water_Consumption_2050.csv')
+gdf_coast = gpd.read_file('../data/interim/qgis/morocco_coast_line.shp').to_crs("EPSG:32629")        
+df_water_2025_sw    = pd.read_csv('../data/interim/water/water_availability_sw.csv')
+df_water_2025_gw    = pd.read_csv('../data/interim/water/water_availability_gw.csv')
+df_water_consumption_2025 = pd.read_csv('../data/interim/water/Water_Consumption_2025.csv')
+df_water_consumption_2050 = pd.read_csv('../data/interim/water/Water_Consumption_2050.csv')
 ds_water_ges_2025        = (+ df_water_2025_gw['water_availability_gw[MCM]']  
                        + df_water_2025_sw['water_availability_sw[MCM]'])
 
@@ -59,7 +59,7 @@ for i in range(len(gdf_precipitation)):
             list_geoms.append(geom)
 
 gdf_cwb = gpd.GeoDataFrame(geometry=list_geoms, data={'CWB':list_values}, crs=gdf_precipitation.crs)
-gdf_cwb.to_file('Data/cwb.shp', driver='ESRI Shapefile')
+gdf_cwb.to_file('../data/interim/water/cwb.shp', driver='ESRI Shapefile')
 
 water_supply_2025   = ds_water_ges_2025.sum()    #MCM
 water_supply_2050   = 8535                  #MCM
@@ -115,4 +115,4 @@ for i in range(len(gdf_grid)):
 
 df_water = pd.DataFrame(data = list_water)
 
-df_water.to_csv('results/results_water_res_availabil_2050.csv', index=False)
+df_water.to_csv('../data/interim/mca_criteria/results_water_res_availabil_2050.csv', index=False)
