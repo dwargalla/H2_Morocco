@@ -14,4 +14,4 @@ python-dotenv>=1.0      # liest RENEWABLES_NINJA_TOKEN aus .env
 
 # Cost_analysis/FLH_el.py (needs a Gurobi license)
 pypsa>=0.25             # Network.optimize()
-gurobipy>=11.0
+gurobipy>=12,<13       # muss zur Hauptversion der Gurobi-Lizenz passen

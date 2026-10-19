@@ -77,6 +77,7 @@ MCA/Data/hotosm_mar_waterways_gpkg/*.gpkg
 !.env.example
 .DS_Store
 __pycache__/
+*.egg-info/
 !requirements.txt
 
 # KI-Assistenten
