@@ -82,6 +82,6 @@ cx.add_basemap(ax, crs=gdf_roads_railsways.crs, source=cx.providers.CartoDB.Posi
 plt.axis('off')
 plt.legend(loc = 'lower right', fontsize = 12)
 plt.tight_layout()
-plt.savefig("Maps/morocco_infrastructure.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
-plt.savefig("Maps/morocco_infrastructure.eps", format="eps", bbox_inches='tight', pad_inches=0)
+plt.savefig("../results/figures/mca/morocco_infrastructure.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
+plt.savefig("../results/figures/mca/morocco_infrastructure.eps", format="eps", bbox_inches='tight', pad_inches=0)
 plt.show()

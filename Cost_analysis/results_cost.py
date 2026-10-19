@@ -26,8 +26,8 @@ import contextily as cx
 gdf_morocco_boundary    = gpd.read_file('../MCA/Data/morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
 gdf_grid_morocco        = gpd.read_file('../MCA/Grid_morocco/grid_morocco_clear.shp').to_crs("EPSG:32629")
 
-df_res_2025             = pd.read_csv('Data/results_cost_2025.csv')
-df_res_2050             = pd.read_csv('Data/results_cost_2050.csv')
+df_res_2025             = pd.read_csv('../results/cost/results_cost_2025.csv')
+df_res_2050             = pd.read_csv('../results/cost/results_cost_2050.csv')
 
 theme_rating = 'jet'
 theme_diff   = 'OrRd_r'
@@ -48,8 +48,8 @@ plt.axis('off')
 cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=10)
 cbar_ax.yaxis.label.set_size(20)
-plt.savefig("Maps/cost_map_2025.pdf", format="pdf", bbox_inches='tight', pad_inches=0)#
-plt.savefig("Maps/cost_map_2025.png", format="png", dpi = 300, bbox_inches='tight', pad_inches=0)
+plt.savefig("../results/figures/cost/cost_map_2025.pdf", format="pdf", bbox_inches='tight', pad_inches=0)#
+plt.savefig("../results/figures/cost/cost_map_2025.png", format="png", dpi = 300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Costs 2050
@@ -61,8 +61,8 @@ plt.axis('off')
 cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=10)
 cbar_ax.yaxis.label.set_size(20)
-plt.savefig("Maps/cost_map_2050.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
-plt.savefig("Maps/cost_map_2050.png", format="png", dpi = 300, bbox_inches='tight', pad_inches=0)
+plt.savefig("../results/figures/cost/cost_map_2050.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
+plt.savefig("../results/figures/cost/cost_map_2050.png", format="png", dpi = 300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Kostenanteile
@@ -82,8 +82,8 @@ ax.legend()
 ax.bar_label(rects1, padding=3)
 ax.bar_label(rects2, padding=3)
 fig.tight_layout()
-plt.savefig("Maps/bar_cost_components_morocco_seperate.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
-plt.savefig("Maps/bar_cost_components_morocco_seperate.png", format="png", dpi = 300, bbox_inches='tight', pad_inches=0)
+plt.savefig("../results/figures/cost/bar_cost_components_morocco_seperate.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
+plt.savefig("../results/figures/cost/bar_cost_components_morocco_seperate.png", format="png", dpi = 300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Gestapeltes Säulendiagramm
@@ -107,10 +107,10 @@ ax.set_xticklabels(['2025', '2050'])
 ax.set_ylabel(r'Cost $\mathrm{[€/MWh_{H_2}]}$')
 ax.legend([b[0] for b in bars], labels, bbox_to_anchor=(1.05, 1), loc='upper left')
 fig.tight_layout()
-plt.savefig("Maps/bar_cost_components_morocco.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
-plt.savefig("Maps/bar_cost_components_morocco.png", format="png", dpi = 300, bbox_inches='tight', pad_inches=0)
+plt.savefig("../results/figures/cost/bar_cost_components_morocco.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
+plt.savefig("../results/figures/cost/bar_cost_components_morocco.png", format="png", dpi = 300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Results export (csv)
 df_res = pd.concat([df_res_2025['H2_Price_2025 [EUR/MWh_h2]'], df_res_2050['H2_Price_2050 [EUR/MWh_h2]']], axis=1)
-df_res.to_csv('Data/results_cost_morocco_2025_2050.csv', index=False)
+df_res.to_csv('../results/cost/results_cost_morocco_2025_2050.csv', index=False)

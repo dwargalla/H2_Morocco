@@ -161,7 +161,7 @@ gdf_mca_morocco_2050['Hydrogen_potential'] = df_mca_morocco_2050
 # Results export (csv)
 df_mca = pd.concat([df_mca_morocco, df_mca_morocco_2050], axis=1)
 df_mca.columns = ['MCA_Morocco_2025', 'MCA_Morocco_2050']
-df_mca.to_csv('results/results_mca_morocco_2025_2050.csv', index=False)
+df_mca.to_csv('../results/mca/results_mca_morocco_2025_2050.csv', index=False)
 
 ### MAPS ###
 
@@ -178,8 +178,8 @@ cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=14)
 cbar_ax.yaxis.label.set_size(20)
 plt.tight_layout()
-plt.savefig("Maps/mca_morocco_2025.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
-plt.savefig("Maps/mca_morocco_2025.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
+plt.savefig("../results/figures/mca/mca_morocco_2025.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("../results/figures/mca/mca_morocco_2025.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Map MCA 2050
@@ -192,8 +192,8 @@ cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=14)
 cbar_ax.yaxis.label.set_size(20)
 plt.tight_layout()
-plt.savefig("Maps/mca_morocco_2050.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
-plt.savefig("Maps/mca_morocco_2050.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
+plt.savefig("../results/figures/mca/mca_morocco_2050.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("../results/figures/mca/mca_morocco_2050.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
 plt.show()
 
     #Difference
@@ -213,8 +213,8 @@ cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=14)
 cbar_ax.yaxis.label.set_size(20)
 plt.tight_layout()
-plt.savefig("Maps/mca_morocco_diff.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
-plt.savefig("Maps/mca_morocco_diff.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
+plt.savefig("../results/figures/mca/mca_morocco_diff.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("../results/figures/mca/mca_morocco_diff.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Pie chart of weights
@@ -261,6 +261,6 @@ for autotext in autotexts:
     autotext.set_fontsize(12)  # z.B. 16, nach Wunsch anpassen
 
 plt.tight_layout()
-plt.savefig("Maps/pie_chart_weights.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
-plt.savefig("Maps/pie_chart_weights.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
+plt.savefig("../results/figures/mca/pie_chart_weights.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("../results/figures/mca/pie_chart_weights.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
 plt.show()

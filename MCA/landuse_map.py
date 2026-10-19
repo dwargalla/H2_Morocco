@@ -56,5 +56,5 @@ legend_handles = [
     mpatches.Patch(color='red', label='Industrial area')]
 plt.legend(handles=legend_handles, loc='lower right', fontsize=12)
 plt.tight_layout()
-plt.savefig("Maps/morocco_landuse.png", format="png", bbox_inches='tight', pad_inches=0)
+plt.savefig("../results/figures/mca/morocco_landuse.png", format="png", bbox_inches='tight', pad_inches=0)
 plt.show()

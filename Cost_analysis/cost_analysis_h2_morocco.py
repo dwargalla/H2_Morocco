@@ -400,6 +400,6 @@ for i in range(len(gdf_grid_morocco)):
 gdf_cost_cells_2025 = gpd.GeoDataFrame(df_h2_cost_share_2025, geometry=gdf_grid_morocco.geometry, crs=gdf_grid_morocco.crs)
 gdf_cost_cells_2050 = gpd.GeoDataFrame(df_h2_cost_share_2050, geometry=gdf_grid_morocco.geometry, crs=gdf_grid_morocco.crs)
 
-df_h2_cost_share_2025.to_csv('Data/results_cost_2025.csv', index=False)
+df_h2_cost_share_2025.to_csv('../results/cost/results_cost_2025.csv', index=False)
 
-df_h2_cost_share_2050.to_csv('Data/results_cost_2050.csv', index=False)
+df_h2_cost_share_2050.to_csv('../results/cost/results_cost_2050.csv', index=False)

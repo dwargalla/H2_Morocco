@@ -39,7 +39,7 @@ cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=14)
 cbar_ax.yaxis.label.set_size(20)
 plt.tight_layout()
-plt.savefig("Maps/morocco_photovoltaic_potential.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("../results/figures/mca/morocco_photovoltaic_potential.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Map Wind
@@ -51,5 +51,5 @@ cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=14)
 cbar_ax.yaxis.label.set_size(20)
 plt.tight_layout()
-plt.savefig("Maps/morocco_wind_potential.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("../results/figures/mca/morocco_wind_potential.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
