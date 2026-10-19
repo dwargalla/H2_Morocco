@@ -5,12 +5,12 @@ Straßenklasse sind zufällig (``np.random``), die Karte sieht also bei jedem La
 anders aus.
 
 Eingaben:
-    Data/Landuse/gis_osm_{roads,railways}_free_1.shp
-    Data/Landuse/morocco_Morocco_Country_Boundary.shp
-    Data/industrial_ports_morocco_{2025,2050}.shp
+    data/raw/osm/gis_osm_{roads,railways}_free_1.shp
+    data/raw/boundaries/morocco_Morocco_Country_Boundary.shp
+    data/raw/infrastructure/industrial_ports_morocco_{2025,2050}.shp
 
 Ausgaben:
-    Maps/morocco_infrastructure.{pdf,eps}
+    results/figures/mca/morocco_infrastructure.{pdf,eps}
 
 Hinweise:
     - Ausführen aus ``MCA/``: ``python infra_map.py``

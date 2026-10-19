@@ -7,10 +7,10 @@ annualisierte Kosten (Zins 4 %) minimiert. Das wird für alle 100 Standorte
 wiederholt.
 
 Eingaben:
-    Data/pv_wind_electricity.csv   aus re_data.py
+    data/interim/re_profiles/pv_wind_electricity.csv   aus re_data.py
 
 Ausgaben:
-    Data/FLH_electrolyzer.csv   je Standort: FLH_electrolyzer [h/a],
+    data/interim/re_profiles/FLH_electrolyzer.csv   je Standort: FLH_electrolyzer [h/a],
                                 PV und Wind in % der optimierten H2-Abgabeleistung
 
 Hinweise:

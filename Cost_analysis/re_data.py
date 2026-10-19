@@ -7,12 +7,12 @@ V136 3450, 150 m Nabenhöhe), hängt sie als Spalten ``electricity_PV_i`` /
 Volllaststunden (Jahressumme).
 
 Eingaben:
-    Data/PV_WIND_50_Punkte.xlsx    Blatt PV_Punkte (Latitude, Longitude)
-    Data/pv_wind_electricity.csv   bisher abgerufene Profile (wird erweitert)
+    data/raw/renewables/PV_WIND_50_Punkte.xlsx    Blatt PV_Punkte (Latitude, Longitude)
+    data/interim/re_profiles/pv_wind_electricity.csv   bisher abgerufene Profile (wird erweitert)
 
 Ausgaben:
-    Data/pv_wind_electricity.csv   stündliche Profile, 8760 Zeilen
-    Data/flh_re.csv                FLH_PV, FLH_Wind für die Standorte 0–49
+    data/interim/re_profiles/pv_wind_electricity.csv   stündliche Profile, 8760 Zeilen
+    data/interim/re_profiles/flh_re.csv                FLH_PV, FLH_Wind für die Standorte 0–49
 
 Hinweise:
     - Braucht einen API-Token in ``H2_Morocco/.env`` als ``RENEWABLES_NINJA_TOKEN``

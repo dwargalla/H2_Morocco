@@ -7,12 +7,12 @@ innerhalb der Zelle. Die Gewichtung der Klassen erfolgt erst in
 verwendet.
 
 Eingaben:
-    Grid_morocco/grid_morocco_clear.shp
-    Data/Landuse/gis_osm_roads_free_1.shp      (Spalte fclass)
-    Data/Landuse/gis_osm_railways_free_1.shp
+    data/interim/grid/grid_morocco_clear.shp
+    data/raw/osm/gis_osm_roads_free_1.shp      (Spalte fclass)
+    data/raw/osm/gis_osm_railways_free_1.shp
 
 Ausgaben:
-    results/results_accessibility.csv   12 Spalten (eine je Klasse), zeilengleich mit dem Raster
+    data/interim/mca_criteria/results_accessibility.csv   12 Spalten (eine je Klasse), zeilengleich mit dem Raster
 
 Hinweise:
     - Schleife über alle Zellen ohne räumlichen Index, läuft lange.

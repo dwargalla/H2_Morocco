@@ -5,7 +5,7 @@ Landesgrenze (EPSG:32629, UTM 29N) und behält nur Zellen, die die Grenze
 schneiden.
 
 Eingaben:
-    ../Data/morocco_Morocco_Country_Boundary.shp   Landesgrenze
+    data/raw/boundaries/morocco_Morocco_Country_Boundary.shp   Landesgrenze
 
 Ausgaben:
     grid_morocco.shp                               Rohraster

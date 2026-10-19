@@ -5,11 +5,11 @@ Verschneidet das Raster mit den PV-Polygonen aus dem Global Solar Atlas
 ``pv_yeald`` [kWh/kWp]. Zellen ohne Treffer erhalten 0.
 
 Eingaben:
-    Grid_morocco/grid_morocco_clear.shp
-    Data/Morocco_GISdata_LTAy_YearlyMonthlyTotals_GlobalSolarAtlas-v2_GEOTIFF/PV_yeald_clear_ma_we.shp
+    data/interim/grid/grid_morocco_clear.shp
+    data/interim/qgis/PV_yeald_clear_ma_we.shp
 
 Ausgaben:
-    results/results_pv_yeald.csv   eine Spalte ``pv_yeald``, zeilengleich mit dem Raster
+    data/interim/mca_criteria/results_pv_yeald.csv   eine Spalte ``pv_yeald``, zeilengleich mit dem Raster
 
 Hinweise:
     - Ausführen aus ``MCA/``: ``python pv_analysis.py``

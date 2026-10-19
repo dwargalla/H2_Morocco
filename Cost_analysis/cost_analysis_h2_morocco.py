@@ -15,18 +15,18 @@ Betrachtet einen 100-MW-PEM-Elektrolyseur. Ablauf:
        der nächsten Zelle mit Wasser.
 
 Eingaben:
-    Data/grid_morocco_clear.shp
-    Data/industrial_ports_morocco_{2025,2050}.shp
-    Data/data_re_flh_electrolyzer.shp   aus assignment_re_data.py
-    Data/flh_re.csv                     aus re_data.py
-    Data/cell_flh_re.csv                FLH je Zelle (nicht per Skript erzeugt, vermutlich QGIS)
-    Data/Data/morocco_coast_line.shp
-    Data/water_availability_{sw,gw}.csv, Data/water_availability_{sw,gw}_2050.csv
-                                        (eigene Kopien, weichen von MCA/Data ab)
+    data/interim/grid/grid_morocco_clear.shp
+    data/raw/infrastructure/industrial_ports_morocco_{2025,2050}.shp
+    data/interim/re_profiles/data_re_flh_electrolyzer.shp   aus assignment_re_data.py
+    data/interim/re_profiles/flh_re.csv                     aus re_data.py
+    data/interim/qgis/cell_flh_re.csv                FLH je Zelle (nicht per Skript erzeugt, vermutlich QGIS)
+    data/interim/qgis/morocco_coast_line.shp
+    data/interim/water_cost/water_availability_{sw,gw}.csv, data/interim/water_cost/water_availability_{sw,gw}_2050.csv
+                                        (eigene Fassung, weicht von data/interim/water/ ab)
 
 Ausgaben:
-    Data/results_cost_2025.csv   je Zelle: Produktionszelle, FLH, Kostenanteile
-    Data/results_cost_2050.csv   (Wasser, Elektrolyse, EE, Netz, Pipeline) und
+    results/cost/results_cost_2025.csv   je Zelle: Produktionszelle, FLH, Kostenanteile
+    results/cost/results_cost_2050.csv   (Wasser, Elektrolyse, EE, Netz, Pipeline) und
                                  Gesamtpreis in €/MWh_H2
 
 Hinweise:

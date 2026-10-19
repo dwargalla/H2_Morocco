@@ -3,14 +3,14 @@
 Nur Abbildung, kein Einfluss auf die Ergebnisse.
 
 Eingaben:
-    Grid_morocco/grid_morocco_clear.shp
-    Data/morocco_Morocco_Country_Boundary.shp
-    results/results_pv_yeald.csv   aus pv_analysis.py
-    results/results_wind_flh.csv   aus wind_analysis.py
+    data/interim/grid/grid_morocco_clear.shp
+    data/raw/boundaries/morocco_Morocco_Country_Boundary.shp
+    data/interim/mca_criteria/results_pv_yeald.csv   aus pv_analysis.py
+    data/interim/mca_criteria/results_wind_flh.csv   aus wind_analysis.py
 
 Ausgaben:
-    Maps/morocco_photovoltaic_potential.png
-    Maps/morocco_wind_potential.png
+    results/figures/mca/morocco_photovoltaic_potential.png
+    results/figures/mca/morocco_wind_potential.png
 
 Hinweise:
     - Ausführen aus ``MCA/``: ``python re_potential_map.py``

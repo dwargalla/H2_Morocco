@@ -9,16 +9,16 @@
    Küstenzellen erhalten 100.
 
 Eingaben:
-    Grid_morocco/grid_morocco_clear.shp
-    Data/Precipitation_morocco_2050_corr.shp   (Spalte Precipitat)
-    Data/PET_morocco_2050_corr.shp             (Spalte PET)
-    Data/morocco_coast_line.shp
-    Data/water_availability_{sw,gw}.csv
-    Data/Water_Consumption_{2025,2050}.csv
+    data/interim/grid/grid_morocco_clear.shp
+    data/raw/climate/Precipitation_morocco_2050_corr.shp   (Spalte Precipitat)
+    data/raw/climate/PET_morocco_2050_corr.shp             (Spalte PET)
+    data/interim/qgis/morocco_coast_line.shp
+    data/interim/water/water_availability_{sw,gw}.csv
+    data/interim/water/Water_Consumption_{2025,2050}.csv
 
 Ausgaben:
-    Data/cwb.shp                                   klimatische Wasserbilanz (für water_maps.py)
-    results/results_water_res_availabil_2050.csv   eine Spalte, zeilengleich mit dem Raster
+    data/interim/water/cwb.shp                                   klimatische Wasserbilanz (für water_maps.py)
+    data/interim/mca_criteria/results_water_res_availabil_2050.csv   eine Spalte, zeilengleich mit dem Raster
 
 Hinweise:
     - Das Dargebot 2050 ist hartkodiert (Korrekturplan F-22); der Rückgang

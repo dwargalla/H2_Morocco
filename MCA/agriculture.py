@@ -6,18 +6,16 @@ fortgeschriebenen Landnutzung. In ``mca_maps.py`` invertiert skaliert
 (hoher Anteil = schlechter Score).
 
 Eingaben:
-    Grid_morocco/grid_morocco_clear.shp
-    Data/Landuse/mar_gc_adg/mar_gc_adg.shp   GlobCover Marokko
-    Data/Landuse/wsa_gc_adg/wsa_gc_adg.shp   GlobCover Westsahara
-    Data/morocco_landuse_2050.shp            aus forecast_landuse.py
+    data/interim/grid/grid_morocco_clear.shp
+    data/raw/globcover/mar_gc_adg/mar_gc_adg.shp   GlobCover Marokko
+    data/raw/globcover/wsa_gc_adg/wsa_gc_adg.shp   GlobCover Westsahara
+    data/interim/landuse/morocco_landuse_2050.shp            aus forecast_landuse.py
 
 Ausgaben:
-    results/results_agriculture.csv          2025
-    results/results_agriculture_2050.csv     2050
+    data/interim/mca_criteria/results_agriculture.csv          2025
+    data/interim/mca_criteria/results_agriculture_2050.csv     2050
 
 Hinweise:
-    - Liest GlobCover aus ``Data/Landuse/…``, während urban_zone.py und
-      rural_zone.py ``Data/…`` verwenden; beide Kopien müssen vorhanden sein.
     - Ausführen aus ``MCA/``: ``python agriculture.py``
 """
 

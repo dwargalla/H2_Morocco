@@ -6,15 +6,15 @@ Dargebot = Grund- + Oberflächenwasser und Überschuss = Dargebot − Verbrauch
 erhalten pauschal 100 (Meerwasserentsalzung möglich).
 
 Eingaben:
-    Grid_morocco/grid_morocco_clear.shp
-    Data/morocco_coast_line.shp        (derzeit eine Rekonstruktion, siehe
-                                        Data/README_Datenherkunft.md)
-    Data/water_availability_gw.csv     aus water_exploitable_gw.py
-    Data/water_availability_sw.csv     aus water_exploitable_sw.py
-    Data/Water_Consumption_2025.csv    aus water_consumption.py
+    data/interim/grid/grid_morocco_clear.shp
+    data/interim/qgis/morocco_coast_line.shp        (derzeit eine Rekonstruktion, siehe
+                                        data/README.md)
+    data/interim/water/water_availability_gw.csv     aus water_exploitable_gw.py
+    data/interim/water/water_availability_sw.csv     aus water_exploitable_sw.py
+    data/interim/water/Water_Consumption_2025.csv    aus water_consumption.py
 
 Ausgaben:
-    results/results_water_res_available.csv   eine Spalte, zeilengleich mit dem Raster
+    data/interim/mca_criteria/results_water_res_available.csv   eine Spalte, zeilengleich mit dem Raster
 
 Hinweise:
     - Ausführen aus ``MCA/``: ``python water_net.py``

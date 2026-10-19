@@ -4,11 +4,11 @@ Vereinigt alle OSM-Landnutzungspolygone der Klasse ``industrial`` und berechnet
 je Zelle den Flächenanteil (0–1).
 
 Eingaben:
-    Grid_morocco/grid_morocco_clear.shp
-    Data/Landuse/gis_osm_landuse_a_free_1.shp   (Spalte fclass)
+    data/interim/grid/grid_morocco_clear.shp
+    data/raw/osm/gis_osm_landuse_a_free_1.shp   (Spalte fclass)
 
 Ausgaben:
-    results/results_industrie.csv   eine Spalte, zeilengleich mit dem Raster
+    data/interim/mca_criteria/results_industrie.csv   eine Spalte, zeilengleich mit dem Raster
 
 Hinweise:
     - Ausführen aus ``MCA/``: ``python industrie.py``

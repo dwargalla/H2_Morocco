@@ -9,14 +9,14 @@ Sektoranteilen auf Flächen:
 und summiert je Zelle die Anteile der darin liegenden Flächen.
 
 Eingaben:
-    Grid_morocco/grid_morocco_clear.shp
-    Data/Landuse/gis_osm_landuse_a_free_1.shp
-    Data/mar_gc_adg/mar_gc_adg.shp, Data/wsa_gc_adg/wsa_gc_adg.shp
-    Data/morocco_landuse_2050.shp   aus forecast_landuse.py
+    data/interim/grid/grid_morocco_clear.shp
+    data/raw/osm/gis_osm_landuse_a_free_1.shp
+    data/raw/globcover/mar_gc_adg/mar_gc_adg.shp, data/raw/globcover/wsa_gc_adg/wsa_gc_adg.shp
+    data/interim/landuse/morocco_landuse_2050.shp   aus forecast_landuse.py
 
 Ausgaben:
-    Data/Water_Consumption_2025.csv   Indexspalte + ``Water_Consumption[BCM]``
-    Data/Water_Consumption_2050.csv
+    data/interim/water/Water_Consumption_2025.csv   Indexspalte + ``Water_Consumption[BCM]``
+    data/interim/water/Water_Consumption_2050.csv
 
 Hinweise:
     - Regenfeldbau wird nicht vom Agrarwasser ausgenommen (Korrekturplan F-21).

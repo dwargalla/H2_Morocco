@@ -3,16 +3,16 @@
 Nur Abbildung, kein Einfluss auf die Ergebnisse.
 
 Eingaben:
-    Grid_morocco/grid_morocco_clear.shp
-    Data/morocco_Morocco_Country_Boundary.shp
-    Data/Morocco/Morocco_HG.shp, Data/Morocco/WSahara/WesternSahara_HG.shp
-    Data/water_availability_sw.csv   aus water_exploitable_sw.py
-    Data/flow_direction_grid.shp
-    Data/watershead_morocco.shp
-    Data/cwb.shp                     aus water_forecast.py
+    data/interim/grid/grid_morocco_clear.shp
+    data/raw/boundaries/morocco_Morocco_Country_Boundary.shp
+    data/raw/groundwater/Morocco_HG.shp, data/raw/groundwater/WesternSahara_HG.shp
+    data/interim/water/water_availability_sw.csv   aus water_exploitable_sw.py
+    data/interim/qgis/flow_direction_grid.shp
+    data/raw/hydrology/watershead_morocco.shp
+    data/interim/water/cwb.shp                     aus water_forecast.py
 
 Ausgaben:
-    Maps/morocco_{groundwater,surfacewater,flow_direction,watersheds,cwb}.png
+    results/figures/mca/morocco_{groundwater,surfacewater,flow_direction,watersheds,cwb}.png
 
 Hinweise:
     - Ausführen aus ``MCA/``: ``python water_maps.py``

@@ -7,13 +7,13 @@ und auf die Region zugeschnitten. Die übrigen Landnutzungsflächen werden um di
 neuen Stadtflächen verkleinert.
 
 Eingaben:
-    Data/Landuse/mar_gc_adg/mar_gc_adg.shp   GlobCover Marokko (Spalte GRIDCODE)
-    Data/Landuse/wsa_gc_adg/wsa_gc_adg.shp   GlobCover Westsahara
-    Data/Landuse/Regions.shp                 Regionen (Spalte Nom_Region)
-    Data/Landuse/morocco_Morocco_Country_Boundary.shp   (eingelesen, aber nicht verwendet)
+    data/raw/globcover/mar_gc_adg/mar_gc_adg.shp   GlobCover Marokko (Spalte GRIDCODE)
+    data/raw/globcover/wsa_gc_adg/wsa_gc_adg.shp   GlobCover Westsahara
+    data/raw/boundaries/Regions.shp                 Regionen (Spalte Nom_Region)
+    data/raw/boundaries/morocco_Morocco_Country_Boundary.shp   (eingelesen, aber nicht verwendet)
 
 Ausgaben:
-    Data/morocco_landuse_2050.shp            Landnutzung 2050, genutzt von
+    data/interim/landuse/morocco_landuse_2050.shp            Landnutzung 2050, genutzt von
                                              agriculture.py, urban_zone.py,
                                              rural_zone.py, water_consumption.py
 

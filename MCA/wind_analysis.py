@@ -5,11 +5,11 @@ Atlas, räumlicher Join ``intersects``) und bildet je Zelle den Mittelwert von
 ``FLH_wind`` [h/a]. Zellen ohne Treffer erhalten 0.
 
 Eingaben:
-    Grid_morocco/grid_morocco_clear.shp
-    Data/Wind_Energiedichte/wind_yeald/Wind_pot_morocco_FLH.shp
+    data/interim/grid/grid_morocco_clear.shp
+    data/interim/qgis/Wind_pot_morocco_FLH.shp
 
 Ausgaben:
-    results/results_wind_flh.csv   eine Spalte ``FLH_wind``, zeilengleich mit dem Raster
+    data/interim/mca_criteria/results_wind_flh.csv   eine Spalte ``FLH_wind``, zeilengleich mit dem Raster
 
 Hinweise:
     - Die Volllaststunden sind teils physikalisch unplausibel hoch

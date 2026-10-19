@@ -5,11 +5,11 @@ Koordinaten (Zeilen 0–49: PV-Punkte, 50–99: Wind-Punkte) und speichert sie a
 Punkt-Shapefile (EPSG:4326).
 
 Eingaben:
-    Data/FLH_electrolyzer.csv      aus FLH_el.py
-    Data/PV_WIND_50_Punkte.xlsx    Blätter PV_Punkte und Wind_Punkte
+    data/interim/re_profiles/FLH_electrolyzer.csv      aus FLH_el.py
+    data/raw/renewables/PV_WIND_50_Punkte.xlsx    Blätter PV_Punkte und Wind_Punkte
 
 Ausgaben:
-    Data/data_re_flh_electrolyzer.shp   (Shapefile kürzt Spaltennamen auf 10 Zeichen,
+    data/interim/re_profiles/data_re_flh_electrolyzer.shp   (Shapefile kürzt Spaltennamen auf 10 Zeichen,
                                          z. B. FLH_electr)
 
 Hinweise:

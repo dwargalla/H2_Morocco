@@ -6,14 +6,14 @@ OSM-Flächen der Klassen ``military``, ``nature_reserve`` oder
 ausgeschlossen ist (``NoGo`` = 0). Beide Masken werden per Minimum kombiniert.
 
 Eingaben:
-    Grid_morocco/grid_morocco_clear.shp
-    Data/Landuse/gis_osm_landuse_a_free_1.shp   (Spalte fclass)
-    Data/ToPo_1500.shp                          (Spalte NoGo, 0/1; in QGIS auf das
+    data/interim/grid/grid_morocco_clear.shp
+    data/raw/osm/gis_osm_landuse_a_free_1.shp   (Spalte fclass)
+    data/interim/qgis/ToPo_1500.shp                          (Spalte NoGo, 0/1; in QGIS auf das
                                                  Raster aggregiert, muss zeilengleich
                                                  mit dem Raster sein)
 
 Ausgaben:
-    results/results_nogo_zones.csv   eine Spalte ``NoGo``, zeilengleich mit dem Raster
+    data/interim/mca_criteria/results_nogo_zones.csv   eine Spalte ``NoGo``, zeilengleich mit dem Raster
 
 Hinweise:
     - In ``mca_maps.py`` wird der gewichtete Score mit dieser Maske multipliziert.

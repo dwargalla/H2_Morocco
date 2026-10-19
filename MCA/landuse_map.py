@@ -3,12 +3,12 @@
 Nur Abbildung, kein Einfluss auf die Ergebnisse.
 
 Eingaben:
-    Data/morocco_Morocco_Country_Boundary.shp
-    Data/Landuse/mar_gc_adg/mar_gc_adg.shp, Data/Landuse/wsa_gc_adg/wsa_gc_adg.shp
-    Data/Landuse/gis_osm_landuse_a_free_1.shp
+    data/raw/boundaries/morocco_Morocco_Country_Boundary.shp
+    data/raw/globcover/mar_gc_adg/mar_gc_adg.shp, data/raw/globcover/wsa_gc_adg/wsa_gc_adg.shp
+    data/raw/osm/gis_osm_landuse_a_free_1.shp
 
 Ausgaben:
-    Maps/morocco_landuse.png
+    results/figures/mca/morocco_landuse.png
 
 Hinweise:
     - Ausführen aus ``MCA/``: ``python landuse_map.py``

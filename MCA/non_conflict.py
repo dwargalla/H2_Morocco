@@ -6,12 +6,12 @@ Verhältnis Abstand_Konflikt / Abstand_Marokko. Zellen in Kernmarokko erhalten
 100, Zellen in der Westsahara 0, alle übrigen werden rangskaliert (0–100).
 
 Eingaben:
-    Grid_morocco/grid_morocco_clear.shp
-    Data/morocco.geojson       Kernmarokko
-    Data/conflict_area.shp     Westsahara
+    data/interim/grid/grid_morocco_clear.shp
+    data/raw/boundaries/morocco.geojson       Kernmarokko
+    data/raw/boundaries/conflict_area.shp     Westsahara
 
 Ausgaben:
-    results/results_non_conflict_areas.csv   eine Spalte, zeilengleich mit dem Raster
+    data/interim/mca_criteria/results_non_conflict_areas.csv   eine Spalte, zeilengleich mit dem Raster
     (zusätzlich eine Kontrollkarte per ``gdf.plot``, wird nicht gespeichert)
 
 Hinweise:

@@ -4,12 +4,12 @@ Nur Abbildung, kein Einfluss auf die Ergebnisse (die Maske selbst erzeugt
 no_go_zones.py).
 
 Eingaben:
-    Data/morocco_Morocco_Country_Boundary.shp
-    Data/Landuse/gis_osm_landuse_a_free_1.shp
-    Data/ToPo_1500.shp
+    data/raw/boundaries/morocco_Morocco_Country_Boundary.shp
+    data/raw/osm/gis_osm_landuse_a_free_1.shp
+    data/interim/qgis/ToPo_1500.shp
 
 Ausgaben:
-    Maps/morocco_nogos.png
+    results/figures/mca/morocco_nogos.png
 
 Hinweise:
     - Ausführen aus ``MCA/``: ``python nogo_maps.py``
