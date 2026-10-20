@@ -9,7 +9,7 @@ Eingaben:
     data/interim/water/water_availability_sw.csv   aus water_exploitable_sw.py
     data/interim/qgis/flow_direction_grid.shp
     data/raw/hydrology/watershead_morocco.shp
-    data/interim/water/cwb.shp                     aus water_forecast.py
+    data/interim/water/cwb.shp                     aus water_forecast.py (optional, sonst keine CWB-Karte)
 
 Ausgaben:
     results/figures/mca/morocco_{groundwater,surfacewater,flow_direction,watersheds,cwb}.png
@@ -50,8 +50,6 @@ gdf_grid['Surface Water'] = df_sw['water_availability_sw[MCM]']
 gdf_water_direction = gpd.read_file('../data/interim/qgis/flow_direction_grid.shp')
 
 gdf_watershead_morocco = gpd.read_file('../data/raw/hydrology/watershead_morocco.shp')
-
-gdf_cwb = gpd.read_file('../data/interim/water/cwb.shp')
 
 # Map Ground Water
 fig, ax = plt.subplots(figsize=(15, 10))
@@ -115,15 +113,19 @@ plt.tight_layout()
 plt.savefig("../results/figures/mca/morocco_watersheds.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
-# Map CWB
-fig, ax = plt.subplots(figsize=(15, 10))
-gdf_cwb.plot(ax = ax, column='CWB',alpha=0.9, cmap = 'Blues', legend=True, legend_kwds={"label": "Climate Water Balance [MCM]", "orientation": "vertical"})
-gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=1)
-cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=basemap)
-plt.axis('off')
-cbar_ax = fig.axes[-1]
-cbar_ax.tick_params(labelsize=14)
-cbar_ax.yaxis.label.set_size(20)
-plt.tight_layout()
-plt.savefig("../results/figures/mca/morocco_cwb.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
-plt.show()
+# Map CWB (nicht im Paper; cwb.shp entsteht erst mit den Klimadaten 2050 in water_forecast.py)
+if os.path.exists('../data/interim/water/cwb.shp'):
+    gdf_cwb = gpd.read_file('../data/interim/water/cwb.shp')
+    fig, ax = plt.subplots(figsize=(15, 10))
+    gdf_cwb.plot(ax = ax, column='CWB',alpha=0.9, cmap = 'Blues', legend=True, legend_kwds={"label": "Climate Water Balance [MCM]", "orientation": "vertical"})
+    gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=1)
+    cx.add_basemap(ax, crs=gdf_morocco_boundary.crs, source=basemap)
+    plt.axis('off')
+    cbar_ax = fig.axes[-1]
+    cbar_ax.tick_params(labelsize=14)
+    cbar_ax.yaxis.label.set_size(20)
+    plt.tight_layout()
+    plt.savefig("../results/figures/mca/morocco_cwb.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+    plt.show()
+else:
+    print('cwb.shp fehlt (Klimadaten 2050), CWB-Karte übersprungen.')

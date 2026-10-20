@@ -8,6 +8,10 @@ matplotlib>=3.7
 contextily>=1.5         # basemaps in the *_map(s).py scripts
 openpyxl>=3.1           # pd.read_excel on Data/PV_WIND_50_Punkte.xlsx
 
+# data/reconstruction/ (Nachbau verlorener Eingabedateien)
+rasterio>=1.3           # rebuild_pv_wind.py
+scipy>=1.10             # rebuild_flow_direction_grid.py
+
 # Cost_analysis/re_data.py (renewables.ninja API)
 requests>=2.31
 python-dotenv>=1.0      # liest RENEWABLES_NINJA_TOKEN und CARTO_API_KEY aus .env
