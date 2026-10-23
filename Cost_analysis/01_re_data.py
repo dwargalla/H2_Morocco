@@ -20,7 +20,7 @@ Hinweise:
       (``range(1)``) ist für schrittweisen Abruf gedacht.
     - Es wird nur das Blatt PV_Punkte gelesen; Volllaststunden werden nur für die
       ersten 50 Standorte berechnet.
-    - Ausführen aus ``Cost_analysis/``: ``python re_data.py``
+    - Ausführen aus ``Cost_analysis/``: ``python 01_re_data.py``
 """
 
 import os

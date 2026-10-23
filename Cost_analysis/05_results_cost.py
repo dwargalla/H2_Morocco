@@ -3,7 +3,7 @@
 Eingaben:
     data/raw/boundaries/morocco_Morocco_Country_Boundary.shp
     data/interim/grid/grid_morocco_clear.shp
-    results/cost/results_cost_{2025,2050}.csv   aus cost_analysis_h2_morocco.py
+    results/cost/results_cost_{2025,2050}.csv   aus 04_cost_analysis_h2_morocco.py
 
 Ausgaben:
     results/figures/cost/cost_map_{2025,2050}.{pdf,png}                 H2-Kosten je Zelle
@@ -13,7 +13,7 @@ Ausgaben:
 
 Hinweise:
     - ``plt.show()`` blockiert ohne grafische Oberfläche (``MPLBACKEND=Agg`` setzen).
-    - Ausführen aus ``Cost_analysis/``: ``python results_cost.py``
+    - Ausführen aus ``Cost_analysis/``: ``python 05_results_cost.py``
 """
 
 import geopandas as gpd

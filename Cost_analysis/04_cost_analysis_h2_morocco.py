@@ -17,8 +17,8 @@ Betrachtet einen 100-MW-PEM-Elektrolyseur. Ablauf:
 Eingaben:
     data/interim/grid/grid_morocco_clear.shp
     data/raw/infrastructure/industrial_ports_morocco_{2025,2050}.shp
-    data/interim/re_profiles/data_re_flh_electrolyzer.shp   aus assignment_re_data.py
-    data/interim/re_profiles/flh_re.csv                     aus re_data.py
+    data/interim/re_profiles/data_re_flh_electrolyzer.shp   aus 03_assignment_re_data.py
+    data/interim/re_profiles/flh_re.csv                     aus 01_re_data.py
     data/interim/qgis/cell_flh_re.csv                FLH je Zelle (nicht per Skript erzeugt, vermutlich QGIS)
     data/interim/qgis/morocco_coast_line.shp
     data/interim/water_cost/water_availability_{sw,gw}.csv, data/interim/water_cost/water_availability_{sw,gw}_2050.csv
@@ -35,7 +35,7 @@ Hinweise:
       PV/Wind-Leistung in % als MW gelesen (F-04), Konverterkosten auch bei
       Distanz 0 (F-05), PV-Jahreskosten mit CAPEX statt OPEX (F-07).
     - Der 2050-Block rechnet Wasser mit den 2025-Preisvariablen (Werte derzeit gleich).
-    - Ausführen aus ``Cost_analysis/``: ``python cost_analysis_h2_morocco.py``
+    - Ausführen aus ``Cost_analysis/``: ``python 04_cost_analysis_h2_morocco.py``
 """
 
 import geopandas as gpd 

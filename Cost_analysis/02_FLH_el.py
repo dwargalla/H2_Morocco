@@ -7,7 +7,7 @@ annualisierte Kosten (Zins 4 %) minimiert. Das wird für alle 100 Standorte
 wiederholt.
 
 Eingaben:
-    data/interim/re_profiles/pv_wind_electricity.csv   aus re_data.py
+    data/interim/re_profiles/pv_wind_electricity.csv   aus 01_re_data.py
 
 Ausgaben:
     data/interim/re_profiles/FLH_electrolyzer.csv   je Standort: FLH_electrolyzer [h/a],
@@ -16,9 +16,9 @@ Ausgaben:
 Hinweise:
     - Solver fest auf Gurobi (Lizenz nötig); HiGHS wäre eine freie Alternative.
     - Annahmen (Wirkungsgrad, Zins, Lebensdauer, OPEX) weichen von
-      cost_analysis_h2_morocco.py ab (Korrekturplan F-06). PV/Wind werden in %
+      04_cost_analysis_h2_morocco.py ab (Korrekturplan F-06). PV/Wind werden in %
       gespeichert, dort aber als MW gelesen (F-04).
-    - Ausführen aus ``Cost_analysis/``: ``python FLH_el.py``
+    - Ausführen aus ``Cost_analysis/``: ``python 02_FLH_el.py``
 """
 
 import pandas as pd

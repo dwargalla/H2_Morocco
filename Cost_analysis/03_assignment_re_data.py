@@ -5,7 +5,7 @@ Koordinaten (Zeilen 0–49: PV-Punkte, 50–99: Wind-Punkte) und speichert sie a
 Punkt-Shapefile (EPSG:4326).
 
 Eingaben:
-    data/interim/re_profiles/FLH_electrolyzer.csv      aus FLH_el.py
+    data/interim/re_profiles/FLH_electrolyzer.csv      aus 02_FLH_el.py
     data/raw/renewables/PV_WIND_50_Punkte.xlsx    Blätter PV_Punkte und Wind_Punkte
 
 Ausgaben:
@@ -13,7 +13,7 @@ Ausgaben:
                                          z. B. FLH_electr)
 
 Hinweise:
-    - Ausführen aus ``Cost_analysis/``: ``python assignment_re_data.py``
+    - Ausführen aus ``Cost_analysis/``: ``python 03_assignment_re_data.py``
 """
 
 import pandas as pd
