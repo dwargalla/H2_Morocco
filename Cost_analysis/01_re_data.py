@@ -36,7 +36,6 @@ from dotenv import load_dotenv
 coordinates = pd.read_excel('../data/raw/renewables/PV_WIND_50_Punkte.xlsx', sheet_name='PV_Punkte')
 df_electricity = pd.read_csv('../data/interim/re_profiles/pv_wind_electricity.csv', index_col=0)
 df_electricity.reset_index(drop=True, inplace=True)
-#df_electricity = pd.DataFrame()
 
 # API token from renewables.ninja (https://www.renewables.ninja/api/), stored in H2_Morocco/.env
 load_dotenv(Path(__file__).resolve().parent.parent / '.env')

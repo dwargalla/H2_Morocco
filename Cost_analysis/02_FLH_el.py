@@ -54,6 +54,9 @@ df_pv_wind = pd.read_csv('../data/interim/re_profiles/pv_wind_electricity.csv')
 df_wind_el = df_pv_wind[f'electricity_Wind_{0}']
 df_pv_el = df_pv_wind[f'electricity_PV_{0}']
 
+#################
+# PyPSA Network #
+#################
 network = pypsa.Network()
 network.set_snapshots(range(len(df_pv_wind)))
 
@@ -70,21 +73,12 @@ network.add("Link", name = "Electrolyzer", bus0 = "bus_electricity", bus1 = "bus
             p_nom_extendable = True, efficiency = eff_el, capital_cost = el_annuity)
 
 network.add("Generator", name = "negative_gen", bus = "bus_hydrogen",
-             p_nom_extendable = True, sign = -1, e_sum_min = energy_production_min, e_sum_max = energy_production_min)
+            p_nom_extendable = True, sign = -1, e_sum_min = energy_production_min, e_sum_max = energy_production_min)
 
 df_flh_electrolyzer = pd.DataFrame(columns=['FLH_electrolyzer'])
 
-network.optimize(solver_name = "gurobi")
-
-pv = (network.generators.p_nom_opt['pv']/network.generators.p_nom_opt['negative_gen'])*100
-wind = (network.generators.p_nom_opt['wind']/network.generators.p_nom_opt['negative_gen'])*100
-flh_el = (network.generators_t.p['negative_gen'].sum())/network.generators.p_nom_opt['negative_gen']
-
-df_flh_electrolyzer.at[0, 'FLH_electrolyzer'] = flh_el
-df_flh_electrolyzer.at[0, 'PV'] = pv
-df_flh_electrolyzer.at[0, 'Wind'] = wind
-
-for i in range(1, 100):
+# überschreibt die p_max_pu der Generatoren mit den Profilen der Standorte 0 bis 99 und optimiert erneut
+for i in range(100):
     df_wind_el = df_pv_wind[f'electricity_Wind_{i}']
     df_pv_el = df_pv_wind[f'electricity_PV_{i}']
     network.generators_t.p_max_pu['pv'] = df_pv_el.values

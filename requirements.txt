@@ -12,6 +12,9 @@ openpyxl>=3.1           # pd.read_excel on Data/PV_WIND_50_Punkte.xlsx
 rasterio>=1.3           # rebuild_pv_wind.py
 scipy>=1.10             # rebuild_flow_direction_grid.py
 
+# Cost_analysis/00_era5_download.py (Copernicus CDS)
+cdsapi>=0.7.2           # neue CDS-API seit 2024
+
 # Cost_analysis/re_data.py (renewables.ninja API)
 requests>=2.31
 python-dotenv>=1.0      # liest RENEWABLES_NINJA_TOKEN und CARTO_API_KEY aus .env
