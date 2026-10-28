@@ -281,17 +281,23 @@ for i in range(len(gdf_grid_morocco)):
     h2_kg = h2_production * 1000 / 33.33    # Convert MWh_h2 into kg_h2
     water_consumption = h2_kg * 13          # Calculate water demand [dm^3] (1 kg h2 = 13 kg water)
     water_consumption = water_consumption / 1000    # Convert to m^3
-    
+
+
+    ##########################
+    # Water Cost calculation #
+    ##########################
+
     # Use at first the cheepest option for water and so on
     use_sw      = min(water_consumption, df_sw_2025.loc[i, 'water_availability_sw[MCM]'] * 10**6)
     res_demand  = water_consumption - use_sw
     water_cost  = use_sw * lco_sw_2025
 
-    if res_demand > 0:
+
+    if res_demand > 0: # we have to use groundwater
         use_gw = min(res_demand, df_gw_2025.loc[i, 'water_availability_gw[MCM]'] * 10**6)
         res_demand = res_demand - use_gw
         water_cost += use_gw * lco_gw_2025
-        if res_demand > 0:
+        if res_demand > 0: # we have to use desalination or transport water from other cell
             cell = gdf_grid_morocco.geometry[i]
             cell_intersection = cell.intersects(gdf_coast.geometry)
             if any(cell_intersection):
