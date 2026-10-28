@@ -14,8 +14,16 @@ Hinweise:
     - Einmaliger Schritt. Alle anderen Skripte verwenden nicht dieses Ergebnis,
       sondern ``grid_morocco_clear.shp`` (manuell bereinigte Fassung, 7219
       Zellen). Diese Bereinigung ist nicht als Code vorhanden.
-    - Ausführen aus ``MCA/Grid_morocco/``: ``python grid_morocco.py``
+    - Direkt in VS Code oder aus beliebigem Arbeitsordner starten: ``python grid_morocco.py``
 """
+
+# Arbeitsordner automatisch setzen: direkter Start in VS Code ist möglich.
+import os as _os
+from pathlib import Path as _Path
+
+if __name__ == "__main__":
+    _os.chdir(_Path(__file__).resolve().parent)
+
 
 import geopandas as gpd
 import numpy as np

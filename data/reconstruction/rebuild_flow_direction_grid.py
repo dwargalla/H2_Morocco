@@ -25,8 +25,16 @@ Hinweise:
       ``water_availability_sw.csv`` exakt (max. Abweichung 1·10⁻¹⁴). Gegen die
       EPS-Farben liegen die ``sahara``-Zellen etwa 4,5 % daneben, alle anderen
       Gebiete stimmen auf ±1 Farbstufe.
-    - Ausführen aus ``data/reconstruction/``: ``python rebuild_flow_direction_grid.py``
+    - Direkt in VS Code oder aus beliebigem Arbeitsordner starten: ``python rebuild_flow_direction_grid.py``
 """
+
+# Arbeitsordner automatisch setzen: direkter Start in VS Code ist möglich.
+import os as _os
+from pathlib import Path as _Path
+
+if __name__ == "__main__":
+    _os.chdir(_Path(__file__).resolve().parent)
+
 
 import geopandas as gpd
 import numpy as np

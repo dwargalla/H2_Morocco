@@ -13,8 +13,16 @@ Ausgaben:
                                          z. B. FLH_electr)
 
 Hinweise:
-    - Ausführen aus ``Cost_analysis/``: ``python 03_assignment_re_data.py``
+    - Direkt in VS Code oder aus beliebigem Arbeitsordner starten: ``python 03_assignment_re_data.py``
 """
+
+# Arbeitsordner automatisch setzen: direkter Start in VS Code ist möglich.
+import os as _os
+from pathlib import Path as _Path
+
+if __name__ == "__main__":
+    _os.chdir(_Path(__file__).resolve().parent)
+
 
 import pandas as pd
 import geopandas as gpd

@@ -18,8 +18,16 @@ Hinweise:
     - Annahmen (Wirkungsgrad, Zins, Lebensdauer, OPEX) weichen von
       04_cost_analysis_h2_morocco.py ab (Korrekturplan F-06). PV/Wind werden in %
       gespeichert, dort aber als MW gelesen (F-04).
-    - Ausführen aus ``Cost_analysis/``: ``python 02_FLH_el.py``
+    - Direkt in VS Code oder aus beliebigem Arbeitsordner starten: ``python 02_FLH_el.py``
 """
+
+# Arbeitsordner automatisch setzen: direkter Start in VS Code ist möglich.
+import os as _os
+from pathlib import Path as _Path
+
+if __name__ == "__main__":
+    _os.chdir(_Path(__file__).resolve().parent)
+
 
 import pandas as pd
 import pypsa

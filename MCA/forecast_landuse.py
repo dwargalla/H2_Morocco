@@ -20,8 +20,16 @@ Ausgaben:
 Hinweise:
     - Die Faktoren 1,13–2,4 stammen laut Quelle aus jährlichen Raten, werden hier
       aber als Gesamtfaktor bis 2050 verwendet (Korrekturplan F-24).
-    - Ausführen aus ``MCA/``: ``python forecast_landuse.py``
+    - Direkt in VS Code oder aus beliebigem Arbeitsordner starten: ``python forecast_landuse.py``
 """
+
+# Arbeitsordner automatisch setzen: direkter Start in VS Code ist möglich.
+import os as _os
+from pathlib import Path as _Path
+
+if __name__ == "__main__":
+    _os.chdir(_Path(__file__).resolve().parent)
+
 
 import geopandas as gpd
 import pandas as pd

@@ -15,8 +15,16 @@ Hinweise:
     - Kontrolle: ``forecast_landuse.py`` + Stadtanteil 2050 trifft dieselben 194
       Stadtzellen wie ``results_urban_2050.csv``, Summe −0,06 %. geoBoundaries
       (+0,5 %) passt schlechter, HDX hat nur 10 Regionen.
-    - Ausführen aus ``data/reconstruction/``: ``python rebuild_regions.py``
+    - Direkt in VS Code oder aus beliebigem Arbeitsordner starten: ``python rebuild_regions.py``
 """
+
+# Arbeitsordner automatisch setzen: direkter Start in VS Code ist möglich.
+import os as _os
+from pathlib import Path as _Path
+
+if __name__ == "__main__":
+    _os.chdir(_Path(__file__).resolve().parent)
+
 
 import os
 

@@ -18,8 +18,16 @@ Ausgaben:
 Hinweise:
     - In ``mca_maps.py`` wird der gewichtete Score mit dieser Maske multipliziert.
       Die Kostenanalyse verwendet die Maske nicht (Korrekturplan F-25).
-    - Ausführen aus ``MCA/``: ``python no_go_zones.py``
+    - Direkt in VS Code oder aus beliebigem Arbeitsordner starten: ``python no_go_zones.py``
 """
+
+# Arbeitsordner automatisch setzen: direkter Start in VS Code ist möglich.
+import os as _os
+from pathlib import Path as _Path
+
+if __name__ == "__main__":
+    _os.chdir(_Path(__file__).resolve().parent)
+
 
 import geopandas as gpd
 import numpy as np

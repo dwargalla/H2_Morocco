@@ -20,8 +20,16 @@ Ausgaben:
 
 Hinweise:
     - Regenfeldbau wird nicht vom Agrarwasser ausgenommen (Korrekturplan F-21).
-    - Ausführen aus ``MCA/``: ``python water_consumption.py``
+    - Direkt in VS Code oder aus beliebigem Arbeitsordner starten: ``python water_consumption.py``
 """
+
+# Arbeitsordner automatisch setzen: direkter Start in VS Code ist möglich.
+import os as _os
+from pathlib import Path as _Path
+
+if __name__ == "__main__":
+    _os.chdir(_Path(__file__).resolve().parent)
+
 
 import geopandas as gpd
 import pandas as pd

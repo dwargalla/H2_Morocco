@@ -20,8 +20,16 @@ Hinweise:
       (``range(1)``) ist für schrittweisen Abruf gedacht.
     - Es wird nur das Blatt PV_Punkte gelesen; Volllaststunden werden nur für die
       ersten 50 Standorte berechnet.
-    - Ausführen aus ``Cost_analysis/``: ``python 01_re_data.py``
+    - Direkt in VS Code oder aus beliebigem Arbeitsordner starten: ``python 01_re_data.py``
 """
+
+# Arbeitsordner automatisch setzen: direkter Start in VS Code ist möglich.
+import os as _os
+from pathlib import Path as _Path
+
+if __name__ == "__main__":
+    _os.chdir(_Path(__file__).resolve().parent)
+
 
 import os
 from pathlib import Path

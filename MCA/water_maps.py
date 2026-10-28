@@ -15,8 +15,16 @@ Ausgaben:
     results/figures/mca/morocco_{groundwater,surfacewater,flow_direction,watersheds,cwb}.png
 
 Hinweise:
-    - Ausführen aus ``MCA/``: ``python water_maps.py``
+    - Direkt in VS Code oder aus beliebigem Arbeitsordner starten: ``python water_maps.py``
 """
+
+# Arbeitsordner automatisch setzen: direkter Start in VS Code ist möglich.
+import os as _os
+from pathlib import Path as _Path
+
+if __name__ == "__main__":
+    _os.chdir(_Path(__file__).resolve().parent)
+
 
 import pandas as pd
 import matplotlib.pyplot as plt

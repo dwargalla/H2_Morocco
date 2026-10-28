@@ -19,8 +19,16 @@ Ausgaben:
 Hinweise:
     - Kontrolle: ``MCA/water_exploitable_gw.py`` reproduziert damit
       ``data/interim/water/water_availability_gw.csv`` (max. Abweichung 4·10⁻⁸).
-    - Ausführen aus ``data/reconstruction/``: ``python rebuild_watershead.py``
+    - Direkt in VS Code oder aus beliebigem Arbeitsordner starten: ``python rebuild_watershead.py``
 """
+
+# Arbeitsordner automatisch setzen: direkter Start in VS Code ist möglich.
+import os as _os
+from pathlib import Path as _Path
+
+if __name__ == "__main__":
+    _os.chdir(_Path(__file__).resolve().parent)
+
 
 import os
 

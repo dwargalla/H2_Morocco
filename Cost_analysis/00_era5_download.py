@@ -21,11 +21,19 @@ Hinweise:
       neu gestartet werden. Dateien entstehen erst nach vollständigem Download.
     - Dauer hängt vor allem von der CDS-Warteschlange ab (1 Jahr: Stunden,
       10 Jahre: etwa ein Tag). Rechner darf nicht in den Ruhezustand.
-    - Ausführen aus ``Cost_analysis/``:
+    - Direkt in VS Code oder aus beliebigem Arbeitsordner starten:
           python 00_era5_download.py 2019             ein Jahr
           python 00_era5_download.py 2015-2024        mehrere Jahre
           python 00_era5_download.py 2019 --test      nur 1 Tag, prüft Zugang
 """
+
+# Arbeitsordner automatisch setzen: direkter Start in VS Code ist möglich.
+import os as _os
+from pathlib import Path as _Path
+
+if __name__ == "__main__":
+    _os.chdir(_Path(__file__).resolve().parent)
+
 
 import argparse
 import calendar

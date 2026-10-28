@@ -12,8 +12,16 @@ Ausgaben:
     data/interim/mca_criteria/results_pv_yeald.csv   eine Spalte ``pv_yeald``, zeilengleich mit dem Raster
 
 Hinweise:
-    - Ausführen aus ``MCA/``: ``python pv_analysis.py``
+    - Direkt in VS Code oder aus beliebigem Arbeitsordner starten: ``python pv_analysis.py``
 """
+
+# Arbeitsordner automatisch setzen: direkter Start in VS Code ist möglich.
+import os as _os
+from pathlib import Path as _Path
+
+if __name__ == "__main__":
+    _os.chdir(_Path(__file__).resolve().parent)
+
 
 import geopandas as gpd
 

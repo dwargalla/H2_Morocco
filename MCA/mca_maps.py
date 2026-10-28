@@ -22,8 +22,16 @@ Hinweise:
     - Die Straßengewichte werden rein positionell auf die Spalten von
       results_accessibility.csv angewandt (Reihenfolge muss stimmen).
     - ``plt.show()`` blockiert ohne grafische Oberfläche (``MPLBACKEND=Agg`` setzen).
-    - Ausführen aus ``MCA/``: ``python mca_maps.py``
+    - Direkt in VS Code oder aus beliebigem Arbeitsordner starten: ``python mca_maps.py``
 """
+
+# Arbeitsordner automatisch setzen: direkter Start in VS Code ist möglich.
+import os as _os
+from pathlib import Path as _Path
+
+if __name__ == "__main__":
+    _os.chdir(_Path(__file__).resolve().parent)
+
 
 import pandas as pd
 import matplotlib.pyplot as plt

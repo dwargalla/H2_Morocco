@@ -13,8 +13,16 @@ Ausgaben:
     results/figures/mca/morocco_infrastructure.{pdf,eps}
 
 Hinweise:
-    - Ausführen aus ``MCA/``: ``python infra_map.py``
+    - Direkt in VS Code oder aus beliebigem Arbeitsordner starten: ``python infra_map.py``
 """
+
+# Arbeitsordner automatisch setzen: direkter Start in VS Code ist möglich.
+import os as _os
+from pathlib import Path as _Path
+
+if __name__ == "__main__":
+    _os.chdir(_Path(__file__).resolve().parent)
+
 
 import pandas as pd
 import matplotlib.pyplot as plt

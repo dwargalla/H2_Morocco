@@ -65,12 +65,16 @@ pip install -r requirements.txt
 - `re_data.py` braucht einen **API-Token von [renewables.ninja](https://www.renewables.ninja/api/)**. Er wird aus `.env` gelesen: `cp .env.example .env` und `RENEWABLES_NINJA_TOKEN` eintragen. `.env` ist per `.gitignore` vom Repo ausgeschlossen.
 - Die Kartenskripte (`*_map(s).py`, `results_cost.py`) brauchen einen **CARTO-API-Key** für die Hintergrundkarte ([anfordern](https://carto.com/basemaps/apikey/)), ebenfalls in `.env` als `CARTO_API_KEY`. Ohne Key liefert CARTO die Kacheln mit dem Wasserzeichen „API KEY REQUIRED“ aus.
 
-**Wichtig:** Alle Skripte verwenden relative Pfade (`../data/...`, `../results/...`) und müssen **aus ihrem eigenen Ordner** gestartet werden:
+**Direkt in VS Code starten:** Öffne das gewünschte Skript und klicke oben rechts auf **Python-Datei ausführen**. Wähle über **Python: Interpreter auswählen** die Python-Umgebung `H2_Morocco/.venv` aus (wenn `H2_Morocco` selbst geöffnet ist: `.venv`).
+
+Die aktiven Skripte in `Cost_analysis/`, `MCA/`, `MCA/Grid_morocco/` und `data/reconstruction/` setzen beim direkten Start ihr Arbeitsverzeichnis automatisch auf ihren eigenen Ordner. Dadurch werden `../data/...` und `../results/...` unabhängig vom Arbeitsordner des Terminals korrekt aufgelöst. Auch ein Start aus dem Projektordner funktioniert:
 
 ```bash
-cd MCA && python mca_maps.py
-cd Cost_analysis && python cost_analysis_h2_morocco.py
+python MCA/mca_maps.py
+python Cost_analysis/04_cost_analysis_h2_morocco.py
 ```
+
+Benötigte Eingangsdaten, Pakete, API-Zugangsdaten und Solver-Lizenzen müssen weiterhin vorhanden sein. Die archivierten Skripte in `MCA/old/` und `Cost_analysis/01_old/` enthalten teilweise alte absolute Windows-Pfade und sind von dieser Anpassung ausgenommen.
 
 ---
 

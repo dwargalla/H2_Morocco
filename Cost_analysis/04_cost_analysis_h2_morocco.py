@@ -35,8 +35,16 @@ Hinweise:
       PV/Wind-Leistung in % als MW gelesen (F-04), Konverterkosten auch bei
       Distanz 0 (F-05), PV-Jahreskosten mit CAPEX statt OPEX (F-07).
     - Der 2050-Block rechnet Wasser mit den 2025-Preisvariablen (Werte derzeit gleich).
-    - Ausführen aus ``Cost_analysis/``: ``python 04_cost_analysis_h2_morocco.py``
+    - Direkt in VS Code oder aus beliebigem Arbeitsordner starten: ``python 04_cost_analysis_h2_morocco.py``
 """
+
+# Arbeitsordner automatisch setzen: direkter Start in VS Code ist möglich.
+import os as _os
+from pathlib import Path as _Path
+
+if __name__ == "__main__":
+    _os.chdir(_Path(__file__).resolve().parent)
+
 
 import geopandas as gpd 
 import numpy as np

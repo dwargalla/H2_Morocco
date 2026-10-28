@@ -18,8 +18,16 @@ Hinweise:
     - Der Indikator ist ein Abstandsverhältnis, keine Distanz (Korrekturplan F-15);
       die Rangskalierung hat einen Off-by-one-Fehler, der einen negativen Wert
       erzeugt (F-16).
-    - Ausführen aus ``MCA/``: ``python non_conflict.py``
+    - Direkt in VS Code oder aus beliebigem Arbeitsordner starten: ``python non_conflict.py``
 """
+
+# Arbeitsordner automatisch setzen: direkter Start in VS Code ist möglich.
+import os as _os
+from pathlib import Path as _Path
+
+if __name__ == "__main__":
+    _os.chdir(_Path(__file__).resolve().parent)
+
 
 import geopandas as gpd
 import numpy as np

@@ -16,8 +16,16 @@ Ausgaben:
     data/interim/mca_criteria/results_agriculture_2050.csv     2050
 
 Hinweise:
-    - Ausführen aus ``MCA/``: ``python agriculture.py``
+    - Direkt in VS Code oder aus beliebigem Arbeitsordner starten: ``python agriculture.py``
 """
+
+# Arbeitsordner automatisch setzen: direkter Start in VS Code ist möglich.
+import os as _os
+from pathlib import Path as _Path
+
+if __name__ == "__main__":
+    _os.chdir(_Path(__file__).resolve().parent)
+
 
 import pandas as pd
 import geopandas as gpd

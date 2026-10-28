@@ -22,8 +22,16 @@ Ausgaben:
 Hinweise:
     - Kontrolle gegen die Kriterien-CSVs: PV Korrelation 0,99995 (Median-Abweichung
       0,03 %), Wind Korrelation 0,981 bei im Mittel etwa 15 % niedrigeren Werten.
-    - Ausführen aus ``data/reconstruction/``: ``python rebuild_pv_wind.py``
+    - Direkt in VS Code oder aus beliebigem Arbeitsordner starten: ``python rebuild_pv_wind.py``
 """
+
+# Arbeitsordner automatisch setzen: direkter Start in VS Code ist möglich.
+import os as _os
+from pathlib import Path as _Path
+
+if __name__ == "__main__":
+    _os.chdir(_Path(__file__).resolve().parent)
+
 
 import os
 

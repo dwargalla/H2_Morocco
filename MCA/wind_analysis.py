@@ -14,8 +14,16 @@ Ausgaben:
 Hinweise:
     - Die Volllaststunden sind teils physikalisch unplausibel hoch
       (Korrekturplan F-19).
-    - Ausführen aus ``MCA/``: ``python wind_analysis.py``
+    - Direkt in VS Code oder aus beliebigem Arbeitsordner starten: ``python wind_analysis.py``
 """
+
+# Arbeitsordner automatisch setzen: direkter Start in VS Code ist möglich.
+import os as _os
+from pathlib import Path as _Path
+
+if __name__ == "__main__":
+    _os.chdir(_Path(__file__).resolve().parent)
+
 
 import geopandas as gpd
 

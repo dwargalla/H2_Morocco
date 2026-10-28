@@ -26,8 +26,16 @@ Hinweise:
     - Die Wasserverfügbarkeit 2050 je Zelle wird nicht als CSV gespeichert;
       die Kostenanalyse nutzt eigene, ältere Dateien.
     - Doppelte Schleifen ohne räumlichen Index, läuft sehr lange.
-    - Ausführen aus ``MCA/``: ``python water_forecast.py``
+    - Direkt in VS Code oder aus beliebigem Arbeitsordner starten: ``python water_forecast.py``
 """
+
+# Arbeitsordner automatisch setzen: direkter Start in VS Code ist möglich.
+import os as _os
+from pathlib import Path as _Path
+
+if __name__ == "__main__":
+    _os.chdir(_Path(__file__).resolve().parent)
+
 
 import geopandas as gpd
 import pandas as pd
