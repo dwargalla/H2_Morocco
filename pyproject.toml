@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "h2morocco"
+version = "0.1.0"
+description = "Gemeinsame Funktionen für die H2-Standortanalyse Marokko (MCA und Kostenanalyse)"
+requires-python = ">=3.10"
+
+[tool.setuptools]
+packages = ["h2morocco"]

@@ -1,3 +1,7 @@
+# Eigenes Paket h2morocco (h2morocco/utils.py: read_model_parameters, annuity_factor), editierbar installiert.
+# pip install -r requirements.txt im Ordner H2_Morocco/ ausführen, sonst findet pip "." nicht.
+-e .
+
 # MCA/ and Cost_analysis/ (Python >= 3.10)
 pandas>=2.0
 numpy>=1.24
