@@ -33,6 +33,7 @@ Beide Analysen werden jeweils für **2025** und **2050** gerechnet.
 H2_Morocco/
 ├── main.ipynb                Gesamtlauf aller Skripte (Schalter je Schritt), danach Vergleich MCA ↔ Kosten
 ├── compare_mca_cost.py       Übersichtsfolie: MCA-Score gegen H2-Kosten
+├── compare_mca_runs.py       MCA-Laufordner + Vergleichsfolie gegen den letzten MCA-Lauf
 ├── h2morocco/                gemeinsamer Code: Parameter einlesen, Annuität, Laufordner (runs.py)
 ├── data/
 │   ├── README.md             Herkunft und Links aller Dateien
@@ -54,7 +55,8 @@ H2_Morocco/
 │   ├── 00_…05_*.py           Pipeline der Kostenanalyse (siehe unten)
 │   ├── ki_generiert/         von Claude geschriebene Skripte (01b_flh_re.py, 01c_cell_flh_re.py)
 │   └── 01_old/               veraltete Skripte
-├── Fehlerprotokoll.md        bekannte Fehler und ihr Status (lokal, nicht im Repo)
+├── Fehlerprotokoll_Code.md   bekannte Fehler in Code, Daten und Annahmen (lokal, nicht im Repo)
+├── Fehlerprotokoll_Paper.md  offene Punkte im Manuskript: Text, Tabellen, Literatur (lokal)
 └── requirements.txt
 ```
 
@@ -143,7 +145,7 @@ Wasser ist das am stärksten gewichtete Kriterium und hat eine eigene Teilkette:
 |---|---|---|
 | `water_exploitable_sw.py` | `data/interim/water/water_availability_sw.csv` | Oberflächenwasser [Mio. m³/a] je Zelle: Das Dargebot jedes der 9 Einzugsgebiete wird nach `flow_direction_grid` auf die Zellen verteilt. Das sind summierte Fließrichtungs-Codes, keine Fließakkumulation (Fehlerprotokoll Nr. 110, Methode offen). |
 | `water_exploitable_gw.py` | `data/interim/water/water_availability_gw.csv` | Grundwasser [Mio. m³/a] je Zelle: Das Dargebot je Einzugsgebiet wird flächenanteilig auf die ergiebigen Aquifere (BGS-Atlas) verteilt. |
-| `water_consumption.py` | `data/interim/water/Water_Consumption_{2025,2050}.csv` | heutiger und künftiger Wasserverbrauch [Mrd. m³/a] je Zelle, verteilt nach Stadt-, Landwirtschafts- und Industrieflächen und den Sektoranteilen |
+| `water_consumption.py` | `data/interim/water/Water_Consumption_{2025,2050}.csv` | heutiger und künftiger Wasserverbrauch [Mrd. m³/a] je Zelle, verteilt nach Sektoranteilen: Landwirtschaft nach Bewässerungsfläche (FAO GMIA, `ki_generiert/irrigation_grid.py`), Städte nach GlobCover-Klasse 190, Industrie nach OSM |
 | `water_net.py` | `data/interim/mca_criteria/results_water_res_available.csv` | Score 2025 |
 | `water_forecast.py` | `data/interim/mca_criteria/results_water_res_availabil_2050.csv` (+ `data/interim/water/cwb.shp`, `water_availability_{sw,gw}_2050.csv` für die Kostenanalyse) | Score 2050: Der Rückgang des Wasserdargebots wird über die klimatische Wasserbilanz (Niederschlag − Verdunstung 2050) auf die Zellen verteilt. |
 
@@ -161,6 +163,18 @@ Wasser ist das am stärksten gewichtete Kriterium und hat eine eigene Teilkette:
 - `results/mca/results_mca_morocco_2025_2050.csv`
 - Karten `results/figures/mca/mca_morocco_{2025,2050,diff}`
 - Tortendiagramm der Gewichte
+
+### MCA-Läufe vergleichen (optional)
+
+`compare_mca_runs.py` baut auf dem Ergebnis von `mca_maps.py` auf, ändert aber keines der MCA-Skripte. In `main.ipynb` ist es ein eigener Schritt, der sich abschalten lässt.
+
+- **Laufordner** `results/runs/<Datum>_<Uhrzeit>_<Commit>[-dirty]_mca/`: MCA-Ergebnis, Kopie aller Kriterien-CSVs, Gewichte, Prüfsummen von `data/interim/` und Codestand. Die MCA-Ergebnisse in `results/mca/` werden weiter überschrieben, der Laufordner hält jeden Stand fest.
+- **Folie** `overview_mca.png` (16:9) im selben Ordner: Kennzahlen (Ø Score, Rangkorrelation, Top-100/500-Übereinstimmung, Zellen mit |Δ| > 5), geänderte Gewichte, Kriterien, Eingabedateien und Code, Histogramm der Änderungen sowie Karten Bezug / jetzt / Δ für 2025 und 2050.
+- **Bezug** ist der letzte MCA-Lauf davor, oder `--reference results/runs/<ordner>_mca`.
+
+```bash
+python compare_mca_runs.py --note "Was wurde geändert"
+```
 
 ---
 
@@ -242,7 +256,7 @@ Neue Skripte, die Claude (Claude Code) geschrieben hat, liegen in eigenen Untero
 
 | Ordner | Skripte | Übersicht |
 |---|---|---|
-| `MCA/ki_generiert/` | `flow_direction_grid.py`, `pv_yield_polygons.py`, `wind_flh_grid.py`, `topography_grid.py` (ersetzen frühere QGIS-Schritte) | `MCA/ki_generiert/README.md` |
+| `MCA/ki_generiert/` | `flow_direction_grid.py`, `pv_yield_polygons.py`, `wind_flh_grid.py`, `topography_grid.py` (ersetzen frühere QGIS-Schritte), `irrigation_grid.py` (Bewässerungsfläche je Zelle, Nr. 31) | `MCA/ki_generiert/README.md` |
 | `Cost_analysis/ki_generiert/` | `01b_flh_re.py` (Volllaststunden der Referenzpunkte), `01c_cell_flh_re.py` (PV/Wind je Zelle) | `Cost_analysis/ki_generiert/README.md` |
 
 **Vorhandene Skripte, die Claude am 05.11.2026 inhaltlich geändert hat** (Diff in Git):
@@ -255,13 +269,13 @@ Neue Skripte, die Claude (Claude Code) geschrieben hat, liegen in eigenen Untero
 - `MCA/wind_analysis.py`: liest den Wind-Layer aus `data/interim/layers/` (Global Wind Atlas)
 - Pfade und Kommentare in `water_net.py`, `water_exploitable_{sw,gw}.py`, `no_go_zones.py`, `nogo_maps.py`, `02_FLH_el.py`
 
-**Ältere KI-generierte Dateien** (laut Git-Commits mit „Co-Authored-By: Claude“; nicht verschoben, weil sie importiert werden bzw. im Hauptordner liegen müssen): `main.ipynb`, `compare_mca_cost.py`, `h2morocco/__init__.py`, `h2morocco/overview.py`, `h2morocco/runs.py`. Commits ohne diesen Vermerk können ebenfalls KI-Anteile enthalten.
+**Ältere KI-generierte Dateien** (laut Git-Commits mit „Co-Authored-By: Claude“; nicht verschoben, weil sie importiert werden bzw. im Hauptordner liegen müssen): `main.ipynb`, `compare_mca_cost.py`, `compare_mca_runs.py` (05.11.2026), `h2morocco/__init__.py`, `h2morocco/overview.py`, `h2morocco/runs.py`. Commits ohne diesen Vermerk können ebenfalls KI-Anteile enthalten.
 
 ---
 
 ## Bekannte Einschränkungen
 
-Vollständig und mit Status in `Fehlerprotokoll.md`. Die wichtigsten:
+Vollständig und mit Status in `Fehlerprotokoll_Code.md` (Code) und `Fehlerprotokoll_Paper.md` (Manuskript); die Nummern gelten über beide Dateien. Die wichtigsten im Code:
 
 1. **Oberflächenwasser:** wird nach summierten Fließrichtungs-Codes verteilt statt nach Fließakkumulation (Fehlerprotokoll Nr. 110, 113). Die Methode wird noch abgestimmt; MERIT Hydro `upa` liegt bereit.
 2. **Herkunft unbekannt:** Die Küstenlinie stammt aus QGIS ohne erhaltene Quelle, siehe `data/raw/origin_unknown/README.md`.
