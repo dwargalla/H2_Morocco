@@ -39,9 +39,9 @@ Ausgaben (je Lauf ein neuer Ordner, siehe h2morocco/runs.py):
 
 Hinweise:
     - Die Distanzmatrix und ihre Sortierung brauchen mehrere GB Arbeitsspeicher.
-    - Bekannte Fehler laut Korrekturplan (Patch in Korrektur/code_fixes.patch):
-      PV/Wind-Leistung in % als MW gelesen (F-04), PV-Jahreskosten mit CAPEX
-      statt OPEX (F-07). F-05 (Konverter auch bei Distanz 0) ist seit 05.11.2026 behoben.
+    - Seit 05.11.2026 behoben (Korrekturplan): F-04 (PV/Wind-Leistung in % als MW
+      gelesen), F-05 (Konverter auch bei Distanz 0), F-07 (PV-Jahreskosten mit CAPEX
+      statt OPEX).
     - Lesart: Ergebnis je Zelle = Standortpotenzial für ein einzelnes 100-MW-Projekt.
       Netzkosten nach Danish Energy Agency (2025) für große HGÜ-Leitungen (4.000 MW) und
       Konverterstationen (1.500–2.000 MW), verstanden als Anteil des Projekts an gemeinsamer
@@ -135,8 +135,8 @@ gdf_ports_2050              = gpd.read_file("../data/raw/infrastructure/industri
     # Repräsentative Standorte (Referenzpunkte) aus 02_FLH_el.py (PyPSA):
     # FLH Elektrolyseur, PV- und Windleistung
 gdf_ref_points              = gpd.read_file('../data/interim/re_profiles/data_re_flh_electrolyzer.shp').to_crs(gdf_grid.crs)
-pv_capacity                 = gdf_ref_points['PV']      # [MW] je Referenzpunkt (bekannter Fehler F-04: eigentlich Prozent)
-wind_capacity               = gdf_ref_points['Wind']    # [MW] je Referenzpunkt (bekannter Fehler F-04: eigentlich Prozent)
+pv_capacity                 = gdf_ref_points['PV_ratio']   * electrolyzer_capacity   # [MW] je Referenzpunkt
+wind_capacity               = gdf_ref_points['Wind_ratio'] * electrolyzer_capacity   # [MW] je Referenzpunkt
 df_ref_points_flh           = pd.read_csv('../data/interim/re_profiles/flh_re.csv')    # FLH PV und Wind je Referenzpunkt
 df_cell_flh                 = pd.read_csv('../data/interim/re_profiles/cell_flh_re.csv')      # FLH PV und Wind je Zelle
     # Küste und Wasserverfügbarkeit je Zelle [Mio. m³]
@@ -205,13 +205,13 @@ electrolyzer_annual_cost_2050 = electrolyzer_annuity_2050 + electrolyzer_opex_20
 
 # PV Cost je Referenzpunkt
     # 2025
-pv_opex_2025        = pv_opex_share_2025 * pv_capex_2025                                    # [€/MWp/a] (wegen F-07 bisher ungenutzt)
+pv_opex_2025        = pv_opex_share_2025 * pv_capex_2025                                    # [€/MWp/a]
 pv_annuity_2025     = annuity_factor(discount_rate, pv_lifetime) * pv_capacity * pv_capex_2025  # €/a
-pv_annual_cost_2025 = pv_annuity_2025 + pv_capex_2025 * pv_capacity                         # €/a (bekannter Fehler F-07: CAPEX statt OPEX)
+pv_annual_cost_2025 = pv_annuity_2025 + pv_opex_2025 * pv_capacity                          # €/a
     # 2050
-pv_opex_2050        = pv_opex_share_2050 * pv_capex_2050                                    # [€/MWp/a] (wegen F-07 bisher ungenutzt)
+pv_opex_2050        = pv_opex_share_2050 * pv_capex_2050                                    # [€/MWp/a]
 pv_annuity_2050     = annuity_factor(discount_rate, pv_lifetime) * pv_capacity * pv_capex_2050  # €/a
-pv_annual_cost_2050 = pv_annuity_2050 + pv_capex_2050 * pv_capacity                         # €/a (bekannter Fehler F-07: CAPEX statt OPEX)
+pv_annual_cost_2050 = pv_annuity_2050 + pv_opex_2050 * pv_capacity                          # €/a
 
 # Wind Cost je Referenzpunkt
     #2025

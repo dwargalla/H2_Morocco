@@ -13,12 +13,15 @@ Eingaben:
 
 Ausgaben:
     data/interim/re_profiles/FLH_electrolyzer.csv   je Standort: FLH_electrolyzer [h/a],
-                                PV und Wind in % der optimierten H2-Abgabeleistung
+                                PV_ratio und Wind_ratio [MW je MW Elektrolyseur]
 
 Hinweise:
     - Solver Gurobi (Lizenz nötig, gurobipy 12); HiGHS (highspy) ist installiert und wäre die freie Alternative.
     - Nur eine Auslegung (sizing_year); 2050 nutzt in 04 dieselbe (Fehlerprotokoll 8).
-      PV/Wind werden in % gespeichert, in 04 aber als MW gelesen (F-04).
+    - Volllaststunden und Leistungsverhältnisse beziehen sich auf die optimierte
+      Elektrolyseurleistung, nicht auf die frei wählbare H2-Abgabe ``negative_gen``
+      (Fehlerprotokoll Nr. 17). Bis 05.11.2026 standen PV und Wind in % der H2-Abgabe
+      und wurden in 04 als MW gelesen (F-04, Nr. 11).
     - Direkt in VS Code oder aus beliebigem Arbeitsordner starten: ``python 02_FLH_el.py``
 """
 
@@ -107,13 +110,13 @@ for i in range(100):
     if condition != "optimal":
         raise RuntimeError(f"Standort {i}: Optimierung nicht optimal ({status}, {condition})")
     print(f"Standort {i}: optimal")
-    flh_el = (network.generators_t.p['negative_gen'].sum())/network.generators.p_nom_opt['negative_gen']
-    pv = (network.generators.p_nom_opt['pv']/network.generators.p_nom_opt['negative_gen'])*100
-    wind = (network.generators.p_nom_opt['wind']/network.generators.p_nom_opt['negative_gen'])*100
-
+    electrolyzer_mw = network.links.p_nom_opt['Electrolyzer']                     # MW_el
+    flh_el = network.links_t.p0['Electrolyzer'].sum() / electrolyzer_mw           # h/a, Strom in den Elektrolyseur
+    pv     = network.generators.p_nom_opt['pv'] / electrolyzer_mw                 # MW_PV je MW_el
+    wind   = network.generators.p_nom_opt['wind'] / electrolyzer_mw               # MW_Wind je MW_el
 
     df_flh_electrolyzer.at[i, 'FLH_electrolyzer'] = flh_el
-    df_flh_electrolyzer.at[i, 'PV'] = pv
-    df_flh_electrolyzer.at[i, 'Wind'] = wind
+    df_flh_electrolyzer.at[i, 'PV_ratio']   = pv
+    df_flh_electrolyzer.at[i, 'Wind_ratio'] = wind
 
 df_flh_electrolyzer.to_csv('../data/interim/re_profiles/FLH_electrolyzer.csv')
