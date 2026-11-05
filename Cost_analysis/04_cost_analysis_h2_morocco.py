@@ -48,6 +48,11 @@ Hinweise:
       Infrastruktur. Wechselstrom wurde geprüft und weggelassen (Kosten kaum anders,
       Fehlerprotokoll Nr. 63). Eine eigene 100-MW-Leitung wäre je MW etwa viermal so teuer
       (Fehlerprotokoll Nr. 63); Elektrolyse am Erzeugungsort fehlt als Option (Nr. 44).
+    - Annahme Konglomerat auch für die H2-Pipeline: Das Projekt ist an eine gemeinsame
+      Sammelleitung angeschlossen und zahlt den spezifischen Preis einer 1,7-GW_H2-Leitung
+      (untere Grenze der Quelle Galimova et al. 2023, 2050 auf 1,7 GW umgerechnet). Eine
+      eigene 60-MW-Leitung wäre je MW etwa 4,5-mal so teuer (Fehlerprotokoll Nr. 49).
+      Kompressionsstrom und Transportverluste der Pipeline sind bewusst nicht enthalten.
     - Direkt in VS Code oder aus beliebigem Arbeitsordner starten: ``python 04_cost_analysis_h2_morocco.py``
 """
 

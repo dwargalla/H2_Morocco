@@ -177,7 +177,7 @@ Betrachtet wird ein **100-MW-Elektrolyseur** (PEM), der von PV und Wind gespeist
 | **Elektrolyseur** | Annuität + O&M; Wirkungsgrad 60 % (2025) bzw. 76 % (2050) |
 | **Erneuerbarer Strom** | Annuitäten + Betriebskosten der PV- und Windanlagen, die je Standort und Szenariojahr optimal ausgelegt sind (siehe `02_FLH_el.py`) |
 | **Stromnetz** | HGÜ-Freileitung von der Zelle mit der Stromerzeugung zur Zelle des Elektrolyseurs (€/km) + zwei Konverterstationen, mit Übertragungsverlusten; Werte der Danish Energy Agency (2025) für große Trassen, verstanden als Anteil an gemeinsamer Infrastruktur. Bei Eigenversorgung keine Netzkosten |
-| **H2-Pipeline** | von der Zelle des Elektrolyseurs zum nächstgelegenen Industriehafen |
+| **H2-Pipeline** | von der Zelle des Elektrolyseurs zum nächstgelegenen Industriehafen; spezifischer Preis einer gemeinsamen 1,7-GW_H2-Sammelleitung (Annahme: das Projekt ist Teil eines Konglomerats), 5 % Betriebskosten; ohne Kompressionsstrom und Transportverluste |
 | **Wasser** | 13 kg Wasser je kg H2, bezogen in der Reihenfolge Oberflächenwasser (0,25 €/m³) → Grundwasser (0,07 €/m³) → Entsalzung (1,30 €/m³, nur an der Küste) → Transport aus der nächsten Zelle mit Wasser (0,0007 €/m³/km); Preise in EUR 2025 |
 
 Die Kosten werden auf die erzeugte Wasserstoffmenge umgelegt:
@@ -188,7 +188,7 @@ H2-Kosten [€/MWh_H2] = Σ Jahreskosten [€/a] / (Volllaststunden_Elektrolyseu
 
 Alle Kostenannahmen (CAPEX, OPEX, Lebensdauer, Zinssatz 8 %) stehen mit Quellenangabe in `data/model_parameters/model_parameters.csv`.
 
-**Lesart:** Das Ergebnis je Zelle ist das Standortpotenzial für ein einzelnes 100-MW-Projekt, keine landesweite Ausbauplanung. Viele Zellen können dieselbe Produktionszelle wählen.
+**Lesart:** Das Ergebnis je Zelle ist das Standortpotenzial für ein einzelnes 100-MW-Projekt, keine landesweite Ausbauplanung. Viele Zellen können dieselbe Produktionszelle wählen. **Annahme Konglomerat:** Für Stromleitung und H2-Pipeline zahlt das Projekt seinen Anteil an gemeinsamer Infrastruktur (große Trassen bzw. eine 1,7-GW_H2-Sammelleitung), keine eigene Leitung. Eine eigene Leitung wäre deutlich teurer (Pipeline etwa Faktor 4,5, Fehlerprotokoll Nr. 49).
 
 ### Pipeline
 
