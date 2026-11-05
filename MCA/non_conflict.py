@@ -1,23 +1,30 @@
 """MCA-Kriterium Nicht-Konfliktgebiet (soziopolitische Stabilität).
 
-Berechnet für jeden Zellmittelpunkt den Abstand zur Westsahara
-(``conflict_area.shp``) und zu Kernmarokko (``morocco.geojson``) und bildet das
-Verhältnis Abstand_Konflikt / Abstand_Marokko. Zellen in Kernmarokko erhalten
-100, Zellen in der Westsahara 0, alle übrigen werden rangskaliert (0–100).
+Wert je Zelle aus dem Abstand ihres Mittelpunkts zur Konfliktzone östlich des Walls
+(``conflict_area.shp``, nach Marsili 2024), mit exponentiellem Abfall des Risikos:
+
+    Wert = 100 · (1 − exp(−Abstand / λ)),   λ = 50 km
+
+In der Konfliktzone ist der Wert 0, mit wachsendem Abstand nähert er sich 100
+(bei 50 km 63 Punkte, bei 150 km 95 Punkte). Die Zone selbst ist zusätzlich No-Go
+(``no_go_zones.py``).
+
+Begründung für λ = 50 km: Die Beschüsse seit 2020 treffen Orte nahe am Wall
+(Mahbès etwa 25 km, Smara etwa 31 km von der Zone; UN S/2024/707); die eingesetzten
+Raketenwerfer (BM-21 Grad) reichen 20 km, mit neuerer Munition 30–45 km. λ entspricht
+damit der größten Waffenreichweite. Sensitivität λ = 25 / 100 km: Fehlerprotokoll Nr. 68.
 
 Eingaben:
     data/interim/grid/grid_morocco_clear.shp
-    data/raw/boundaries/morocco.geojson       Kernmarokko
-    data/raw/boundaries/conflict_area.shp     Westsahara
+    data/raw/boundaries/conflict_area.shp     Konfliktzone östlich des Walls
 
 Ausgaben:
     data/interim/mca_criteria/results_non_conflict_areas.csv   eine Spalte, zeilengleich mit dem Raster
-    (zusätzlich eine Kontrollkarte per ``gdf.plot``, wird nicht gespeichert)
 
 Hinweise:
-    - Der Indikator ist ein Abstandsverhältnis, keine Distanz (Korrekturplan F-15);
-      die Rangskalierung hat einen Off-by-one-Fehler, der einen negativen Wert
-      erzeugt (F-16).
+    - Bis 05.11.2026 war der Indikator das Verhältnis Abstand Konfliktzone ÷ Abstand
+      Kernmarokko, nach Rang skaliert: Kernmarokko bekam pauschal 100, auch 2 km neben
+      der Zone (Fehlerprotokoll Nr. 68, 38, 72; Korrekturplan F-15, F-16).
     - Direkt in VS Code oder aus beliebigem Arbeitsordner starten: ``python non_conflict.py``
 """
 
@@ -31,30 +38,24 @@ if __name__ == "__main__":
 
 import geopandas as gpd
 import numpy as np
+import pandas as pd
+
+DECAY_KM = 50       # λ: typische Reichweite des Risikos durch Beschuss [km]
 
 # Data
-    # Current potential
 gdf_grid = gpd.read_file('../data/interim/grid/grid_morocco_clear.shp')
 gdf_cells_centroid = gdf_grid.centroid
-    # non_conflict
-gdf_morocco = gpd.read_file('../data/raw/boundaries/morocco.geojson').to_crs("EPSG:32629")
-    # conflict --> Western Sahara
+    # Conflict zone east of the berm (Marsili 2024)
 gdf_conflict = gpd.read_file('../data/raw/boundaries/conflict_area.shp').to_crs("EPSG:32629")
 
-ds_distance_to_morocco = gdf_cells_centroid.distance(gdf_morocco.geometry[0])
-ds_distance_to_conflict_area = gdf_cells_centroid.distance(gdf_conflict.geometry[0])
-ds_ratio_distance = ds_distance_to_conflict_area/ds_distance_to_morocco
-ds_ratio_distance.loc[ds_ratio_distance == 0] = 0
-ds_ratio_distance.loc[ds_ratio_distance == np.inf] = 100
+# Distance of each cell centre to the conflict zone (0 inside the zone)
+distance_km = gdf_cells_centroid.distance(gdf_conflict.geometry[0]) / 1000
 
-# Rang-skale
-kriterium = (ds_ratio_distance > 0) & (ds_ratio_distance < 100) | (ds_ratio_distance > 100)
+# Exponential decay: 0 in the zone, close to 100 far away
+non_conflict_score = 100 * (1 - np.exp(-distance_km / DECAY_KM))
 
-ds_ranks = ds_ratio_distance.loc[kriterium].rank().astype(int)-1
-ds_ranks = (ds_ranks - 1) / (len(ds_ranks) - 1) * 100
-ds_ratio_distance.loc[kriterium] = ds_ranks
-ds_ratio_distance.to_csv('../data/interim/mca_criteria/results_non_conflict_areas.csv', index=False)
+pd.DataFrame({'0': non_conflict_score}).to_csv('../data/interim/mca_criteria/results_non_conflict_areas.csv', index=False)
 
-# Map non-conflict areas
-gdf_grid['non_conflict'] = ds_ratio_distance
+# Map non-conflict score (only shown, not saved)
+gdf_grid['non_conflict'] = non_conflict_score
 gdf_grid.plot(column='non_conflict', cmap='YlGnBu', legend=True)

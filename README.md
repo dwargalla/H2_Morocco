@@ -119,7 +119,7 @@ Die Gewichte stehen in `MCA/mca_maps.py` als `dict_weights_category`.
 | Kriterium | Gewicht | Skript | Was berechnet wird | Richtung |
 |---|---|---|---|---|
 | Wasserverfügbarkeit | 34,06 % | `water_net.py` / `water_forecast.py` | siehe [Wasser](#wasser) | hoch = gut |
-| Nicht-Konfliktgebiet | 16,30 % | `non_conflict.py` | Verhältnis der Abstände zur Westsahara und zu Kernmarokko, rangskaliert | hoch = gut |
+| Nicht-Konfliktgebiet | 16,30 % | `non_conflict.py` | Abstand des Zellmittelpunkts zur Konfliktzone östlich des Walls, exponentiell: 100 · (1 − exp(−Abstand/50 km)) | hoch = gut |
 | Industrieflächenanteil | 14,46 % | `industrie.py` | Anteil OSM-Industriefläche an der Zelle | hoch = gut |
 | Windertrag | 12,37 % | `wind_analysis.py` | mittlere Wind-Volllaststunden (Global Wind Atlas) | hoch = gut |
 | Erreichbarkeit | 8,25 % | `accesibility.py` | Länge von Straßen/Schienen je Klasse, gewichtet (Autobahn 0,25 … Feldweg 0,01) | hoch = gut |
@@ -128,7 +128,7 @@ Die Gewichte stehen in `MCA/mca_maps.py` als `dict_weights_category`.
 | Landwirtschaftsanteil | 1,94 % | `agriculture.py` | Anteil Ackerfläche (GlobCover) | hoch = **schlecht** |
 | Stadtflächenanteil | 1,48 % | `urban_zone.py` | Anteil Siedlungsfläche (GlobCover-Klasse 190) | hoch = **schlecht** |
 
-**No-Go-Maske** (`no_go_zones.py`): Eine Zelle wird ausgeschlossen (0), wenn mindestens 50 % ihrer Fläche Militär-, Naturschutz- oder Erholungsgebiet sind (OSM) oder wenn sie aufgrund der Topografie ausgeschlossen ist (`ToPo_1500.shp`).
+**No-Go-Maske** (`no_go_zones.py`): Eine Zelle wird ausgeschlossen (0), wenn mindestens 50 % ihrer Fläche Militär-, Naturschutz- oder Erholungsgebiet sind (OSM) oder wenn sie aufgrund der Topografie ausgeschlossen ist (`ToPo_1500.shp`), oder wenn mindestens 50 % ihrer Fläche in der Konfliktzone östlich des Walls liegen (`conflict_area.shp`).
 
 ### Was sich zwischen 2025 und 2050 ändert
 

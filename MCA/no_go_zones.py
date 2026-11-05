@@ -3,13 +3,16 @@
 Eine Zelle wird ausgeschlossen, wenn mindestens 50 % ihrer Fläche von
 OSM-Flächen der Klassen ``military``, ``nature_reserve`` oder
 ``recreation_ground`` bedeckt sind, oder wenn sie laut Topografie-Layer
-ausgeschlossen ist (``NoGo`` = 0). Beide Masken werden per Minimum kombiniert.
+ausgeschlossen ist (``NoGo`` = 0), oder wenn mindestens 50 % ihrer Fläche in der
+Konfliktzone östlich des Walls liegen (seit 05.11.2026, Fehlerprotokoll Nr. 68).
+Die Masken werden per Minimum kombiniert.
 
 Eingaben:
     data/interim/grid/grid_morocco_clear.shp
     data/raw/osm/gis_osm_landuse_a_free_1.shp   (Spalte fclass)
     data/interim/layers/ToPo_1500.shp                          (Spalte NoGo, 0/1; aus ki_generiert/topography_grid.py,
                                                  zeilengleich mit dem Raster)
+    data/raw/boundaries/conflict_area.shp       Konfliktzone östlich des Walls (Marsili 2024)
 
 Ausgaben:
     data/interim/mca_criteria/results_nogo_zones.csv   eine Spalte ``NoGo``, zeilengleich mit dem Raster
@@ -31,6 +34,7 @@ if __name__ == "__main__":
 import geopandas as gpd
 import numpy as np
 import pandas as pd
+import shapely
 
 from custom import list_index
 
@@ -68,6 +72,13 @@ for i in range(len(gdf_grid)):
 
 array_nogo = np.array(list_nogo)
 array_nogo = np.minimum(array_nogo, gdf_topo_utm29n['NoGo'])
+
+    # No-Go Zones: conflict zone east of the berm (at least 50 % of the cell area inside)
+gdf_conflict = gpd.read_file('../data/raw/boundaries/conflict_area.shp').to_crs("EPSG:32629")
+conflict_zone = shapely.make_valid(gdf_conflict.geometry[0])   # Umriss hat eine kleine Selbstüberschneidung (ca. 10 km²)
+share_in_conflict_zone = gdf_grid.intersection(conflict_zone).area / gdf_grid.area
+conflict_ok = np.where(share_in_conflict_zone >= 0.5, 0, 1)
+array_nogo = np.minimum(array_nogo, conflict_ok)
 
 df_nogo_zones = pd.DataFrame(data = array_nogo)
 
