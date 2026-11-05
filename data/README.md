@@ -18,6 +18,7 @@ Alle Eingangs- und Zwischendaten von MCA und Kostenanalyse liegen in diesem Ordn
 |---|---|---|---|
 | `osm/gis_osm_{landuse_a,roads,railways}_free_1.shp` | OpenStreetMap über Geofabrik, Stand 29.01.2025 (aus `General/04_Recherche/QGIS/morocco-latest-free.shp.zip`); Lizenz ODbL, siehe `osm/README` | `fclass` | nein |
 | `globcover/{mar,wsa}_gc_adg/*.shp` | FAO GlobCover Marokko und Westsahara (Download 19.10.2026): https://data.apps.fao.org/catalog/dataset/fad3f475-8973-463f-b56a-e6b6535c1db5, https://data.apps.fao.org/catalog/iso/75aaf5c5-d579-425a-97fb-aa4580536df2 | `GRIDCODE` | nur Legenden-.xls |
+| `gmia/gmia_v5_{aei_ha,aai_pct_aei}.asc` | FAO Global Map of Irrigation Areas v5 (Siebert et al. 2013, Universität Bonn / FAO), Download 05.11.2026 von https://www.fao.org/aquastat/en/geospatial-information/global-maps-irrigated-areas/latest-version; 5′, EPSG:4326, Datenstand etwa 2005. Lizenz laut FAO-Katalog CC BY-NC-SA 3.0 IGO (auf der Downloadseite nicht angegeben): nicht kommerziell. | ausgerüstete Fläche [ha], davon tatsächlich bewässert [%], NoData −9 | nein |
 | `boundaries/morocco_Morocco_Country_Boundary.shp` | `General/04_Recherche/QGIS/Marokko karte vollständig/Morocco Country Boundary.shp.zip` | – | nein |
 | `boundaries/morocco.geojson` | Kernmarokko, `General/04_Recherche/QGIS/Datein/Daten/morocco.geojson` | – | nein |
 | `boundaries/Regions.shp` | 12 Verwaltungsregionen mit Bevölkerungsspalten; Original aus dem Masterprojekt (Sciebo `H2 Morocco/Masterprojekt/Python/Cost_analysis/Data/Data/`) | `Nom_Region` | nein |
@@ -48,7 +49,8 @@ Alle Eingangs- und Zwischendaten von MCA und Kostenanalyse liegen in diesem Ordn
 | `layers/ToPo_1500.shp` | `MCA/ki_generiert/topography_grid.py` | `raw/dem/copernicus_dem_glo90/`, Höhenspanne je Zelle, `NoGo = 0` ab 1.500 m |
 | `landuse/morocco_landuse_2050.shp` | `MCA/forecast_landuse.py` | GlobCover + `Regions` |
 | `water/water_availability_{sw,gw}.csv` | `MCA/water_exploitable_{sw,gw}.py` | Einzugsgebiete, Fließrichtung, Grundwasser |
-| `water/Water_Consumption_{2025,2050}.csv` | `MCA/water_consumption.py` | Landnutzung |
+| `water/irrigated_area_gmia.csv` | `MCA/ki_generiert/irrigation_grid.py` | `raw/gmia/`, tatsächlich bewässerte Fläche [ha] je Zelle, flächenanteilig |
+| `water/Water_Consumption_{2025,2050}.csv` | `MCA/water_consumption.py` | Stadt (GlobCover), Bewässerung (GMIA), Industrie (OSM) |
 | `water/cwb.shp`, `water/water_availability_{sw,gw}_2050.csv` | `MCA/water_forecast.py` | Klimadaten 2050 |
 | `mca_criteria/results_*.csv` (14) | MCA-Kriterienskripte | Eingabe für `MCA/mca_maps.py` |
 | `re_profiles/flh_re.csv` | `Cost_analysis/ki_generiert/01b_flh_re.py` | `raw/renewables_ninja/pv_wind_electricity.csv` |

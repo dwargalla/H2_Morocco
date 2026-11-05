@@ -49,7 +49,7 @@ AGENTS.md
 .cursor/
 .cursorrules
 test.ipynb
-Fehlerprotokoll.md
+Fehlerprotokoll*.md
 # Zwischenergebnisse: alle von Skripten erzeugt, deshalb nicht versioniert.
 # data/interim/ lässt sich jederzeit löschen und mit main.ipynb neu erzeugen.
 # Welcher Stand zu einem Ergebnis gehört, steht im Laufordner (results/runs/).
