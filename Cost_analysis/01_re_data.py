@@ -2,24 +2,24 @@
 
 Ruft für jeden Standort aus ``PV_WIND_50_Punkte.xlsx`` die Erzeugung 2019 einer
 1-kW-Anlage ab (PV: MERRA-2, Neigung 35°, Süd, 10 % Verluste; Wind: Vestas
-V136 3450, 150 m Nabenhöhe), hängt sie als Spalten ``electricity_PV_i`` /
-``electricity_Wind_i`` an die vorhandene CSV an und berechnet daraus die
-Volllaststunden (Jahressumme).
+V136 3450, 150 m Nabenhöhe) und hängt sie als Spalten ``electricity_PV_i`` /
+``electricity_Wind_i`` an die vorhandene CSV an. Reiner Download, daher nach
+``data/raw/``; die Volllaststunden berechnet ``01b_flh_re.py``.
 
 Eingaben:
     data/raw/renewables/PV_WIND_50_Punkte.xlsx    Blatt PV_Punkte (Latitude, Longitude)
-    data/interim/re_profiles/pv_wind_electricity.csv   bisher abgerufene Profile (wird erweitert)
+    data/raw/renewables_ninja/pv_wind_electricity.csv  bisher abgerufene Profile (wird erweitert)
 
 Ausgaben:
-    data/interim/re_profiles/pv_wind_electricity.csv   stündliche Profile, 8760 Zeilen
-    data/interim/re_profiles/flh_re.csv                FLH_PV, FLH_Wind für die Standorte 0–49
+    data/raw/renewables_ninja/pv_wind_electricity.csv  stündliche Profile, 8760 Zeilen
 
 Hinweise:
     - Braucht einen API-Token in ``H2_Morocco/.env`` als ``RENEWABLES_NINJA_TOKEN``
       (Vorlage: ``.env.example``). Limit 50 Anfragen pro Stunde; die Schleife
       (``range(1)``) ist für schrittweisen Abruf gedacht.
-    - Es wird nur das Blatt PV_Punkte gelesen; Volllaststunden werden nur für die
-      ersten 50 Standorte berechnet.
+    - Es wird nur das Blatt PV_Punkte gelesen.
+    - Die vorhandene CSV lässt sich hiermit nicht reproduzieren (Fehlerprotokoll
+      Nr. 10, 41); sie ist ein Altbestand aus dem Masterprojekt.
     - Direkt in VS Code oder aus beliebigem Arbeitsordner starten: ``python 01_re_data.py``
 """
 
@@ -42,7 +42,7 @@ from dotenv import load_dotenv
 # Get location-specific profiles in morocco from renewables ninja 
 
 coordinates = pd.read_excel('../data/raw/renewables/PV_WIND_50_Punkte.xlsx', sheet_name='PV_Punkte')
-df_electricity = pd.read_csv('../data/interim/re_profiles/pv_wind_electricity.csv', index_col=0)
+df_electricity = pd.read_csv('../data/raw/renewables_ninja/pv_wind_electricity.csv', index_col=0)
 df_electricity.reset_index(drop=True, inplace=True)
 
 # API token from renewables.ninja (https://www.renewables.ninja/api/), stored in H2_Morocco/.env
@@ -106,19 +106,4 @@ for i in range(1):   # Nur sechs Anfragen pro Min (2*3), um API-Limits zu beacht
     df_concat.reset_index(drop=True, inplace=True)
     df_electricity = pd.concat([df_electricity, df_concat], axis=1)
 
-# Calculation of Fullloadhours of pv and wind for locaions
-# df_re = pd.read_csv('../data/interim/re_profiles/pv_wind_electricity.csv')
-# df_re = df_re.drop(columns= ['Unnamed: 0'])
-
-ds_sum = df_electricity.sum()
-
-df_flh = pd.DataFrame(columns=['FLH_PV', 'FLH_Wind'])
-for i in range(0, 50):
-    pv = ds_sum[f'electricity_PV_{i}']
-    wind = ds_sum[f'electricity_Wind_{i}']
-
-    df_flh.at[i, 'FLH_PV'] = pv
-    df_flh.at[i, 'FLH_Wind'] = wind
-
-df_flh.to_csv('../data/interim/re_profiles/flh_re.csv', index=False)
-df_electricity.to_csv('../data/interim/re_profiles/pv_wind_electricity.csv')
+df_electricity.to_csv('../data/raw/renewables_ninja/pv_wind_electricity.csv')

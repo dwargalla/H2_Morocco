@@ -12,7 +12,7 @@ Eingaben:
     data/interim/grid/grid_morocco_clear.shp
     data/raw/climate/Precipitation_morocco_2050_corr.shp   (Spalte Precipitat)
     data/raw/climate/PET_morocco_2050_corr.shp             (Spalte PET)
-    data/interim/qgis/morocco_coast_line.shp
+    data/raw/origin_unknown/morocco_coast_line.shp
     data/interim/water/water_availability_{sw,gw}.csv
     data/interim/water/Water_Consumption_{2025,2050}.csv
 
@@ -48,7 +48,7 @@ gdf_grid = gpd.read_file('../data/interim/grid/grid_morocco_clear.shp')
 gdf_precipitation   = gpd.read_file('../data/raw/climate/Precipitation_morocco_2050_corr.shp').to_crs('EPSG:32629')
 gdf_pet             = gpd.read_file('../data/raw/climate/PET_morocco_2050_corr.shp').to_crs('EPSG:32629')
 
-gdf_coast = gpd.read_file('../data/interim/qgis/morocco_coast_line.shp').to_crs("EPSG:32629")        
+gdf_coast = gpd.read_file('../data/raw/origin_unknown/morocco_coast_line.shp').to_crs("EPSG:32629")        
 df_water_2025_sw    = pd.read_csv('../data/interim/water/water_availability_sw.csv')
 df_water_2025_gw    = pd.read_csv('../data/interim/water/water_availability_gw.csv')
 df_water_consumption_2025 = pd.read_csv('../data/interim/water/Water_Consumption_2025.csv')

@@ -60,10 +60,9 @@ data/interim/**
 # von Hand bereinigtes Raster
 !data/interim/grid/grid_morocco_clear.*
 # in QGIS erzeugt
-!data/interim/qgis/cell_flh_re.csv
-# renewables.ninja; 01_re_data.py kann sie nicht reproduzieren (Fehlerprotokoll Nr. 10)
-!data/interim/re_profiles/pv_wind_electricity.csv
-!data/interim/re_profiles/flh_re.csv
+!data/raw/origin_unknown/cell_flh_re.csv
+# renewables.ninja-Download (Altbestand); 01_re_data.py kann ihn nicht reproduzieren (Fehlerprotokoll Nr. 10)
+!data/raw/renewables_ninja/pv_wind_electricity.csv
 # Kopien der Wasserdaten, kein Skript erzeugt sie
 !data/interim/water_cost/*.csv
 # water_forecast.py braucht Klimadaten 2050, die fehlen

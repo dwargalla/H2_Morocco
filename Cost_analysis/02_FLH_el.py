@@ -9,7 +9,7 @@ Szenariojahres ``sizing_year``.
 
 Eingaben:
     data/model_parameters/model_parameters.csv         Annahmen (über h2morocco.utils)
-    data/interim/re_profiles/pv_wind_electricity.csv   aus 01_re_data.py
+    data/raw/renewables_ninja/pv_wind_electricity.csv  aus 01_re_data.py (Download)
 
 Ausgaben:
     data/interim/re_profiles/FLH_electrolyzer.csv   je Standort: FLH_electrolyzer [h/a],
@@ -65,7 +65,7 @@ electrolyzer_annual_cost_per_mw = (annuity_factor(discount_rate, electrolyzer_li
 pv_annual_cost_per_mw           = (annuity_factor(discount_rate, pv_lifetime)           + pv_opex_share)           * pv_capex            # [€/MWp/a]
 wind_annual_cost_per_mw         = (annuity_factor(discount_rate, wind_lifetime)         + wind_opex_share)         * wind_capex          # [€/MW/a]
 
-df_pv_wind = pd.read_csv('../data/interim/re_profiles/pv_wind_electricity.csv')
+df_pv_wind = pd.read_csv('../data/raw/renewables_ninja/pv_wind_electricity.csv')
 
 
 #################

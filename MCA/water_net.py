@@ -7,7 +7,7 @@ erhalten pauschal 100 (Meerwasserentsalzung möglich).
 
 Eingaben:
     data/interim/grid/grid_morocco_clear.shp
-    data/interim/qgis/morocco_coast_line.shp        (Original aus Sciebo, siehe data/README.md)
+    data/raw/origin_unknown/morocco_coast_line.shp        (Original aus Sciebo, siehe data/README.md)
     data/interim/water/water_availability_gw.csv     aus water_exploitable_gw.py
     data/interim/water/water_availability_sw.csv     aus water_exploitable_sw.py
     data/interim/water/Water_Consumption_2025.csv    aus water_consumption.py
@@ -33,7 +33,7 @@ import pandas as pd
 
 gdf_grid = gpd.read_file('../data/interim/grid/grid_morocco_clear.shp')
 
-gdf_coast = gpd.read_file('../data/interim/qgis/morocco_coast_line.shp').to_crs("EPSG:32629")        
+gdf_coast = gpd.read_file('../data/raw/origin_unknown/morocco_coast_line.shp').to_crs("EPSG:32629")        
 
 # Today
 df_gw_availability = pd.read_csv('../data/interim/water/water_availability_gw.csv')

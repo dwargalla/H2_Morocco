@@ -183,14 +183,15 @@ Alle Kostenannahmen (CAPEX, OPEX, Lebensdauer, Zinssatz 8 %) stehen mit Quellena
 
 | Schritt | Skript | Eingabe | Ausgabe |
 |---|---|---|---|
-| 1 | `re_data.py` | `data/raw/renewables/PV_WIND_50_Punkte.xlsx` (je 50 PV- und Wind-Standorte) | stündliche PV/Wind-Profile 2019 von renewables.ninja → `data/interim/re_profiles/pv_wind_electricity.csv`, `…/flh_re.csv` |
-| 2 | `FLH_el.py` | `data/interim/re_profiles/pv_wind_electricity.csv` | PyPSA-Optimierung je Standort: kostenoptimaler Mix aus PV, Wind und Elektrolyseur → `data/interim/re_profiles/FLH_electrolyzer.csv` (Volllaststunden Elektrolyseur, PV- und Windleistung) |
+| 1 | `re_data.py` | `data/raw/renewables/PV_WIND_50_Punkte.xlsx` (je 50 PV- und Wind-Standorte) | Download der stündlichen PV/Wind-Profile 2019 von renewables.ninja → `data/raw/renewables_ninja/pv_wind_electricity.csv` (API-Token; reproduziert den vorhandenen Bestand nicht, Fehlerprotokoll Nr. 10) |
+| 1b | `01b_flh_re.py` | `data/raw/renewables_ninja/pv_wind_electricity.csv` | Volllaststunden je Standort (Jahressumme der Profile) → `data/interim/re_profiles/flh_re.csv` |
+| 2 | `FLH_el.py` | `data/raw/renewables_ninja/pv_wind_electricity.csv` | PyPSA-Optimierung je Standort: kostenoptimaler Mix aus PV, Wind und Elektrolyseur → `data/interim/re_profiles/FLH_electrolyzer.csv` (Volllaststunden Elektrolyseur, PV- und Windleistung) |
 | 3 | `assignment_re_data.py` | `FLH_electrolyzer.csv` + Koordinaten | `data/interim/re_profiles/data_re_flh_electrolyzer.shp` |
 | 4 | `cost_analysis_h2_morocco.py` | Raster, Häfen, Standortdaten, Wasserverfügbarkeit | `results/cost/results_cost_{2025,2050}.csv` mit allen Kostenbestandteilen je Zelle |
 | 5 | `results_cost.py` | Ergebnisse aus Schritt 4 | Kostenkarten und Balkendiagramme in `results/figures/cost/`, `results/cost/results_cost_morocco_2025_2050.csv` |
 
 **Wie Schritt 4 funktioniert:**
-1. Jeder Zelle wird der repräsentative Standort zugeordnet, dessen PV- und Wind-Volllaststunden ihren eigenen am ähnlichsten sind (`data/interim/qgis/cell_flh_re.csv`).
+1. Jeder Zelle wird der repräsentative Standort zugeordnet, dessen PV- und Wind-Volllaststunden ihren eigenen am ähnlichsten sind (`data/raw/origin_unknown/cell_flh_re.csv`).
 2. Für jede Bedarfszelle wird über alle Zellen die günstigste Produktionszelle gesucht, inklusive Netzkosten über die Entfernung.
 3. Pipeline- und Wasserkosten werden addiert.
 
@@ -205,7 +206,7 @@ Weil dabei eine Entfernungsmatrix aller Zellen untereinander (7219 × 7219) ents
 Die Zwischenergebnisse liegen im Repo. Es fehlen nur zwei Geodateien (siehe `data/README.md`):
 
 - `data/raw/boundaries/morocco_Morocco_Country_Boundary.shp`
-- `data/interim/qgis/morocco_coast_line.shp`
+- `data/raw/origin_unknown/morocco_coast_line.shp`
 
 ```bash
 cd MCA && python mca_maps.py
@@ -251,7 +252,7 @@ Weitere Literaturquellen (Wasserdargebot, Sektoranteile, Kosten) sind direkt in 
 ## Bekannte Einschränkungen
 
 1. **2050-Wasserdaten der Kostenanalyse:** `data/interim/water_cost/water_availability_{sw,gw}_2050.csv` lassen sich mit dem aktuellen Code nicht neu erzeugen. Die Berechnung wurde in Commit `0ff553c` aus `water_exploitable_{sw,gw}.py` entfernt und benötigte `MCA/Data/cwp_cell.csv`.
-2. **`data/interim/qgis/cell_flh_re.csv`** stammt nicht aus einem Skript im Repo (vermutlich QGIS).
+2. **`data/raw/origin_unknown/cell_flh_re.csv`** stammt nicht aus einem Skript im Repo (vermutlich QGIS).
 3. **Abweichende Wasserdaten:** Die Wasser-CSVs in `data/interim/water_cost/` sind älter als die in `data/interim/water/` und weichen von ihnen ab.
 4. **Nur 50 von 100 Standorten:** `re_data.py` berechnet `flh_re.csv` nur für die ersten 50 von 100 Standorten, die Kostenanalyse ordnet Zellen deshalb nur diesen zu.
 5. **PV-Kosten vermutlich überschätzt:** In `cost_analysis_h2_morocco.py` werden die jährlichen PV-Kosten als `Annuität + CAPEX × Leistung` statt `Annuität + OPEX × Leistung` berechnet.

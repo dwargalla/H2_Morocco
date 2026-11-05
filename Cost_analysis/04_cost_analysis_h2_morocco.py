@@ -20,9 +20,9 @@ Eingaben:
     data/interim/grid/grid_morocco_clear.shp
     data/raw/infrastructure/industrial_ports_morocco_{2025,2050}.shp
     data/interim/re_profiles/data_re_flh_electrolyzer.shp   aus 03_assignment_re_data.py
-    data/interim/re_profiles/flh_re.csv                     aus 01_re_data.py
-    data/interim/qgis/cell_flh_re.csv                FLH je Zelle (nicht per Skript erzeugt, vermutlich QGIS)
-    data/interim/qgis/morocco_coast_line.shp
+    data/interim/re_profiles/flh_re.csv                     aus 01b_flh_re.py
+    data/raw/origin_unknown/cell_flh_re.csv                FLH je Zelle (nicht per Skript erzeugt, vermutlich QGIS)
+    data/raw/origin_unknown/morocco_coast_line.shp
     data/interim/water_cost/water_availability_{sw,gw}.csv, data/interim/water_cost/water_availability_{sw,gw}_2050.csv
 
 Ausgaben (je Lauf ein neuer Ordner, siehe h2morocco/runs.py):
@@ -131,9 +131,9 @@ gdf_ref_points              = gpd.read_file('../data/interim/re_profiles/data_re
 pv_capacity                 = gdf_ref_points['PV']      # [MW] je Referenzpunkt (bekannter Fehler F-04: eigentlich Prozent)
 wind_capacity               = gdf_ref_points['Wind']    # [MW] je Referenzpunkt (bekannter Fehler F-04: eigentlich Prozent)
 df_ref_points_flh           = pd.read_csv('../data/interim/re_profiles/flh_re.csv')    # FLH PV und Wind je Referenzpunkt
-df_cell_flh                 = pd.read_csv('../data/interim/qgis/cell_flh_re.csv')      # FLH PV und Wind je Zelle
+df_cell_flh                 = pd.read_csv('../data/raw/origin_unknown/cell_flh_re.csv')      # FLH PV und Wind je Zelle
     # Küste und Wasserverfügbarkeit je Zelle [Mio. m³]
-gdf_coast                   = gpd.read_file('../data/interim/qgis/morocco_coast_line.shp').to_crs("EPSG:32629")
+gdf_coast                   = gpd.read_file('../data/raw/origin_unknown/morocco_coast_line.shp').to_crs("EPSG:32629")
 df_surface_water_2025       = pd.read_csv('../data/interim/water_cost/water_availability_sw.csv')
 df_ground_water_2025        = pd.read_csv('../data/interim/water_cost/water_availability_gw.csv')
 df_surface_water_2050       = pd.read_csv('../data/interim/water_cost/water_availability_sw_2050.csv')
