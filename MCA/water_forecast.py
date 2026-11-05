@@ -7,6 +7,10 @@
 3. Berechnet den Score wie water_net.py (50 % Dargebot, 50 % Überschuss nach
    Abzug des Verbrauchs 2050), skaliert mit den 2025-Maxima als Referenz.
    Küstenzellen erhalten 100.
+4. Für die Kostenanalyse zusätzlich Grund- und Oberflächenwasser 2050 je Zelle
+   getrennt: feste Gesamtmengen 1.636 bzw. 6.899 Mio. m³/a, Rückgang ebenfalls
+   nach CWB × Fläche verteilt, negative Werte auf 0, danach auf die Gesamtmenge
+   zurückskaliert (Block aus Commit 0ff553c wiederhergestellt).
 
 Eingaben:
     data/interim/grid/grid_morocco_clear.shp
@@ -19,12 +23,16 @@ Eingaben:
 Ausgaben:
     data/interim/water/cwb.shp                                   klimatische Wasserbilanz (für water_maps.py)
     data/interim/mca_criteria/results_water_res_availabil_2050.csv   eine Spalte, zeilengleich mit dem Raster
+    data/interim/water/water_availability_{gw,sw}_2050.csv       Wasser 2050 je Zelle [Mio. m³] für 04
 
 Hinweise:
     - Das Dargebot 2050 ist hartkodiert (Korrekturplan F-22); der Rückgang
       belastet gerade die trockensten Zellen am stärksten (F-23).
-    - Die Wasserverfügbarkeit 2050 je Zelle wird nicht als CSV gespeichert;
-      die Kostenanalyse nutzt eigene, ältere Dateien.
+    - Schritt 4 verteilt anders als Schritt 2 (getrennt nach Grund- und
+      Oberflächenwasser, ohne negative Werte). MCA und Kostenanalyse rechnen
+      2050 also mit unterschiedlichem Wasser (Fehlerprotokoll Nr. 36, 77).
+      Gegen die alten Dateien der Kostenanalyse geprüft (05.11.2026):
+      Oberflächenwasser exakt, Grundwasser max. 0,0007 Mio. m³ daneben.
     - Doppelte Schleifen ohne räumlichen Index, läuft sehr lange.
     - Direkt in VS Code oder aus beliebigem Arbeitsordner starten: ``python water_forecast.py``
 """
@@ -84,6 +92,23 @@ for i in range(len(gdf_grid)):
             list_cwb_cell.append(cwb_cell)
 
 df_cwb_cell = pd.DataFrame(data={'CWP_zell':list_cwb_cell}) #CWB for each cell 
+
+# Wasser 2050 für die Kostenanalyse, getrennt nach Grund- und Oberflächenwasser
+# Source: Economic concepts to address future water supply–demand imbalances in Iran, Morocco and Saudi Arabia
+gw_2025 = df_water_2025_gw['water_availability_gw[MCM]']
+sw_2025 = df_water_2025_sw['water_availability_sw[MCM]']
+
+gw_in_2050 = 1636 # MCM
+cwb_gw = df_cwb_cell['CWP_zell'].where(gw_2025 != 0, 0)    # Zellen ohne Grundwasser verlieren keins
+gw_cell_2050 = (gw_2025 - (cwb_gw/cwb_gw.sum()) * (gw_2025.sum() - gw_in_2050)).clip(lower=0)
+gw_cell_2050 = (gw_cell_2050/gw_cell_2050.sum()) * gw_in_2050
+
+sw_in_2050 = 6899 # MCM
+sw_cell_2050 = (sw_2025 - (df_cwb_cell['CWP_zell']/df_cwb_cell['CWP_zell'].sum()) * (sw_2025.sum() - sw_in_2050)).clip(lower=0)
+sw_cell_2050 = (sw_cell_2050/sw_cell_2050.sum()) * sw_in_2050
+
+gw_cell_2050.rename('water_availability_gw[MCM]').to_csv('../data/interim/water/water_availability_gw_2050.csv')
+sw_cell_2050.rename('water_availability_sw[MCM]').to_csv('../data/interim/water/water_availability_sw_2050.csv')
 df_total_loss_water_cell = (df_cwb_cell['CWP_zell']/df_cwb_cell['CWP_zell'].sum()) * water_loss_2050    #Is positiv, Anteil_zelle_loss * Gesamtloss = Zellenloss
 df_water_cell_2050 = ds_water_ges_2025 - df_total_loss_water_cell    #Pos or neg water in each cell
 

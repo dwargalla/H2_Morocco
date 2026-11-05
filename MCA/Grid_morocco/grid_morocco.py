@@ -1,19 +1,24 @@
-"""Erzeugt das 10-km-Rohraster über Marokko.
+"""Erzeugt das 10-km-Raster über Marokko, roh und auf die Landesgrenze zugeschnitten.
 
 Legt ein Rechteckgitter mit 10 000 m Kantenlänge über die Bounding Box der
 Landesgrenze (EPSG:32629, UTM 29N) und behält nur Zellen, die die Grenze
-schneiden.
+schneiden. Danach wird jede Zelle auf die Landesgrenze zugeschnitten; das ist
+das zentrale Raster aller weiteren Skripte.
 
 Eingaben:
     data/raw/boundaries/morocco_Morocco_Country_Boundary.shp   Landesgrenze
 
 Ausgaben:
-    grid_morocco.shp                               Rohraster
+    data/interim/grid/grid_morocco.shp             Rohraster (volle 10-km-Quadrate)
+    data/interim/grid/grid_morocco_clear.shp       zentrales Raster: Zellen auf die
+                                                   Landesgrenze zugeschnitten (7219 Zellen)
 
 Hinweise:
-    - Einmaliger Schritt. Alle anderen Skripte verwenden nicht dieses Ergebnis,
-      sondern ``grid_morocco_clear.shp`` (manuell bereinigte Fassung, 7219
-      Zellen). Diese Bereinigung ist nicht als Code vorhanden.
+    - Alle anderen Skripte lesen ``grid_morocco_clear.shp``. Früher hieß es, die
+      Datei sei von Hand bereinigt; tatsächlich ist sie genau dieser Zuschnitt
+      (geprüft 05.11.2026 gegen die alte Datei: Abweichung < 0,00001 m² je Zelle).
+    - Zeilenreihenfolge nicht ändern: Alle CSVs je Zelle sind zeilengleich mit
+      diesem Raster.
     - Direkt in VS Code oder aus beliebigem Arbeitsordner starten: ``python grid_morocco.py``
 """
 
@@ -67,6 +72,12 @@ def grid_cration(polygon, cell_size):
 grid_size = 10000
 gdf_morocco_gird = grid_cration(polygon=gdf_morocco_boundary_utm29N, cell_size=grid_size)
 
-gdf_morocco_gird.plot()
-
+gdf_morocco_gird['FID'] = range(len(gdf_morocco_gird))
+gdf_morocco_gird = gdf_morocco_gird[['FID', 'geometry']]
 gdf_morocco_gird.to_file("../../data/interim/grid/grid_morocco.shp", driver='ESRI Shapefile')
+
+# Zentrales Raster: Zellen auf die Landesgrenze zuschneiden
+morocco_shape = gdf_morocco_boundary_utm29N.union_all()
+gdf_grid_clear = gdf_morocco_gird.copy()
+gdf_grid_clear['geometry'] = gdf_morocco_gird.geometry.intersection(morocco_shape)
+gdf_grid_clear.to_file("../../data/interim/grid/grid_morocco_clear.shp", driver='ESRI Shapefile')

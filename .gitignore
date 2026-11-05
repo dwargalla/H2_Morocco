@@ -50,20 +50,15 @@ AGENTS.md
 .cursorrules
 test.ipynb
 Fehlerprotokoll.md
-# Zwischenergebnisse: von Skripten erzeugt, deshalb nicht versioniert.
+# Zwischenergebnisse: alle von Skripten erzeugt, deshalb nicht versioniert.
+# data/interim/ lässt sich jederzeit löschen und mit main.ipynb neu erzeugen.
 # Welcher Stand zu einem Ergebnis gehört, steht im Laufordner (results/runs/).
-# Ausnahmen: Dateien, die sich mit dem heutigen Code nicht neu erzeugen lassen
-# (Gründe in data/README.md und im Fehlerprotokoll). Dieser Block muss am Ende stehen,
-# damit die Ausnahmen die allgemeinen Regeln wie *.shp übersteuern.
 data/interim/**
 !data/interim/**/
-# von Hand bereinigtes Raster
-!data/interim/grid/grid_morocco_clear.*
-# in QGIS erzeugt
+
+# Ausnahmen in data/raw/: kleine Eingabedateien, die kein Skript erzeugen oder neu laden kann.
+# Dieser Block muss am Ende stehen, damit er allgemeine Regeln wie *.csv übersteuert.
+# QGIS-Altdaten aus dem Masterprojekt, Herkunft unbekannt (data/raw/origin_unknown/README.md)
 !data/raw/origin_unknown/cell_flh_re.csv
 # renewables.ninja-Download (Altbestand); 01_re_data.py kann ihn nicht reproduzieren (Fehlerprotokoll Nr. 10)
 !data/raw/renewables_ninja/pv_wind_electricity.csv
-# Kopien der Wasserdaten, kein Skript erzeugt sie
-!data/interim/water_cost/*.csv
-# water_forecast.py braucht Klimadaten 2050, die fehlen
-!data/interim/mca_criteria/results_water_res_availabil_2050.csv

@@ -4,7 +4,7 @@ Ruft für jeden Standort aus ``PV_WIND_50_Punkte.xlsx`` die Erzeugung 2019 einer
 1-kW-Anlage ab (PV: MERRA-2, Neigung 35°, Süd, 10 % Verluste; Wind: Vestas
 V136 3450, 150 m Nabenhöhe) und hängt sie als Spalten ``electricity_PV_i`` /
 ``electricity_Wind_i`` an die vorhandene CSV an. Reiner Download, daher nach
-``data/raw/``; die Volllaststunden berechnet ``01b_flh_re.py``.
+``data/raw/``; die Volllaststunden berechnet ``ki_generiert/01b_flh_re.py``.
 
 Eingaben:
     data/raw/renewables/PV_WIND_50_Punkte.xlsx    Blatt PV_Punkte (Latitude, Longitude)

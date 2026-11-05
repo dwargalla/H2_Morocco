@@ -8,9 +8,8 @@ ausgeschlossen ist (``NoGo`` = 0). Beide Masken werden per Minimum kombiniert.
 Eingaben:
     data/interim/grid/grid_morocco_clear.shp
     data/raw/osm/gis_osm_landuse_a_free_1.shp   (Spalte fclass)
-    data/interim/qgis/ToPo_1500.shp                          (Spalte NoGo, 0/1; in QGIS auf das
-                                                 Raster aggregiert, muss zeilengleich
-                                                 mit dem Raster sein)
+    data/interim/qgis/ToPo_1500.shp                          (Spalte NoGo, 0/1; aus ki_generiert/topography_grid.py,
+                                                 zeilengleich mit dem Raster)
 
 Ausgaben:
     data/interim/mca_criteria/results_nogo_zones.csv   eine Spalte ``NoGo``, zeilengleich mit dem Raster
@@ -49,8 +48,8 @@ gdf_nogo_zones.reset_index(drop=True, inplace=True)
 gdf_nogo_zones.index = range(len(gdf_nogo_zones))
 
     # No-Go Zones: Topography
-    # Source: QGIS, via grid-statistics, origin source for topography: Soufiane fragen
-gdf_topo_utm29n = gpd.read_file('../data/interim/qgis/ToPo_1500.shp').to_crs("EPSG:32629")   #Already 1 or 0, done in QGIS with grid-statistics
+    # Source: Copernicus DEM GLO-90, Höhenspanne je Zelle aus ki_generiert/topography_grid.py
+gdf_topo_utm29n = gpd.read_file('../data/interim/qgis/ToPo_1500.shp').to_crs("EPSG:32629")   #Already 1 or 0
 
 list_nogo = []
 for i in range(len(gdf_grid)):

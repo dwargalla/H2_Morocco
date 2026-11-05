@@ -20,10 +20,10 @@ Eingaben:
     data/interim/grid/grid_morocco_clear.shp
     data/raw/infrastructure/industrial_ports_morocco_{2025,2050}.shp
     data/interim/re_profiles/data_re_flh_electrolyzer.shp   aus 03_assignment_re_data.py
-    data/interim/re_profiles/flh_re.csv                     aus 01b_flh_re.py
+    data/interim/re_profiles/flh_re.csv                     aus ki_generiert/01b_flh_re.py
     data/raw/origin_unknown/cell_flh_re.csv                FLH je Zelle (nicht per Skript erzeugt, vermutlich QGIS)
     data/raw/origin_unknown/morocco_coast_line.shp
-    data/interim/water_cost/water_availability_{sw,gw}.csv, data/interim/water_cost/water_availability_{sw,gw}_2050.csv
+    data/interim/water/water_availability_{sw,gw}{,_2050}.csv   aus water_exploitable_{sw,gw}.py bzw. water_forecast.py
 
 Ausgaben (je Lauf ein neuer Ordner, siehe h2morocco/runs.py):
     results/runs/<Datum>_<Uhrzeit>_<Commit>[-dirty]_cost/
@@ -134,10 +134,10 @@ df_ref_points_flh           = pd.read_csv('../data/interim/re_profiles/flh_re.cs
 df_cell_flh                 = pd.read_csv('../data/raw/origin_unknown/cell_flh_re.csv')      # FLH PV und Wind je Zelle
     # Küste und Wasserverfügbarkeit je Zelle [Mio. m³]
 gdf_coast                   = gpd.read_file('../data/raw/origin_unknown/morocco_coast_line.shp').to_crs("EPSG:32629")
-df_surface_water_2025       = pd.read_csv('../data/interim/water_cost/water_availability_sw.csv')
-df_ground_water_2025        = pd.read_csv('../data/interim/water_cost/water_availability_gw.csv')
-df_surface_water_2050       = pd.read_csv('../data/interim/water_cost/water_availability_sw_2050.csv')
-df_ground_water_2050        = pd.read_csv('../data/interim/water_cost/water_availability_gw_2050.csv')
+df_surface_water_2025       = pd.read_csv('../data/interim/water/water_availability_sw.csv')
+df_ground_water_2025        = pd.read_csv('../data/interim/water/water_availability_gw.csv')
+df_surface_water_2050       = pd.read_csv('../data/interim/water/water_availability_sw_2050.csv')
+df_ground_water_2050        = pd.read_csv('../data/interim/water/water_availability_gw_2050.csv')
 
 
 ############################################################
@@ -178,8 +178,8 @@ df_distance_port_km_2050 = df_distance_port_km_2050/1000  # Convert to km
 cells_with_water_or_coast_2025 = (set(df_surface_water_2025[df_surface_water_2025['water_availability_sw[MCM]'] > 0].index)
                                   | set(df_ground_water_2025[df_ground_water_2025['water_availability_gw[MCM]'] > 0].index)
                                   | set(coastal_cells))
-cells_with_water_or_coast_2050 = (set(df_surface_water_2050[df_surface_water_2050['0'] > 0].index)
-                                  | set(df_ground_water_2050[df_ground_water_2050['0'] > 0].index)
+cells_with_water_or_coast_2050 = (set(df_surface_water_2050[df_surface_water_2050['water_availability_sw[MCM]'] > 0].index)
+                                  | set(df_ground_water_2050[df_ground_water_2050['water_availability_gw[MCM]'] > 0].index)
                                   | set(coastal_cells))
 
 
@@ -405,8 +405,8 @@ df_results_2050 = h2_cost_per_cell(
     flh_cells                   = df_cell_re_2050['FLH_electrolyzer'],
     df_hvdc_cost                = df_hvdc_cost_2050,
     df_h2_pipeline_cost         = df_h2_pipeline_cost_2050,
-    surface_water               = df_surface_water_2050['0'],
-    ground_water                = df_ground_water_2050['0'],
+    surface_water               = df_surface_water_2050['water_availability_sw[MCM]'],
+    ground_water                = df_ground_water_2050['water_availability_gw[MCM]'],
     cells_with_water_or_coast   = cells_with_water_or_coast_2050,
     water_surface_cost          = water_surface_cost_2050,
     water_ground_cost           = water_ground_cost_2050,

@@ -22,6 +22,7 @@ Beide Analysen werden jeweils für **2025** und **2050** gerechnet.
 - [Teil 2: Kostenanalyse](#teil-2-kostenanalyse)
 - [Ergebnisse reproduzieren](#ergebnisse-reproduzieren)
 - [Eingangsdaten](#eingangsdaten)
+- [KI-generierte Dateien](#ki-generierte-dateien)
 - [Bekannte Einschränkungen](#bekannte-einschränkungen)
 
 ---
@@ -33,7 +34,7 @@ H2_Morocco/
 ├── data/
 │   ├── README.md             Herkunft und Links aller Dateien
 │   ├── raw/                  Rohdaten: Downloads und von Hand erstellt (größtenteils nicht im Repo)
-│   └── interim/              Zwischenstufen: Raster, QGIS-Ableitungen, Wasser, MCA-Kriterien, PV/Wind-Profile
+│   └── interim/              Zwischenstufen, alle per Skript erzeugt (löschbar): Raster, Wasser, MCA-Kriterien, …
 ├── results/
 │   ├── mca/                  results_mca_morocco_2025_2050.csv
 │   ├── cost/                 results_cost_{2025,2050}.csv, results_cost_morocco_2025_2050.csv
@@ -42,9 +43,11 @@ H2_Morocco/
 │   ├── Grid_morocco/         Rastererzeugung (grid_morocco.py)
 │   ├── custom.py             Hilfsfunktion list_index() für Zell-Verschneidungen
 │   ├── *.py                  Kriterien-, Wasser- und Kartenskripte (siehe unten)
+│   ├── ki_generiert/         von Claude geschriebene Skripte (ersetzen QGIS-Schritte)
 │   └── old/                  veraltete Skripte
 ├── Cost_analysis/            nur Code
 │   ├── *.py                  Pipeline der Kostenanalyse (siehe unten)
+│   ├── ki_generiert/         von Claude geschriebene Skripte (01b_flh_re.py)
 │   └── 01_old/               veraltete Skripte
 └── requirements.txt
 ```
@@ -83,7 +86,7 @@ Benötigte Eingangsdaten, Pakete, API-Zugangsdaten und Solver-Lizenzen müssen w
 `data/interim/grid/grid_morocco_clear.shp` ist das Rückgrat des Projekts:
 
 - 7219 quadratische Zellen à 10 km, Koordinatensystem **EPSG:32629 (UTM 29N)**, alle Längen in m, alle Flächen in m².
-- `grid_morocco.py` erzeugt das Rohraster; `grid_morocco_clear.shp` ist eine manuell bereinigte Fassung.
+- `grid_morocco.py` erzeugt das Rohraster und `grid_morocco_clear.shp`, dieselben Zellen auf die Landesgrenze zugeschnitten.
 
 **Alle Zwischenergebnisse sind über die Zeilennummer mit dem Raster verknüpft.** Zeile `i` in jeder CSV in `data/interim/` oder `results/` gehört zu Zelle `i` im Raster. Es gibt keine ID-Spalte. Wer eine Zwischen-CSV sortiert oder filtert, verschiebt alle Werte, ohne dass ein Fehler auftritt.
 
@@ -184,7 +187,7 @@ Alle Kostenannahmen (CAPEX, OPEX, Lebensdauer, Zinssatz 8 %) stehen mit Quellena
 | Schritt | Skript | Eingabe | Ausgabe |
 |---|---|---|---|
 | 1 | `re_data.py` | `data/raw/renewables/PV_WIND_50_Punkte.xlsx` (je 50 PV- und Wind-Standorte) | Download der stündlichen PV/Wind-Profile 2019 von renewables.ninja → `data/raw/renewables_ninja/pv_wind_electricity.csv` (API-Token; reproduziert den vorhandenen Bestand nicht, Fehlerprotokoll Nr. 10) |
-| 1b | `01b_flh_re.py` | `data/raw/renewables_ninja/pv_wind_electricity.csv` | Volllaststunden je Standort (Jahressumme der Profile) → `data/interim/re_profiles/flh_re.csv` |
+| 1b | `ki_generiert/01b_flh_re.py` | `data/raw/renewables_ninja/pv_wind_electricity.csv` | Volllaststunden je Standort (Jahressumme der Profile) → `data/interim/re_profiles/flh_re.csv` |
 | 2 | `FLH_el.py` | `data/raw/renewables_ninja/pv_wind_electricity.csv` | PyPSA-Optimierung je Standort: kostenoptimaler Mix aus PV, Wind und Elektrolyseur → `data/interim/re_profiles/FLH_electrolyzer.csv` (Volllaststunden Elektrolyseur, PV- und Windleistung) |
 | 3 | `assignment_re_data.py` | `FLH_electrolyzer.csv` + Koordinaten | `data/interim/re_profiles/data_re_flh_electrolyzer.shp` |
 | 4 | `cost_analysis_h2_morocco.py` | Raster, Häfen, Standortdaten, Wasserverfügbarkeit | `results/cost/results_cost_{2025,2050}.csv` mit allen Kostenbestandteilen je Zelle |
@@ -223,7 +226,7 @@ Dafür werden alle [Eingangsdaten](#eingangsdaten) benötigt. Innerhalb eines Sc
 
 **MCA** (in `MCA/`):
 
-1. `forecast_landuse.py`
+1. `Grid_morocco/grid_morocco.py`, dann `forecast_landuse.py`, `ki_generiert/flow_direction_grid.py`, `ki_generiert/pv_yield_polygons.py`, `ki_generiert/topography_grid.py`
 2. `pv_analysis.py`, `wind_analysis.py`, `accesibility.py`, `industrie.py`, `no_go_zones.py`, `non_conflict.py`, `agriculture.py`, `urban_zone.py`, `rural_zone.py`
 3. `water_exploitable_gw.py`, `water_exploitable_sw.py`, `water_consumption.py`
 4. `water_net.py`, `water_forecast.py`
@@ -231,13 +234,13 @@ Dafür werden alle [Eingangsdaten](#eingangsdaten) benötigt. Innerhalb eines Sc
 
 **Kosten** (in `Cost_analysis/`):
 
-1. `re_data.py` (API-Limit: max. 50 Anfragen pro Stunde; die Schleife ist für schrittweisen Abruf gedacht)
+1. `re_data.py` (nur für einen neuen Download; API-Limit: max. 50 Anfragen pro Stunde), dann `ki_generiert/01b_flh_re.py`
 2. `FLH_el.py`
 3. `assignment_re_data.py`
 4. `cost_analysis_h2_morocco.py`
 5. `results_cost.py`
 
-Die MCA-Wasserdaten werden **nicht** automatisch an die Kostenanalyse übergeben. Die Kostenanalyse liest eigene Wasserdaten aus `data/interim/water_cost/`.
+Die Kostenanalyse liest dieselben Wasserdaten wie die MCA aus `data/interim/water/`. Für 2050 erzeugt `water_forecast.py` eigene Dateien, getrennt nach Grund- und Oberflächenwasser; sie weichen vom Wasser 2050 der MCA ab (Fehlerprotokoll Nr. 36, 77).
 
 ---
 
@@ -249,12 +252,31 @@ Weitere Literaturquellen (Wasserdargebot, Sektoranteile, Kosten) sind direkt in 
 
 ---
 
+## KI-generierte Dateien
+
+Neue Skripte, die Claude (Claude Code) geschrieben hat, liegen in eigenen Unterordnern `ki_generiert/` und tragen im Kopf den Vermerk **KI-generiert**:
+
+| Ordner | Skripte | Übersicht |
+|---|---|---|
+| `MCA/ki_generiert/` | `flow_direction_grid.py`, `pv_yield_polygons.py`, `topography_grid.py` (ersetzen frühere QGIS-Schritte) | `MCA/ki_generiert/README.md` |
+| `Cost_analysis/ki_generiert/` | `01b_flh_re.py` (Volllaststunden aus den Profilen) | `Cost_analysis/ki_generiert/README.md` |
+
+**Vorhandene Skripte, die Claude am 05.11.2026 inhaltlich geändert hat** (Diff in Git):
+- `MCA/Grid_morocco/grid_morocco.py`: schreibt zusätzlich `grid_morocco_clear.shp` (Zuschnitt auf die Landesgrenze)
+- `MCA/water_forecast.py`: schreibt zusätzlich Wasser 2050 für die Kostenanalyse (Block aus Commit `0ff553c`)
+- `Cost_analysis/01_re_data.py`: nur noch Download nach `data/raw/renewables_ninja/`, Rechenteil nach `01b_flh_re.py`
+- `Cost_analysis/04_cost_analysis_h2_morocco.py`: liest Wasser aus `data/interim/water/`
+- Pfade und Kommentare in `wind_analysis.py`, `water_net.py`, `water_exploitable_{sw,gw}.py`, `no_go_zones.py`, `nogo_maps.py`, `02_FLH_el.py`
+
+**Ältere KI-generierte Dateien** (laut Git-Commits mit „Co-Authored-By: Claude“; nicht verschoben, weil sie importiert werden bzw. im Hauptordner liegen müssen): `main.ipynb`, `compare_mca_cost.py`, `h2morocco/__init__.py`, `h2morocco/overview.py`, `h2morocco/runs.py`. Commits ohne diesen Vermerk können ebenfalls KI-Anteile enthalten.
+
+---
+
 ## Bekannte Einschränkungen
 
-1. **2050-Wasserdaten der Kostenanalyse:** `data/interim/water_cost/water_availability_{sw,gw}_2050.csv` lassen sich mit dem aktuellen Code nicht neu erzeugen. Die Berechnung wurde in Commit `0ff553c` aus `water_exploitable_{sw,gw}.py` entfernt und benötigte `MCA/Data/cwp_cell.csv`.
-2. **`data/raw/origin_unknown/cell_flh_re.csv`** stammt nicht aus einem Skript im Repo (vermutlich QGIS).
-3. **Abweichende Wasserdaten:** Die Wasser-CSVs in `data/interim/water_cost/` sind älter als die in `data/interim/water/` und weichen von ihnen ab.
-4. **Nur 50 von 100 Standorten:** `re_data.py` berechnet `flh_re.csv` nur für die ersten 50 von 100 Standorten, die Kostenanalyse ordnet Zellen deshalb nur diesen zu.
-5. **PV-Kosten vermutlich überschätzt:** In `cost_analysis_h2_morocco.py` werden die jährlichen PV-Kosten als `Annuität + CAPEX × Leistung` statt `Annuität + OPEX × Leistung` berechnet.
-6. **Gewichte im Tortendiagramm:** Das Diagramm in `mca_maps.py` nutzt fest eingetragene Werte, die von `dict_weights_category` abweichen.
-7. **Blockierende Fenster:** Kartenskripte rufen `plt.show()` auf und blockieren ohne grafische Oberfläche.
+1. **Herkunft unbekannt:** Wind-Layer, Küstenlinie und `cell_flh_re.csv` stammen aus QGIS ohne erhaltenen Rechenweg, siehe `data/raw/origin_unknown/README.md`.
+2. **Fließrichtung statt Fließakkumulation:** Das Oberflächenwasser wird nach summierten Richtungscodes verteilt (Fehlerprotokoll Nr. 110).
+3. **Nur 50 von 100 Standorten:** `ki_generiert/01b_flh_re.py` berechnet `flh_re.csv` nur für die ersten 50 von 100 Standorten, die Kostenanalyse ordnet Zellen deshalb nur diesen zu.
+4. **PV-Kosten vermutlich überschätzt:** In `cost_analysis_h2_morocco.py` werden die jährlichen PV-Kosten als `Annuität + CAPEX × Leistung` statt `Annuität + OPEX × Leistung` berechnet.
+5. **Gewichte im Tortendiagramm:** Das Diagramm in `mca_maps.py` nutzt fest eingetragene Werte, die von `dict_weights_category` abweichen.
+6. **Blockierende Fenster:** Kartenskripte rufen `plt.show()` auf und blockieren ohne grafische Oberfläche.
