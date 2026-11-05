@@ -7,8 +7,7 @@ erhalten pauschal 100 (Meerwasserentsalzung möglich).
 
 Eingaben:
     data/interim/grid/grid_morocco_clear.shp
-    data/interim/qgis/morocco_coast_line.shp        (derzeit eine Rekonstruktion, siehe
-                                        data/README.md)
+    data/interim/qgis/morocco_coast_line.shp        (Original aus Sciebo, siehe data/README.md)
     data/interim/water/water_availability_gw.csv     aus water_exploitable_gw.py
     data/interim/water/water_availability_sw.csv     aus water_exploitable_sw.py
     data/interim/water/Water_Consumption_2025.csv    aus water_consumption.py

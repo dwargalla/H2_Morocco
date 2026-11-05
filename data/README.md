@@ -4,8 +4,8 @@ Alle Eingangs- und Zwischendaten von MCA und Kostenanalyse liegen in diesem Ordn
 
 | Ordner | Inhalt | Im Repo? |
 |---|---|---|
-| `raw/` | Extern bezogen oder von Hand erstellt. Schreiben dürfen hier nur die Skripte in `reconstruction/`. | nein (außer kleinen Dateien, s. u.), siehe `.gitignore` |
-| `reconstruction/` | Skripte, die verlorene Eingabedateien nachbauen oder ersetzen (siehe unten) | ja |
+| `raw/` | Extern bezogen oder von Hand erstellt. Kein Skript schreibt hierher. | nein (außer kleinen Dateien, s. u.), siehe `.gitignore` |
+| `reconstruction/` | nur noch die gesicherten Nachbauten vom Oktober 2026; die Skripte sind gelöscht (siehe unten) | nein |
 | `interim/` | Abgeleitet, in QGIS oder per Skript. Eingabe für spätere Schritte. | CSVs ja, Geodaten größtenteils nein |
 
 **Alle Dateien je Zelle sind zeilengleich mit dem Raster** `interim/grid/grid_morocco_clear.shp`. Zeile `i` gehört zu Zelle `i`, es gibt keine ID-Spalte. Nicht sortieren und nicht filtern.
@@ -21,18 +21,19 @@ Alle Eingangs- und Zwischendaten von MCA und Kostenanalyse liegen in diesem Ordn
 | `globcover/wsa_gc_adg/wsa_gc_adg.shp` | FAO GlobCover Westsahara (Download 19.10.2026): https://data.apps.fao.org/catalog/iso/75aaf5c5-d579-425a-97fb-aa4580536df2 | `GRIDCODE` | ✓ (Legenden-.xls im Repo) |
 | `boundaries/morocco_Morocco_Country_Boundary.shp` | `General/04_Recherche/QGIS/Marokko karte vollständig/Morocco Country Boundary.shp.zip` | – | ✓ |
 | `boundaries/morocco.geojson` | Kernmarokko, `General/04_Recherche/QGIS/Datein/Daten/morocco.geojson` | – | ✓ |
-| `boundaries/Regions.shp` | **Ersatz, nicht das Original:** 12 Regionen aus https://github.com/Salah-Zkara/Morocco-GeoJson (`Morocco-Regions.geojson`, Download 19.10.2026), Spalte `nom_region` → `Nom_Region`, Schreibweise an `forecast_landuse.py` angepasst (`Tanger-Tetouan-Al Hoceima`, `Fès-Meknès`). Skript: `reconstruction/rebuild_regions.py`. | `Nom_Region` | ✓ (Ersatz) |
-| `boundaries/conflict_area.shp` | **Rekonstruktion, nicht das Original:** Gebiet östlich des Berms nach Marsili (2024), vermutlich von Hand digitalisiert. Nachgebaut als Vereinigung der 874 Zellen, die in `interim/mca_criteria/results_non_conflict_areas.csv` den Wert 0 haben. Natural Earth „W. Sahara“ passt schlechter (988 Zellen). Skript: `reconstruction/rebuild_conflict_area.py`. | – | ✓ (Rekonstruktion) |
+| `boundaries/Regions.shp` | **Original** (Sciebo `H2 Morocco/Masterprojekt/Python/Cost_analysis/Data/Data/`, übernommen 05.11.2026). 12 Regionen mit Bevölkerungsspalten (`Population`, `Nb_Menages`, …). Bis dahin genutzter Ersatz aus https://github.com/Salah-Zkara/Morocco-GeoJson (früher `rebuild_regions.py`, siehe unten) liegt in `reconstruction/ersetzt_2026-11-05/`. | `Nom_Region` | ✓ (Original) |
+| `boundaries/conflict_area.shp` | **Original** (Sciebo `H2 Morocco/Masterprojekt/Python/Cost_analysis/Data/Data/`, übernommen 05.11.2026). Gebiet östlich des Berms nach Marsili (2024), EPSG:4326. Dazu `conflict_area_line.shp` (Berm als Linie, vom Code nicht gelesen). Die Rekonstruktion aus dem früheren `rebuild_conflict_area.py` liegt in `reconstruction/ersetzt_2026-11-05/`. | – | ✓ (Original) |
 | `groundwater/Morocco_HG.shp` | BGS Africa Groundwater Atlas, `General/04_Recherche/QGIS/Datein/Daten/Morocco/` | `MorHGComb` | ✓ |
 | `groundwater/WesternSahara_HG.shp` | BGS Africa Groundwater Atlas (Download 19.10.2026): https://africagroundwateratlas.org/downloads/WSahara.zip | `WSHGComb` | ✓ |
-| `hydrology/watershead_morocco.shp` | **Exakt rekonstruiert** nach `MCA/water_exploitable2.py` (Commit `ed25684`): 8 Gruppen von GADM-1.0-Provinzen (`MAR_adm2.shp`, `General/04_Recherche/QGIS/Datein/Daten/MAR_adm/`, Spalte `ID_2`) per `dissolve()`, dazu `sahara` = Landesgrenze (`boundaries/morocco_Morocco_Country_Boundary.shp`) minus `MAR_adm0.shp`, inklusive der kleinen Splitter entlang der Grenze. EPSG:32629. Skript: `reconstruction/rebuild_watershead.py`. | `name` | ✓ (Rekonstruktion, exakt) |
-| `climate/{Precipitation,PET}_morocco_2050_corr.shp` | CMIP6, SSP2-4.5, nach Gumus et al. (2024), https://doi.org/10.1016/j.jenvman.2024.122019 (Daten bei den Autoren anfragen) | `Precipitat`, `PET` | fehlt |
+| `hydrology/watershead_morocco.shp` | **Original** (Sciebo `H2 Morocco/Masterprojekt/Python/Cost_analysis/Data/Data/`, übernommen 05.11.2026). 9 Einzugsgebiete, EPSG:32629. Entstanden aus GADM-1.0-Provinzgruppen, siehe das frühere `rebuild_watershead.py` (unten); der Nachbau weicht nur um 2·10⁻⁹ der Fläche ab und liegt in `reconstruction/ersetzt_2026-11-05/`. | `name` | ✓ (Original) |
+| `hydrology/flow_direction_morocco.tif` (+ `.aux.xml`) | **Original** (Sciebo `…/Cost_analysis/Data/Data/`, übernommen 05.11.2026). 1,5 GB, 83 m, EPSG:32629. MERIT Hydro, Produkt `dir` (D8-Fließrichtung: 1, 2, 4, …, 128; 0 Mündung, 247 Ozean, 255 Senke), aus den Kacheln `dir_n30w030`/`dir_n00w030` (Sciebo `QGIS/Daten/`). Vom Code nicht gelesen; Quelle von `interim/qgis/flow_direction_grid.shp`, Zonensumme nachgerechnet (7.216/7.219 Zellen auf ±1 gleich). | Werte 0–255 | ✓ (Original) |
+| `climate/{Precipitation,PET}_morocco_2050_corr.shp` | CMIP6, SSP2-4.5, nach Gumus et al. (2024), https://doi.org/10.1016/j.jenvman.2024.122019. **Original** (Sciebo `H2 Morocco/Masterprojekt/Python/Cost_analysis/Data/Data/`, übernommen 05.11.2026). Klassen-Polygone (20 bzw. 17), vermutlich aus den Karten des Papers digitalisiert. Ohne `_corr` liegen gröbere Vorfassungen daneben (vom Code nicht gelesen). | `Precipitat`, `PET` | ✓ (Original) |
 | `infrastructure/industrial_ports_morocco_{2025,2050}.shp` | von Hand erstellt | – | ✓ (im Repo) |
 | `renewables/PV_WIND_50_Punkte.xlsx` | je 50 repräsentative PV- und Wind-Standorte, von Hand gewählt | `Latitude`, `Longitude` | ✓ (im Repo) |
-| `boundaries/gadm1/MAR_adm{0,2}.shp` | GADM 1.0 (2009), aus `General/04_Recherche/QGIS/Datein/Daten/MAR_adm/`; Lizenz siehe `MAR_readme.txt`. Quelle für `rebuild_watershead.py` | `ID_2` | ✓ |
-| `boundaries/Morocco-Regions.geojson` | https://github.com/Salah-Zkara/Morocco-GeoJson, lädt `rebuild_regions.py` | `nom_region` | ✓ |
-| `renewables/gsa/PVOUT_Morocco_Complete_Yearly.tif` | Global Solar Atlas, PV-Jahresertrag Marokko + Westsahara, aus `General/04_Recherche/QGIS/`. Quelle für `rebuild_pv_wind.py` | – | ✓ |
-| `renewables/gwa/{MAR,ESH}_capacity-factor_IEC3.tif` | Global Wind Atlas (Download 19.10.2026), lädt `rebuild_pv_wind.py` | – | ✓ |
+| `boundaries/gadm1/MAR_adm{0,2}.shp` | GADM 1.0 (2009), aus `General/04_Recherche/QGIS/Datein/Daten/MAR_adm/`; Lizenz siehe `MAR_readme.txt`. Quelle des früheren `rebuild_watershead.py`, vom Code nicht mehr gelesen | `ID_2` | ✓ |
+| `boundaries/Morocco-Regions.geojson` | https://github.com/Salah-Zkara/Morocco-GeoJson, Quelle des früheren Ersatzes, vom Code nicht mehr gelesen | `nom_region` | ✓ |
+| `renewables/gsa/PVOUT_Morocco_Complete_Yearly.tif` | Global Solar Atlas, PV-Jahresertrag Marokko + Westsahara, aus `General/04_Recherche/QGIS/`. Quelle des früheren PV-Ersatzes, vom Code nicht mehr gelesen | – | ✓ |
+| `renewables/gwa/{MAR,ESH}_capacity-factor_IEC3.tif` | Global Wind Atlas (Download 19.10.2026), Quelle des früheren Wind-Ersatzes, vom Code nicht mehr gelesen | – | ✓ |
 
 Kontrolle GlobCover: Der 2025-Teil von `urban_zone.py` liefert damit dieselben 171 Stadtzellen wie `interim/mca_criteria/results_urban.csv` (max. Abweichung 1·10⁻¹³, Rundung). Es sind also die Originaldaten.
 
@@ -42,16 +43,16 @@ Kontrolle GlobCover: Der 2025-Teil von `urban_zone.py` liefert damit dieselben 1
 |---|---|---|
 | `grid/` | `grid_morocco.shp` | `MCA/Grid_morocco/grid_morocco.py` |
 | | `grid_morocco_clear.shp` | von Hand bereinigte Fassung (7219 Zellen, EPSG:32629). **Zentrales Raster.** |
-| `qgis/` | `ToPo_1500.shp` | QGIS, Topografie auf das Raster aggregiert (`NoGo` 0/1). Aus Commit `9927be0` wiederhergestellt, Spalte `NoGos` in `NoGo` umbenannt. |
-| | `morocco_coast_line.shp` | **Rekonstruktion, nicht das Original:** Landesgrenze, beschnitten auf die 352 Küstenzellen (Wasser-Score 100), plus zwei Platzhalterlinien für die Zellen 5021 und 5151. Trifft exakt dieselben Zellen wie das Original, taugt aber nur eingeschränkt für Karten. |
+| `qgis/` | `ToPo_1500.shp` | QGIS, Topografie auf das Raster aggregiert (`NoGo` 0/1). **Original** (Sciebo `H2 Morocco/Masterprojekt/Python/Cost_analysis/Data/Data/`, übernommen 05.11.2026); gleich der Fassung aus Commit `9927be0`, zusätzlich Spalte `Diff` (vom Code nicht gelesen). |
+| | `morocco_coast_line.shp` | **Original** (Sciebo `H2 Morocco/Masterprojekt/Python/Cost_analysis/Data/Data/`, übernommen 05.11.2026), EPSG:4326. Die Rekonstruktion traf beim Wasser-Score 2025 dieselben Zellen, beim Score 2050 aber eine Zelle nicht; sie liegt in `reconstruction/ersetzt_2026-11-05/`. |
 | | `cell_flh_re.csv` | QGIS (PV/Wind-Volllaststunden je Zelle), kein Skript |
-| | `flow_direction_grid.shp` | **Rekonstruktion:** `_sum` je Rasterzelle aus `interim/water/water_availability_sw.csv` zurückgerechnet (Umkehrung von `water_exploitable_sw.py`, 9 Gebietssummen per Ausgleichsrechnung). Den gemeinsamen Faktor liefert die Farbleiste von `General/06_Diagramme_Karten/EPS/morocco_flow_direction.eps` (vmax = 1 091 380). Ursprüngliche Datenquelle unbekannt. Skript: `reconstruction/rebuild_flow_direction_grid.py`. |
-| | `PV_yeald_clear_ma_we.shp` | **Ersatz, nicht das Original:** ein Polygon je Rasterzelle (um 1 m nach innen gepuffert) mit dem Mittel aller Pixel aus `General/04_Recherche/QGIS/PVOUT_Morocco_Complete_Yearly.tif` (Global Solar Atlas, Marokko + Westsahara), die die Zelle berühren. Skript: `reconstruction/rebuild_pv_wind.py`. |
-| | `Wind_pot_morocco_FLH.shp` | **Ersatz, nicht das Original:** ein Polygon je Rasterzelle (um 1 m nach innen gepuffert) mit `FLH_wind` = Capacity Factor IEC3 × 8760 h, gemittelt über die Pixel. Daten: Global Wind Atlas, `https://globalwindatlas.info/api/gis/country/{MAR,ESH}/capacity-factor_IEC3` (Download 19.10.2026). Das Original lag unter `Wind_Energiedichte/wind_yeald/`, Rechenweg unbekannt. Skript: `reconstruction/rebuild_pv_wind.py`. |
-| `landuse/` | `morocco_landuse_2050.shp` | `MCA/forecast_landuse.py` (mit dem Ersatz-`Regions.shp` erzeugt) |
+| | `flow_direction_grid.shp` | **Original** (Sciebo `H2 Morocco/Masterprojekt/Python/Cost_analysis/Data/Data/`, übernommen 05.11.2026): `_sum` je Rasterzelle = QGIS-Zonensumme von `raw/hydrology/flow_direction_morocco.tif`. **Achtung:** Das sind summierte D8-Fließrichtungs-Codes, keine Fließakkumulation (Fehlerprotokoll Nr. 110). Die Rückrechnung aus dem früheren `rebuild_flow_direction_grid.py` liegt in `reconstruction/ersetzt_2026-11-05/`; sie passt nur zum rekonstruierten `watershead_morocco`. |
+| | `PV_yeald_clear_ma_we.shp` | **Original** (Sciebo `…/Data/Data/Morocco_GISdata_LTAy_YearlyMonthlyTotals_GlobalSolarAtlas-v2_GEOTIFF/`, übernommen 05.11.2026): Global Solar Atlas v2, PV-Jahresertrag. Der Ersatz aus dem früheren `rebuild_pv_wind.py` liegt in `reconstruction/ersetzt_2026-11-05/`. |
+| | `Wind_pot_morocco_FLH.shp` | **Original** (Sciebo `…/Data/Data/Wind_Energiedichte/wind_yeald/`, übernommen 05.11.2026), Rechenweg weiter unbekannt. Der Ersatz aus dem früheren `rebuild_pv_wind.py` (Global Wind Atlas IEC3 × 8760 h) liegt in `reconstruction/ersetzt_2026-11-05/`. |
+| `landuse/` | `morocco_landuse_2050.shp` | `MCA/forecast_landuse.py`. **Original** aus Sciebo (übernommen 05.11.2026); `forecast_landuse.py` erzeugt mit dem Original-`Regions.shp` dieselbe Geometrie und dieselben Werte. |
 | `water/` | `water_availability_{sw,gw}.csv` | `MCA/water_exploitable_{sw,gw}.py` |
 | | `Water_Consumption_{2025,2050}.csv` | `MCA/water_consumption.py` |
-| | `cwb.shp` (fehlt) | `MCA/water_forecast.py` |
+| | `cwb.shp` | `MCA/water_forecast.py`. **Original** (Sciebo `H2 Morocco/Masterprojekt/Python/Cost_analysis/Data/Data/`, übernommen 05.11.2026); identisch mit dem, was `water_forecast.py` aus den Klimadaten erzeugt. |
 | `water_cost/` | `water_availability_{sw,gw}{,_2050}.csv` | eigene, ältere Fassung der Kostenanalyse. **Weicht von `water/` ab.** Die 2050-Dateien lassen sich mit dem aktuellen Code nicht neu erzeugen (Commit `0ff553c`, Korrekturplan F-22). |
 | `mca_criteria/` | `results_*.csv` (14 Kriterien-Dateien) | MCA-Kriterienskripte, Eingabe für `MCA/mca_maps.py` |
 | `re_profiles/` | `pv_wind_electricity.csv`, `flh_re.csv` | `Cost_analysis/re_data.py` |
@@ -60,21 +61,11 @@ Kontrolle GlobCover: Der 2025-Teil von `urban_zone.py` liefert damit dieselben 1
 
 ## reconstruction/
 
-Baut verlorene Eingabedateien nach (Rekonstruktion) oder ersetzt sie durch frei verfügbare Daten (Ersatz). Ausführen aus `data/reconstruction/`, in dieser Reihenfolge:
+Hier lagen bis 05.11.2026 die Skripte `rebuild_watershead.py`, `rebuild_flow_direction_grid.py`, `rebuild_regions.py`, `rebuild_conflict_area.py` und `rebuild_pv_wind.py`. Sie bauten verlorene Eingabedateien nach oder ersetzten sie durch frei verfügbare Daten. Seit die Originale aus Sciebo vorliegen (siehe unten), sind sie überflüssig und **gelöscht**. Letzter Stand in der Git-Historie: Commit `71be5b8` (`git show 71be5b8:data/reconstruction/rebuild_regions.py`).
 
-```bash
-python rebuild_watershead.py           # -> raw/hydrology/watershead_morocco.shp
-python rebuild_flow_direction_grid.py  # -> interim/qgis/flow_direction_grid.shp (braucht watershead_morocco)
-python rebuild_regions.py              # -> raw/boundaries/Regions.shp
-python rebuild_conflict_area.py        # -> raw/boundaries/conflict_area.shp
-python rebuild_pv_wind.py              # -> interim/qgis/PV_yeald_clear_ma_we.shp, Wind_pot_morocco_FLH.shp
-```
+Die damit erzeugten Nachbauten liegen in `reconstruction/ersetzt_2026-11-05/` (gleiche Unterordner wie in `data/`, gitignored).
 
-`rebuild_flow_direction_grid.py` und `rebuild_conflict_area.py` rechnen aus den getrackten Ergebnis-CSVs zurück. Sie ersetzen also keine Originaldaten, sondern machen die Pipeline wieder lauffähig und die Karten zeichenbar.
-
-Kontrolle der wiederhergestellten Dateien: `water_net.py`, `no_go_zones.py` und `mca_maps.py` reproduzieren damit die vorhandenen Ergebnis-CSVs wertgleich.
-
-### Kontrolle der Rekonstruktionen (19.10.2026)
+### Frühere Kontrolle der Nachbauten (19.10.2026, nur noch historisch)
 
 | Datei | Prüfung | Ergebnis |
 |---|---|---|
@@ -85,4 +76,19 @@ Kontrolle der wiederhergestellten Dateien: `water_net.py`, `no_go_zones.py` und 
 | `PV_yeald_clear_ma_we` | `pv_analysis.py` gegen `results_pv_yeald.csv` | Korrelation 0,99995, Median-Abweichung 0,03 %, max. 8,9 kWh/kWp |
 | `Wind_pot_morocco_FLH` | `wind_analysis.py` gegen `results_wind_flh.csv` | Korrelation 0,981 (Rang 0,986); Werte im Mittel etwa 15 % niedriger. Für die MCA unkritisch, weil `mca_maps.py` min-max-skaliert |
 
-Nicht beschaffbar: `climate/{Precipitation,PET}_morocco_2050_corr.shp` (Gumus et al. 2024, Daten nur auf Anfrage; die Endung `_corr` deutet auf abdigitalisierte Karten hin) und damit `interim/water/cwb.shp`.
+### Originale aus Sciebo (05.11.2026)
+
+Die verlorenen Originale lagen im Sciebo-Ordner `H2 Morocco/Masterprojekt/Python/` (`Cost_analysis/Data/Data/`, weitgehend gleich in `MCA/Data/`). Sie wurden übernommen, die Nachbauten nach `reconstruction/ersetzt_2026-11-05/` verschoben (gleiche Unterordner). Geprüft wurde, indem die Original-Skripte in einer Kopie des Repos mit den Sciebo-Dateien liefen und ihre Ausgaben mit den getrackten Ergebnis-CSVs verglichen wurden (alle 7219 Zellen):
+
+| Datei(en) | Prüfung | Ergebnis |
+|---|---|---|
+| `climate/{Precipitation,PET}_morocco_2050_corr` + `morocco_coast_line` | `water_forecast.py` gegen `results_water_res_availabil_2050.csv` | exakt (max. 2·10⁻¹³). Mit der rekonstruierten Küstenlinie wich 1 Zelle um 12,6 Punkte ab |
+| `cwb` | gegen die von `water_forecast.py` neu erzeugte `cwb.shp` | gleiche 52 Polygone und Werte |
+| `morocco_coast_line` | `water_net.py` gegen `results_water_res_available.csv` | exakt |
+| `conflict_area` | `non_conflict.py` gegen `results_non_conflict_areas.csv` | exakt, dieselben 874 Nullzellen |
+| `flow_direction_grid` + `watershead_morocco` | `water_exploitable_sw.py` gegen `water_availability_sw.csv` | exakt. Das Original-`flow_direction_grid` mit dem rekonstruierten `watershead_morocco` dagegen nicht (max. 0,16 MCM) |
+| `watershead_morocco` | `water_exploitable_gw.py` gegen `water_availability_gw.csv` | exakt (2·10⁻¹³) |
+| `Regions` | `forecast_landuse.py`, dann `urban_zone.py`, `rural_zone.py`, `agriculture.py` gegen die sechs CSVs 2025/2050 | alle exakt (≤ 7·10⁻¹³); Landnutzung 2050 gleich dem Sciebo-Original |
+| `PV_yeald_clear_ma_we` | `pv_analysis.py` gegen `results_pv_yeald.csv` | exakt |
+| `Wind_pot_morocco_FLH` | `wind_analysis.py` gegen `results_wind_flh.csv` | exakt |
+| `ToPo_1500` | Geometrie und Spalten gegen die Fassung aus Commit `9927be0` | gleich (plus Spalte `Diff`) |

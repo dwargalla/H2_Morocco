@@ -67,7 +67,7 @@ pip install -r requirements.txt
 
 **Direkt in VS Code starten:** Öffne das gewünschte Skript und klicke oben rechts auf **Python-Datei ausführen**. Wähle über **Python: Interpreter auswählen** die Python-Umgebung `H2_Morocco/.venv` aus (wenn `H2_Morocco` selbst geöffnet ist: `.venv`).
 
-Die aktiven Skripte in `Cost_analysis/`, `MCA/`, `MCA/Grid_morocco/` und `data/reconstruction/` setzen beim direkten Start ihr Arbeitsverzeichnis automatisch auf ihren eigenen Ordner. Dadurch werden `../data/...` und `../results/...` unabhängig vom Arbeitsordner des Terminals korrekt aufgelöst. Auch ein Start aus dem Projektordner funktioniert:
+Die aktiven Skripte in `Cost_analysis/`, `MCA/`, und `MCA/Grid_morocco/` setzen beim direkten Start ihr Arbeitsverzeichnis automatisch auf ihren eigenen Ordner. Dadurch werden `../data/...` und `../results/...` unabhängig vom Arbeitsordner des Terminals korrekt aufgelöst. Auch ein Start aus dem Projektordner funktioniert:
 
 ```bash
 python MCA/mca_maps.py

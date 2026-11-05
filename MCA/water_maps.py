@@ -121,7 +121,7 @@ plt.tight_layout()
 plt.savefig("../results/figures/mca/morocco_watersheds.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
-# Map CWB (nicht im Paper; cwb.shp entsteht erst mit den Klimadaten 2050 in water_forecast.py)
+# Map CWB (nicht im Paper; cwb.shp kommt aus water_forecast.py bzw. als Original aus Sciebo)
 if os.path.exists('../data/interim/water/cwb.shp'):
     gdf_cwb = gpd.read_file('../data/interim/water/cwb.shp')
     fig, ax = plt.subplots(figsize=(15, 10))
