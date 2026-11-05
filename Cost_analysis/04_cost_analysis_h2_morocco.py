@@ -30,11 +30,10 @@ Ausgaben (je Lauf ein neuer Ordner, siehe h2morocco/runs.py):
         results_cost_2025.csv, results_cost_2050.csv   je Zelle: Produktionszelle, FLH,
                                  Kostenanteile (Wasser, Elektrolyse, EE, Netz, Pipeline)
                                  und Gesamtpreis in €/MWh_H2
-        overview.png             Übersicht im Folienformat
-        metrics.csv              Kennzahlen; zusätzlich eine Zeile in results/runs/runs_index.csv
         run_info.json, model_parameters.csv, changes.patch, FLH_electrolyzer.csv
                                  Codestand, Parameter und Auslegung dieses Laufs
     Optional: --note "was geändert wurde"
+    Die Übersichtsfolie entsteht nicht mehr hier, sondern in compare_mca_cost.py (Schritt in main.ipynb).
 
 Hinweise:
     - Die Distanzmatrix und ihre Sortierung brauchen mehrere GB Arbeitsspeicher.
@@ -59,7 +58,6 @@ import geopandas as gpd
 import numpy as np
 import pandas as pd
 
-from h2morocco.overview import build_overview
 from h2morocco.runs import new_run_dir
 from h2morocco.utils import annuity_factor, read_model_parameters
 
@@ -425,7 +423,4 @@ df_results_2050 = h2_cost_per_cell(
 df_results_2025.to_csv(run_dir / 'results_cost_2025.csv', index=False)
 df_results_2050.to_csv(run_dir / 'results_cost_2050.csv', index=False)
 shutil.copy2('../data/interim/re_profiles/FLH_electrolyzer.csv', run_dir / 'FLH_electrolyzer.csv')
-
-# Übersichtsbild (overview.png) und Kennzahlen (metrics.csv, results/runs/runs_index.csv)
-build_overview(run_dir, gdf_grid, df_results_2025, df_results_2050)
 print(f'Fertig: {run_dir}')

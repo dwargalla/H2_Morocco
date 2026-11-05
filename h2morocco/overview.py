@@ -1,15 +1,17 @@
-"""Übersichtsbild im Folienformat (16:9, PNG) für einen Kostenlauf.
+"""Übersichtsfolie (16:9, PNG) für einen Vergleichslauf MCA ↔ Kosten.
 
-Zeigt auf einem Bild: Codestand und Notiz des Laufs, mittlere H2-Kosten 2025 und 2050
-mit Änderung gegenüber dem vorherigen Lauf, die Kostenanteile, beide Kostenkarten und die
-Parameter, die sich gegenüber dem vorherigen Lauf geändert haben.
+Eine Folie mit Herkunft, Kennzahlen (LCOH-Median, mittlerer MCA-Score, Rangkorrelation),
+mittleren Kostenanteilen, geänderten Parametern und Karten (MCA, Δ MCA, LCOH, Δ LCOH),
+jeweils im Vergleich zu einem Bezugslauf (Standard: letzter Vergleichslauf).
 
-Aufruf am Ende von 04_cost_analysis_h2_morocco.py:
-    build_overview(run_dir, gdf_grid, df_results_2025, df_results_2050)
+Aufruf über compare_mca_cost.py (letzter Schritt in main.ipynb):
+    build_comparison_overview(run_dir, gdf_grid, results, allowed, sources, reference_dir)
 
 Ausgaben im Laufordner:
-    overview.png    das Übersichtsbild (13,33 × 7,5 Zoll wie eine Folie)
-    metrics.csv     Kennzahlen des Laufs (auch als Zeile in results/runs/runs_index.csv)
+    overview.png           die Folie (13,33 × 7,5 Zoll)
+    results_compare.csv    MCA und LCOH je Zelle (Bezug für spätere Vergleiche)
+    sources.json           verglichener Kostenlauf und MCA-Stand
+    metrics.csv            Kennzahlen (auch als Zeile in results/runs/runs_index.csv)
 """
 import textwrap
 from pathlib import Path
@@ -19,7 +21,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from h2morocco.runs import append_to_index, latest_run_dir, read_run_info
+from h2morocco.runs import RUNS_DIR, append_to_index, latest_run_dir, read_run_info
 
 H2_LHV_KWH_PER_KG = 33.33   # nur für die Anzeige in €/kg
 
@@ -95,104 +97,171 @@ def _axes(fig, x, y, w, h):
     return fig.add_axes([x / W, 1 - (y + h) / H, w / W, h / H])
 
 
-def _delta(new, old):
-    """Text und Farbe der Änderung gegenüber dem vorherigen Lauf."""
+def comparison_metrics(results, allowed, cost_dir):
+    """Kennzahlen eines Vergleichslaufs je Jahr: LCOH-Median und Kostenanteile (wie cost_metrics),
+    mittlerer MCA-Score und Spearman-ρ MCA ↔ LCOH, beide nur auf zulässigen Zellen."""
+    from scipy.stats import spearmanr
+    df_cost = {year: pd.read_csv(Path(cost_dir) / f'results_cost_{year}.csv') for year in (2025, 2050)}
+    metrics = cost_metrics(df_cost[2025], df_cost[2050])
+    for year in (2025, 2050):
+        mca, lcoh = results[f'MCA_{year}'][allowed], results[f'LCOH_{year}'][allowed]
+        metrics[f'mca_{year}_mean'] = round(mca.mean(), 2)
+        metrics[f'rho_{year}'] = round(spearmanr(mca, lcoh).statistic, 3)
+    return metrics
+
+
+def _delta_short(new, old, unit='', digits=1, higher_is_better=None):
+    """Kurzer Δ-Text mit Farbe: grün = besser, rot = schlechter, grau = neutral oder kein Vorlauf."""
     if old is None or pd.isna(old):
-        return 'erster Lauf', MUTED
+        return 'kein Bezug', MUTED
     diff = new - old
-    if abs(diff) < 0.005:
-        return '± 0 ggü. Vorlauf', MUTED
-    return f"{f'{diff:+.1f}'.replace('.', ',')} €/MWh ggü. Vorlauf", UP if diff > 0 else DOWN
+    if abs(diff) < 0.5 * 10 ** -digits:
+        return '± 0 ggü. Bezug', MUTED
+    color = MUTED if higher_is_better is None else (DOWN if (diff > 0) == higher_is_better else UP)
+    return f'{diff:+.{digits}f}{unit} ggü. Bezug'.replace('.', ','), color
 
 
-def build_overview(run_dir, gdf_grid, df_results_2025, df_results_2050):
-    """Erzeugt overview.png und metrics.csv im Laufordner und trägt die Kennzahlen in runs_index.csv ein."""
+def build_comparison_overview(run_dir, gdf_grid, results, allowed, sources, reference_dir=None):
+    """Eine Folie MCA ↔ Kosten mit Kennzahlen, Kostenanteilen, geänderten Parametern und Karten,
+    jeweils im Vergleich zum letzten Vergleichslauf.
+
+    results:  DataFrame je Zelle (zeilengleich mit gdf_grid), Spalten MCA_<Jahr> und LCOH_<Jahr>
+    allowed:  Series, True = keine No-Go-Zone (No-Go-Zellen werden in den MCA-Karten grau dargestellt)
+    sources:  dict mit 'cost_run' (Name des Kostenlaufs in results/runs/) und 'mca_mtime' (Dateistand der MCA)
+    reference_dir: Vergleichslauf, gegen den die Δ-Werte gerechnet werden (Standard: der letzte davor)
+
+    Speichert im Laufordner results_compare.csv, sources.json und metrics.csv (Bezug für den nächsten
+    Vergleichslauf), trägt die Kennzahlen in runs_index.csv ein und zeichnet overview.png (13,33 × 7,5 Zoll).
+    """
     run_dir = Path(run_dir)
     info = read_run_info(run_dir)
-    previous_dir = latest_run_dir(info['kind'], before=run_dir)
-    metrics = cost_metrics(df_results_2025, df_results_2050)
-    previous_metrics = None
-    if previous_dir is not None and (previous_dir / 'metrics.csv').exists():
-        previous_metrics = pd.read_csv(previous_dir / 'metrics.csv').iloc[0].to_dict()
+    cost_dir = RUNS_DIR / sources['cost_run']
+    cost_info = read_run_info(cost_dir)
+    metrics = comparison_metrics(results, allowed, cost_dir)
+    results.to_csv(run_dir / 'results_compare.csv', index=False)
+    (run_dir / 'sources.json').write_text(pd.Series(sources).to_json(indent=2, force_ascii=False), encoding='utf-8')
     pd.DataFrame([metrics]).to_csv(run_dir / 'metrics.csv', index=False)
     append_to_index(run_dir, metrics)
+
+    # Letzter Vergleichslauf als Bezug
+    previous_dir = Path(reference_dir) if reference_dir else latest_run_dir('compare', before=run_dir)
+    previous, previous_sources, previous_metrics = None, {}, {}
+    if previous_dir is not None and (previous_dir / 'results_compare.csv').exists():
+        previous = pd.read_csv(previous_dir / 'results_compare.csv')
+        previous_sources = pd.read_json(previous_dir / 'sources.json', typ='series').to_dict()
+        if (previous_dir / 'metrics.csv').exists():
+            previous_metrics = pd.read_csv(previous_dir / 'metrics.csv').iloc[0].to_dict()
+    years = sorted(int(c.split('_')[1]) for c in results if c.startswith('MCA_'))
 
     plt.rcParams['font.family'] = 'DejaVu Sans'
     fig = plt.figure(figsize=(13.333, 7.5), facecolor='white')
 
-    # Kopf: Lauf, Codestand, Notiz
-    title = _txt(fig, 0.5, 0.35, 'H2-Kostenlauf', 26, DARK, 'bold')
-    _txt(fig, 0.5 + _width(fig, title) + 0.25, 0.47, info['started'].replace('T', ' '), 17, MUTED)
-    status = 'nicht committete Änderungen (changes.patch)' if info['dirty'] else 'sauberer Commit'
-    commit = _txt(fig, 0.5, 1.0, f"Commit {info['commit']} ({info['branch']})  ·  ", 11)
-    _txt(fig, 0.5 + _width(fig, commit), 1.0, status, 11, ACCENT if info['dirty'] else MUTED)
-    _txt(fig, 0.5, 1.3, 'Notiz: ' + (info['note'] or '–'), 11, TEXT)
+    # Kopf und Herkunft
+    title = _txt(fig, 0.4, 0.25, 'MCA ↔ Kosten', 24, DARK, 'bold')
+    _txt(fig, 0.4 + _width(fig, title) + 0.25, 0.36, info['started'].replace('T', ' '), 15, MUTED)
+    _txt(fig, 0.4, 0.82, 'Notiz: ' + (info['note'] or '–'), 11)
+    status = lambda i: 'nicht committet' if i['dirty'] else 'sauber'
+    _txt(fig, 0.4, 1.13, f"Jetzt:  Kosten {sources['cost_run']} (Commit {cost_info['commit']}, {status(cost_info)})  ·  "
+                         f"MCA Dateistand {sources['mca_mtime']} (kein Laufordner, Gewichte nicht erfasst)", 8.5, MUTED)
+    if previous is not None:
+        _txt(fig, 0.4, 1.35, f"Δ-Bezug:  {previous_dir.name}  ·  Kosten {previous_sources.get('cost_run', '–')}  ·  "
+                             f"MCA Dateistand {previous_sources.get('mca_mtime', '–')}", 8.5, MUTED)
+    else:
+        _txt(fig, 0.4, 1.35, 'Δ-Bezug:  kein früherer Vergleichslauf', 8.5, MUTED)
 
-    # Kennzahlen 2025 / 2050
-    for i, year in enumerate((2025, 2050)):
-        x = 0.5 + i * 2.05
-        _panel(fig, x, 1.8, 1.9, 2.0)
-        median = metrics[f'lcoh_{year}_median']
-        old = previous_metrics.get(f'lcoh_{year}_median') if previous_metrics else None
-        delta_text, delta_color = _delta(median, old)
-        _txt(fig, x + 0.15, 1.9, str(year), 13, MUTED, 'bold')
-        _txt(fig, x + 0.15, 2.2, f'{median:.1f}'.replace('.', ','), 30, DARK, 'bold')
-        _txt(fig, x + 0.15, 2.85, '€/MWh$_{H2}$ (Median)', 9.5, MUTED)
-        _txt(fig, x + 0.15, 3.1, f'= {median * H2_LHV_KWH_PER_KG / 1000:.2f} €/kg'.replace('.', ','), 11)
-        _txt(fig, x + 0.15, 3.35, f"5–95 %: {metrics[f'lcoh_{year}_p05']:.0f}–{metrics[f'lcoh_{year}_p95']:.0f}", 9.5, MUTED)
-        _txt(fig, x + 0.15, 3.57, delta_text, 9.5, delta_color, 'bold')
+    # Kennzahlen: Zeilen = Jahre; Spalten = LCOH-Median, MCA-Mittel, ρ
+    # (Titel, Kennzahl, Format, Nachkommastellen Δ, höher = besser?)
+    tiles = [('LCOH {} [€/MWh]', 'lcoh_{}_median', '{:.1f}', 1, False),
+             ('MCA {} [Ø Score]', 'mca_{}_mean', '{:.1f}', 1, True),
+             ('ρ MCA↔LCOH {}', 'rho_{}', '{:.2f}', 2, None)]
+    for i, year in enumerate(years):
+        for j, (label, key, fmt, digits, better) in enumerate(tiles):
+            x, y = 0.4 + j * 1.37, 1.75 + i * 0.95
+            _panel(fig, x, y, 1.3, 0.87)
+            value = metrics[key.format(year)]
+            _txt(fig, x + 0.1, y + 0.07, label.format(year), 7.5, MUTED, 'bold')
+            _txt(fig, x + 0.1, y + 0.25, fmt.format(value).replace('.', ','), 17, DARK, 'bold')
+            delta_text, delta_color = _delta_short(value, previous_metrics.get(key.format(year)),
+                                                   '', digits, better)
+            _txt(fig, x + 0.1, y + 0.64, delta_text, 7.5, delta_color, 'bold')
 
-    # Kostenanteile
-    ax = _axes(fig, 0.75, 4.35, 1.9, 2.75)
-    bottom = [0.0, 0.0]
+    # Kostenanteile: je Jahr letzter und dieser Lauf
+    _txt(fig, 0.4, 1.57, 'LCOH: Median aller Zellen  ·  MCA und ρ: nur zulässige Zellen', 6.5, MUTED)
+    _txt(fig, 0.4, 3.72, 'Mittlere Kostenanteile [€/MWh$_{H2}$]', 11, TEXT, 'bold')
+    ax = _axes(fig, 0.75, 4.05, 2.35, 1.4)
+    bars = []                       # (Beschriftung, Kennzahlen)
+    for year in years:
+        if previous_metrics.get(f'{year}_{list(COMPONENTS.values())[0]}') is not None:
+            bars.append((f'{year}\nvorher', year, previous_metrics))
+        bars.append((f'{year}\njetzt', year, metrics))
+    positions = [k + (0.4 if k >= len(bars) / 2 else 0) for k in range(len(bars))]
+    bottom = [0.0] * len(bars)
     for label, color in zip(COMPONENTS.values(), COMPONENT_COLORS):
-        values = [metrics[f'2025_{label}'], metrics[f'2050_{label}']]
-        bars = ax.bar(['2025', '2050'], values, bottom=bottom, color=color, width=0.6, label=label)
-        for bar, value, base in zip(bars, values, bottom):
-            if value >= 6:
-                ax.text(bar.get_x() + bar.get_width() / 2, base + value / 2, f'{value:.0f}', ha='center', va='center',
-                        fontsize=8.5, color='white' if color in COMPONENT_COLORS[:2] else TEXT)
+        values = [m[f'{year}_{label}'] for _, year, m in bars]
+        ax.bar(positions, values, bottom=bottom, color=color, width=0.7, label=label)
         bottom = [b + v for b, v in zip(bottom, values)]
-    ax.set_title('Mittlere Kostenanteile [€/MWh$_{H2}$]', fontsize=11, color=TEXT, loc='left', x=-0.25)
+    for pos, total in zip(positions, bottom):
+        ax.text(pos, total + 2, f'{total:.0f}', ha='center', va='bottom', fontsize=8, color=TEXT)
+    ax.set_xticks(positions, [b[0] for b in bars])
+    ax.set_ylim(0, max(bottom) * 1.18)
     ax.spines[['top', 'right']].set_visible(False)
-    ax.tick_params(labelsize=9.5, colors=MUTED)
-    ax.legend(loc='center left', bbox_to_anchor=(1.02, 0.5), fontsize=8.5, frameon=False)
+    ax.tick_params(labelsize=7.5, colors=MUTED)
+    ax.legend(loc='center left', bbox_to_anchor=(1.02, 0.5), fontsize=7.5, frameon=False)
 
-    # Karten (ohne Hintergrundkarte: schnell und ohne API-Key)
-    for i, (year, df) in enumerate(((2025, df_results_2025), (2050, df_results_2050))):
-        ax = _axes(fig, 4.75, 1.75 + i * 2.8, 3.5, 2.6)
+    # Geänderte Parameter: Snapshots der beiden verglichenen Kostenläufe
+    _panel(fig, 0.4, 5.95, 4.05, 1.35)
+    _txt(fig, 0.5, 6.02, 'Geänderte Kostenparameter ggü. Bezug', 10.5, DARK, 'bold')
+    previous_cost_dir = RUNS_DIR / previous_sources['cost_run'] if previous_sources.get('cost_run') else None
+    if previous_cost_dir is None or not (previous_cost_dir / 'model_parameters.csv').exists():
+        lines = ['Kein Bezug mit Parameter-Snapshot.']
+    else:
+        changed = changed_parameters(cost_dir, previous_cost_dir)
+        if changed.empty:
+            lines = ['Keine Kostenparameter geändert.']
+        else:
+            lines = [f"{row['variable_name']} {int(row['year'])}: {_number(row['value_eur2025_old'])} → "
+                     f"{_number(row['value_eur2025_new'])}" for _, row in changed.head(4).iterrows()]
+            if len(changed) > 4:
+                lines.append(f'… und {len(changed) - 4} weitere (model_parameters.csv)')
+    for k, line in enumerate(lines):
+        _txt(fig, 0.5, 6.3 + k * 0.19, line, 7.5)
+
+    # Karten: Zeilen = Jahre; Spalten = MCA, Δ MCA, LCOH, Δ LCOH (Δ = dieser minus letzter Lauf)
+    def draw(x, y, values, cmap, unit, title, symmetric=False):
+        # Karte und Farbskala in eigenen Achsen, damit nichts in die Nachbarkarte ragt.
+        ax = _axes(fig, x, y + 0.42, 1.55, 2.25)
+        cax = _axes(fig, x + 1.6, y + 0.7, 0.07, 1.8)
         gdf = gdf_grid[['geometry']].copy()
-        gdf['lcoh'] = pd.to_numeric(df[f'H2_Price_{year} [EUR/MWh_h2]']).values
-        gdf.plot(column='lcoh', ax=ax, cmap='YlOrRd', linewidth=0, legend=True,
-                 legend_kwds={'shrink': 0.8, 'label': '€/MWh$_{H2}$'})
-        ax.set_title(f'LCOH {year}', fontsize=11, color=TEXT)
+        gdf['value'] = pd.to_numeric(values).values
+        vmin, vmax = gdf['value'].min(), gdf['value'].max()
+        if symmetric:
+            limit = gdf['value'].abs().max()
+            if not limit > 1e-9:
+                unit = 'unverändert ggü. Bezug'
+                limit = 1.0
+            vmin, vmax = -limit, limit
+        gdf.plot(column='value', ax=ax, cmap=cmap, linewidth=0, vmin=vmin, vmax=vmax,
+                 missing_kwds={'color': '#C8CDD0'})
+        fig.colorbar(plt.cm.ScalarMappable(norm=plt.Normalize(vmin, vmax), cmap=cmap), cax=cax)
+        cax.tick_params(labelsize=7, colors=MUTED)
+        _txt(fig, x, y, title, 10, TEXT, 'bold')
+        _txt(fig, x, y + 0.22, unit, 7.5, MUTED)
         ax.set_axis_off()
 
-    # Geänderte Parameter
-    _panel(fig, 8.55, 1.8, 4.3, 3.0)
-    _txt(fig, 8.7, 1.9, 'Geänderte Parameter ggü. Vorlauf', 12.5, DARK, 'bold')
-    _txt(fig, 8.7, 2.2, previous_dir.name if previous_dir else '–', 8, MUTED)
-    changed = changed_parameters(run_dir, previous_dir)
-    if changed is None:
-        lines = ['Erster Lauf, kein Vergleich möglich.']
-    elif changed.empty:
-        lines = ['Keine Parameter geändert.']
-    else:
-        lines = [f"{row['variable_name']} {int(row['year'])}: {_number(row['value_eur2025_old'])} → "
-                 f"{_number(row['value_eur2025_new'])} {row['unit_new'] if pd.notna(row['unit_new']) and row['unit_new'] != '-' else ''}"
-                 for _, row in changed.head(9).iterrows()]
-        if len(changed) > 9:
-            lines.append(f'… und {len(changed) - 9} weitere (model_parameters.csv)')
-    for j, line in enumerate(lines):
-        _txt(fig, 8.7, 2.5 + j * 0.24, line, 8.5)
-
-    # Geänderte Dateien
-    _panel(fig, 8.55, 4.95, 4.3, 2.25)
-    _txt(fig, 8.7, 5.05, 'Geänderte Dateien (nicht committet)', 12.5, DARK, 'bold')
-    files = info['changed_files']
-    files_text = ', '.join(files[:10]) + (' …' if len(files) > 10 else '') if files else '–'
-    _txt(fig, 8.7, 5.4, textwrap.fill(files_text, 62), 8.5)
-    _txt(fig, 8.7, 6.85, 'Ordner: ' + run_dir.name, 8, MUTED)
+    for i, year in enumerate(years):
+        mca, lcoh = results[f'MCA_{year}'].where(allowed), results[f'LCOH_{year}']
+        panels = [(mca, 'viridis', 'Score [0–100], No-Go grau', f'MCA {year}', False),
+                  (mca - previous[f'MCA_{year}'].where(allowed), 'RdBu', 'blau = besser',
+                   f'Δ MCA {year}', True) if previous is not None else None,
+                  (lcoh, 'YlOrRd', '€/MWh$_{H2}$', f'LCOH {year}', False),
+                  (lcoh - previous[f'LCOH_{year}'], 'RdBu_r', '€/MWh$_{H2}$, blau = günstiger',
+                   f'Δ LCOH {year}', True) if previous is not None else None]
+        for j, panel in enumerate(panels):
+            x, y = 4.75 + j * 2.1, 1.75 + i * 2.8
+            if panel is None:
+                _txt(fig, x + 0.3, y + 1.3, 'Δ: kein\nBezugslauf', 10, MUTED)
+                continue
+            draw(x, y, *panel)
 
     fig.savefig(run_dir / 'overview.png', dpi=150, facecolor='white')
     plt.close(fig)
