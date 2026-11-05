@@ -64,6 +64,23 @@ def changed_parameters(run_dir, previous_dir):
     return changed.sort_values(['variable_name', 'year'])
 
 
+def changed_inputs(run_dir, previous_dir):
+    """Eingabedateien, deren Prüfsumme sich zwischen zwei Läufen unterscheidet (neu, entfernt oder geändert).
+
+    Liest inputs.sha256 beider Laufordner. Teile eines Shapefiles (.shp, .dbf, …) werden zu einem
+    Namen zusammengefasst. Gibt None zurück, wenn einem Lauf die Prüfsummen fehlen.
+    """
+    hashes = []
+    for folder in (run_dir, previous_dir):
+        path = Path(folder) / 'inputs.sha256'
+        if not path.exists():
+            return None
+        hashes.append(dict(reversed(line.split('  ', 1)) for line in path.read_text(encoding='utf-8').splitlines() if line))
+    new, old = hashes
+    changed = {p for p in new.keys() | old.keys() if new.get(p) != old.get(p)}
+    return sorted({Path(p).stem for p in changed})
+
+
 def _panel(fig, x, y, w, h):
     """Hellgraue Fläche als Hintergrund eines Blocks (Koordinaten in Zoll, Ursprung oben links)."""
     W, H = fig.get_size_inches()
@@ -208,23 +225,36 @@ def build_comparison_overview(run_dir, gdf_grid, results, allowed, sources, refe
     ax.tick_params(labelsize=7.5, colors=MUTED)
     ax.legend(loc='center left', bbox_to_anchor=(1.02, 0.5), fontsize=7.5, frameon=False)
 
-    # Geänderte Parameter: Snapshots der beiden verglichenen Kostenläufe
-    _panel(fig, 0.4, 5.95, 4.05, 1.35)
-    _txt(fig, 0.5, 6.02, 'Geänderte Kostenparameter ggü. Bezug', 10.5, DARK, 'bold')
+    # Änderungen ggü. Bezug: Kostenparameter (Snapshots der Kostenläufe) und Eingabedateien (inputs.sha256)
+    _panel(fig, 0.4, 5.85, 4.05, 1.5)
+    _txt(fig, 0.5, 5.92, 'Änderungen ggü. Bezug', 10.5, DARK, 'bold')
+    lines = [('Kostenparameter', True)]
     previous_cost_dir = RUNS_DIR / previous_sources['cost_run'] if previous_sources.get('cost_run') else None
     if previous_cost_dir is None or not (previous_cost_dir / 'model_parameters.csv').exists():
-        lines = ['Kein Bezug mit Parameter-Snapshot.']
+        lines.append(('kein Bezug mit Parameter-Snapshot', False))
     else:
         changed = changed_parameters(cost_dir, previous_cost_dir)
         if changed.empty:
-            lines = ['Keine Kostenparameter geändert.']
+            lines.append(('keine geändert', False))
         else:
-            lines = [f"{row['variable_name']} {int(row['year'])}: {_number(row['value_eur2025_old'])} → "
-                     f"{_number(row['value_eur2025_new'])}" for _, row in changed.head(4).iterrows()]
-            if len(changed) > 4:
-                lines.append(f'… und {len(changed) - 4} weitere (model_parameters.csv)')
-    for k, line in enumerate(lines):
-        _txt(fig, 0.5, 6.3 + k * 0.19, line, 7.5)
+            shown = changed.head(3 if len(changed) <= 3 else 2)
+            lines += [(f"{row['variable_name']} {int(row['year'])}: {_number(row['value_eur2025_old'])} → "
+                       f"{_number(row['value_eur2025_new'])}", False) for _, row in shown.iterrows()]
+            if len(changed) > len(shown):
+                lines.append((f'… und {len(changed) - len(shown)} weitere (model_parameters.csv)', False))
+    lines.append(('Eingabedateien (data/interim)', True))
+    files = changed_inputs(run_dir, previous_dir) if previous is not None else None
+    if files is None:
+        lines.append(('kein Bezug mit Prüfsummen (inputs.sha256)', False))
+    elif not files:
+        lines.append(('keine geändert', False))
+    else:
+        wrapped = textwrap.wrap(f'{len(files)} geändert: ' + ', '.join(files), 70)
+        lines += [(line, False) for line in wrapped[:2]]
+        if len(wrapped) > 2:
+            lines[-1] = (lines[-1][0] + ' …', False)
+    for k, (line, bold) in enumerate(lines):
+        _txt(fig, 0.5, 6.17 + k * 0.165, line, 7, TEXT, 'bold' if bold else 'normal')
 
     # Karten: Zeilen = Jahre; Spalten = MCA, Δ MCA, LCOH, Δ LCOH (Δ = dieser minus letzter Lauf)
     def draw(x, y, values, cmap, unit, title, symmetric=False):
