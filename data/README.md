@@ -53,8 +53,8 @@ Alle Eingangs- und Zwischendaten von MCA und Kostenanalyse liegen in diesem Ordn
 | `mca_criteria/results_*.csv` (14) | MCA-Kriterienskripte | Eingabe für `MCA/mca_maps.py` |
 | `re_profiles/flh_re.csv` | `Cost_analysis/ki_generiert/01b_flh_re.py` | `raw/renewables_ninja/pv_wind_electricity.csv` |
 | `re_profiles/cell_flh_re.csv` | `Cost_analysis/ki_generiert/01c_cell_flh_re.py` | PV- und Wind-Kriterium der MCA (`mca_criteria/results_{pv_yeald,wind_flh}.csv`) |
-| `re_profiles/FLH_electrolyzer.csv` | `Cost_analysis/02_FLH_el.py` (Gurobi) | Profile |
-| `re_profiles/data_re_flh_electrolyzer.shp` | `Cost_analysis/03_assignment_re_data.py` | `FLH_electrolyzer.csv` + Standorte |
+| `re_profiles/FLH_electrolyzer_{2025,2050}.csv` | `Cost_analysis/02_FLH_el.py` (Gurobi) | Profile; Auslegung je Szenariojahr |
+| `re_profiles/data_re_flh_electrolyzer_{2025,2050}.shp` | `Cost_analysis/03_assignment_re_data.py` | `FLH_electrolyzer_{2025,2050}.csv` + Standorte |
 
 `layers/` enthält aufbereitete räumliche Layer. Bis 05.11.2026 hieß der Ordner `qgis/`, weil die Dateien früher in QGIS entstanden.
 
@@ -69,6 +69,7 @@ Alle Eingangs- und Zwischendaten von MCA und Kostenanalyse liegen in diesem Ordn
 - **`cell_flh_re.csv`:** PV wie bisher; die zweite Spalte war `FLH_el` (unbekannte Umrechnung, Mittel 5.429 h) und ist jetzt die Wind-Volllaststunde (Mittel 3.760 h, gleiche Skala wie die Referenzpunkte). Die Zellen verteilen sich auf alle 50 statt 40 Referenzpunkte.
 - **Folge für die Kosten:** mittlerer H₂-Preis 2025 144,66 statt 139,36 €/MWh, 2050 79,46 statt 75,36 €/MWh. Fast der ganze Anstieg kommt aus den Netzkosten: 54 % der Zellen beziehen ihren Strom jetzt aus derselben Produktionszelle (vorher höchstens 1,7 %), siehe Fehlerprotokoll Nr. 48.
 - **Netzkosten danach überarbeitet (05.11.2026):** HGÜ nach Danish Energy Agency (2025) mit Verlusten, keine Netzkosten bei Eigenversorgung (Fehlerprotokoll Nr. 45, 48, 63). Mittlerer H₂-Preis damit 140,37 €/MWh (2025) und 73,48 €/MWh (2050).
+- **Fehlerbehebungen danach (05.11.2026):** Block 1 (PV/Wind-Leistung je MW Elektrolyseur, F-04; PV-OPEX, F-07) und eigene Auslegung für 2050 (Nr. 8): 110,52 €/MWh (2025) und 52,62 €/MWh (2050). Laufordner `results/runs/2026-11-05_1654_8b475c5-dirty_cost`.
 
 **Früher in QGIS, jetzt per Skript.** Abweichungen gegenüber den QGIS-Dateien aus dem Masterprojekt:
 

@@ -21,7 +21,7 @@ Eingaben:
     data/model_parameters/model_parameters.csv               Annahmen und Literaturwerte (über h2morocco.utils)
     data/interim/grid/grid_morocco_clear.shp
     data/raw/infrastructure/industrial_ports_morocco_{2025,2050}.shp
-    data/interim/re_profiles/data_re_flh_electrolyzer.shp   aus 03_assignment_re_data.py
+    data/interim/re_profiles/data_re_flh_electrolyzer_{2025,2050}.shp   aus 03_assignment_re_data.py (Auslegung je Jahr)
     data/interim/re_profiles/flh_re.csv                     aus ki_generiert/01b_flh_re.py
     data/interim/re_profiles/cell_flh_re.csv                FLH_PV, FLH_Wind je Zelle, aus ki_generiert/01c_cell_flh_re.py
     data/raw/origin_unknown/morocco_coast_line.shp
@@ -32,7 +32,7 @@ Ausgaben (je Lauf ein neuer Ordner, siehe h2morocco/runs.py):
         results_cost_2025.csv, results_cost_2050.csv   je Zelle: Produktionszelle, FLH,
                                  Kostenanteile (Wasser, Elektrolyse, EE, Netz, Pipeline)
                                  und Gesamtpreis in €/MWh_H2
-        run_info.json, model_parameters.csv, changes.patch, FLH_electrolyzer.csv
+        run_info.json, model_parameters.csv, changes.patch, FLH_electrolyzer_{2025,2050}.csv
                                  Codestand, Parameter und Auslegung dieses Laufs
     Optional: --note "was geändert wurde"
     Die Übersichtsfolie entsteht nicht mehr hier, sondern in compare_mca_cost.py (Schritt in main.ipynb).
@@ -134,9 +134,13 @@ gdf_ports_2025              = gpd.read_file("../data/raw/infrastructure/industri
 gdf_ports_2050              = gpd.read_file("../data/raw/infrastructure/industrial_ports_morocco_2050.shp").to_crs(gdf_grid.crs)
     # Repräsentative Standorte (Referenzpunkte) aus 02_FLH_el.py (PyPSA):
     # FLH Elektrolyseur, PV- und Windleistung
-gdf_ref_points              = gpd.read_file('../data/interim/re_profiles/data_re_flh_electrolyzer.shp').to_crs(gdf_grid.crs)
-pv_capacity                 = gdf_ref_points['PV_ratio']   * electrolyzer_capacity   # [MW] je Referenzpunkt
-wind_capacity               = gdf_ref_points['Wind_ratio'] * electrolyzer_capacity   # [MW] je Referenzpunkt
+    # Je Szenariojahr eine eigene Auslegung (02 optimiert mit den Kosten des Jahres)
+gdf_ref_points_2025         = gpd.read_file('../data/interim/re_profiles/data_re_flh_electrolyzer_2025.shp').to_crs(gdf_grid.crs)
+gdf_ref_points_2050         = gpd.read_file('../data/interim/re_profiles/data_re_flh_electrolyzer_2050.shp').to_crs(gdf_grid.crs)
+pv_capacity_2025            = gdf_ref_points_2025['PV_ratio']   * electrolyzer_capacity   # [MW] je Referenzpunkt
+wind_capacity_2025          = gdf_ref_points_2025['Wind_ratio'] * electrolyzer_capacity   # [MW] je Referenzpunkt
+pv_capacity_2050            = gdf_ref_points_2050['PV_ratio']   * electrolyzer_capacity   # [MW] je Referenzpunkt
+wind_capacity_2050          = gdf_ref_points_2050['Wind_ratio'] * electrolyzer_capacity   # [MW] je Referenzpunkt
 df_ref_points_flh           = pd.read_csv('../data/interim/re_profiles/flh_re.csv')    # FLH PV und Wind je Referenzpunkt
 df_cell_flh                 = pd.read_csv('../data/interim/re_profiles/cell_flh_re.csv')      # FLH PV und Wind je Zelle
     # Küste und Wasserverfügbarkeit je Zelle [Mio. m³]
@@ -206,32 +210,32 @@ electrolyzer_annual_cost_2050 = electrolyzer_annuity_2050 + electrolyzer_opex_20
 # PV Cost je Referenzpunkt
     # 2025
 pv_opex_2025        = pv_opex_share_2025 * pv_capex_2025                                    # [€/MWp/a]
-pv_annuity_2025     = annuity_factor(discount_rate, pv_lifetime) * pv_capacity * pv_capex_2025  # €/a
-pv_annual_cost_2025 = pv_annuity_2025 + pv_opex_2025 * pv_capacity                          # €/a
+pv_annuity_2025     = annuity_factor(discount_rate, pv_lifetime) * pv_capacity_2025 * pv_capex_2025  # €/a
+pv_annual_cost_2025 = pv_annuity_2025 + pv_opex_2025 * pv_capacity_2025                     # €/a
     # 2050
 pv_opex_2050        = pv_opex_share_2050 * pv_capex_2050                                    # [€/MWp/a]
-pv_annuity_2050     = annuity_factor(discount_rate, pv_lifetime) * pv_capacity * pv_capex_2050  # €/a
-pv_annual_cost_2050 = pv_annuity_2050 + pv_opex_2050 * pv_capacity                          # €/a
+pv_annuity_2050     = annuity_factor(discount_rate, pv_lifetime) * pv_capacity_2050 * pv_capex_2050  # €/a
+pv_annual_cost_2050 = pv_annuity_2050 + pv_opex_2050 * pv_capacity_2050                     # €/a
 
 # Wind Cost je Referenzpunkt
     #2025
 wind_opex_2025        = wind_opex_share_2025 * wind_capex_2025                                      # [€/MW/a]
-wind_annuity_2025     = annuity_factor(discount_rate, wind_lifetime) * wind_capex_2025 * wind_capacity  # €/a
-wind_annual_cost_2025 = wind_annuity_2025 + wind_opex_2025 * wind_capacity                          # €/a
+wind_annuity_2025     = annuity_factor(discount_rate, wind_lifetime) * wind_capex_2025 * wind_capacity_2025  # €/a
+wind_annual_cost_2025 = wind_annuity_2025 + wind_opex_2025 * wind_capacity_2025                     # €/a
     # 2050
 wind_opex_2050        = wind_opex_share_2050 * wind_capex_2050                                      # [€/MW/a]
-wind_annuity_2050     = annuity_factor(discount_rate, wind_lifetime) * wind_capex_2050 * wind_capacity  # €/a
-wind_annual_cost_2050 = wind_annuity_2050 + wind_opex_2050 * wind_capacity                          # €/a
+wind_annuity_2050     = annuity_factor(discount_rate, wind_lifetime) * wind_capex_2050 * wind_capacity_2050  # €/a
+wind_annual_cost_2050 = wind_annuity_2050 + wind_opex_2050 * wind_capacity_2050                     # €/a
 
 # Store costs into df
     # 2025
-gdf_ref_points['Cost_pv_2025 [EUR/a]']     = pv_annual_cost_2025
-gdf_ref_points['Cost_wind_2025 [EUR/a]']   = wind_annual_cost_2025
-gdf_ref_points['Cost_re_2025 [EUR/a]']     = pv_annual_cost_2025 + wind_annual_cost_2025
+gdf_ref_points_2025['Cost_pv_2025 [EUR/a]']     = pv_annual_cost_2025
+gdf_ref_points_2025['Cost_wind_2025 [EUR/a]']   = wind_annual_cost_2025
+gdf_ref_points_2025['Cost_re_2025 [EUR/a]']     = pv_annual_cost_2025 + wind_annual_cost_2025
     # 2050
-gdf_ref_points['Cost_pv_2050 [EUR/a]']     = pv_annual_cost_2050
-gdf_ref_points['Cost_wind_2050 [EUR/a]']   = wind_annual_cost_2050
-gdf_ref_points['Cost_re_2050 [EUR/a]']     = pv_annual_cost_2050 + wind_annual_cost_2050
+gdf_ref_points_2050['Cost_pv_2050 [EUR/a]']     = pv_annual_cost_2050
+gdf_ref_points_2050['Cost_wind_2050 [EUR/a]']   = wind_annual_cost_2050
+gdf_ref_points_2050['Cost_re_2050 [EUR/a]']     = pv_annual_cost_2050 + wind_annual_cost_2050
 
 # Stromübertragung per HGÜ: Jahreskosten (Annuität + Betrieb) je Verbindung mit Leistung des Elektrolyseurs,
 # ein Anteil je km (Leitung) und ein fester Anteil (Konverterstation an jedem Ende).
@@ -271,10 +275,10 @@ for i in range(len(cell_centroids)):
     cell_flh = df_cell_flh.iloc[i].values
     flh_distance = np.sqrt(np.sum((ref_flh - cell_flh) ** 2, axis=1))
     nearest_ref_point = np.argmin(flh_distance)
-    df_cell_re_2025.at[i, 'Cost_re_2025 [EUR/a]'] = gdf_ref_points.at[nearest_ref_point, 'Cost_re_2025 [EUR/a]']
-    df_cell_re_2025.at[i, 'FLH_electrolyzer']     = gdf_ref_points.at[nearest_ref_point, 'FLH_electr']
-    df_cell_re_2050.at[i, 'Cost_re_2050 [EUR/a]'] = gdf_ref_points.at[nearest_ref_point, 'Cost_re_2050 [EUR/a]']
-    df_cell_re_2050.at[i, 'FLH_electrolyzer']     = gdf_ref_points.at[nearest_ref_point, 'FLH_electr']
+    df_cell_re_2025.at[i, 'Cost_re_2025 [EUR/a]'] = gdf_ref_points_2025.at[nearest_ref_point, 'Cost_re_2025 [EUR/a]']
+    df_cell_re_2025.at[i, 'FLH_electrolyzer']     = gdf_ref_points_2025.at[nearest_ref_point, 'FLH_electr']
+    df_cell_re_2050.at[i, 'Cost_re_2050 [EUR/a]'] = gdf_ref_points_2050.at[nearest_ref_point, 'Cost_re_2050 [EUR/a]']
+    df_cell_re_2050.at[i, 'FLH_electrolyzer']     = gdf_ref_points_2050.at[nearest_ref_point, 'FLH_electr']
 
 
 ############################################################
@@ -428,5 +432,6 @@ df_results_2050 = h2_cost_per_cell(
 # damit nachvollziehbar bleibt, mit welchen Volllaststunden gerechnet wurde.
 df_results_2025.to_csv(run_dir / 'results_cost_2025.csv', index=False)
 df_results_2050.to_csv(run_dir / 'results_cost_2050.csv', index=False)
-shutil.copy2('../data/interim/re_profiles/FLH_electrolyzer.csv', run_dir / 'FLH_electrolyzer.csv')
+for year in [2025, 2050]:
+    shutil.copy2(f'../data/interim/re_profiles/FLH_electrolyzer_{year}.csv', run_dir / f'FLH_electrolyzer_{year}.csv')
 print(f'Fertig: {run_dir}')
