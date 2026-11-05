@@ -68,6 +68,7 @@ Der Ordnername `qgis/` ist historisch: Die Dateien entstanden früher in QGIS, h
 - **Wind:** Kriterium im Mittel 3.754 statt 4.294 h, Korrelation mit dem alten 0,983, Maximum gleich (7.432 h). MCA-Wind ist min-max-skaliert, die Rangfolge bleibt weitgehend erhalten.
 - **`cell_flh_re.csv`:** PV wie bisher; die zweite Spalte war `FLH_el` (unbekannte Umrechnung, Mittel 5.429 h) und ist jetzt die Wind-Volllaststunde (Mittel 3.760 h, gleiche Skala wie die Referenzpunkte). Die Zellen verteilen sich auf alle 50 statt 40 Referenzpunkte.
 - **Folge für die Kosten:** mittlerer H₂-Preis 2025 144,66 statt 139,36 €/MWh, 2050 79,46 statt 75,36 €/MWh. Fast der ganze Anstieg kommt aus den Netzkosten: 54 % der Zellen beziehen ihren Strom jetzt aus derselben Produktionszelle (vorher höchstens 1,7 %), siehe Fehlerprotokoll Nr. 48.
+- **Netzkosten danach überarbeitet (05.11.2026):** HGÜ nach Danish Energy Agency (2025) mit Verlusten, keine Netzkosten bei Eigenversorgung (Fehlerprotokoll Nr. 45, 48, 63). Mittlerer H₂-Preis damit 140,37 €/MWh (2025) und 73,48 €/MWh (2050).
 
 **Früher in QGIS, jetzt per Skript.** Abweichungen gegenüber den QGIS-Dateien aus dem Masterprojekt:
 

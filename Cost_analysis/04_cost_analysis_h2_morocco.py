@@ -3,14 +3,16 @@
 Betrachtet einen 100-MW-PEM-Elektrolyseur. Ablauf:
     1. Abstände aller Zellen untereinander (7219 × 7219) und zum nächsten
        Industriehafen berechnen.
-    2. Jahreskosten für Elektrolyseur, PV, Wind, HGÜ-Leitung (je km) plus
-       Konverterpaar und H2-Pipeline (je km) berechnen. Alle Annahmen
+    2. Jahreskosten für Elektrolyseur, PV, Wind, Stromübertragung (HGÜ-Freileitung
+       je km plus Konverterstation an beiden Enden) und H2-Pipeline (je km) berechnen. Alle Annahmen
        (CAPEX, OPEX, Lebensdauer, Zins, Quellen) stehen in
        data/model_parameters/model_parameters.csv.
     3. Jeder Zelle den repräsentativen Standort zuordnen, dessen (FLH_PV,
        FLH_Wind) ihren eigenen Werten am nächsten liegt.
     4. Für jede Bedarfszelle die günstigste Produktionszelle wählen
        (Strom + Elektrolyse + Netz über die Entfernung + Pipeline zum Hafen).
+       Übertragungsverluste erhöhen den Strombedarf am Erzeugungsort.
+       Eigenversorgung (Distanz 0) kostet kein Netz.
     5. Wasserkosten addieren: 13 kg Wasser je kg H2, bezogen in der Reihenfolge
        Oberflächenwasser → Grundwasser → Entsalzung (nur Küste) → Transport aus
        der nächsten Zelle mit Wasser.
@@ -38,8 +40,14 @@ Ausgaben (je Lauf ein neuer Ordner, siehe h2morocco/runs.py):
 Hinweise:
     - Die Distanzmatrix und ihre Sortierung brauchen mehrere GB Arbeitsspeicher.
     - Bekannte Fehler laut Korrekturplan (Patch in Korrektur/code_fixes.patch):
-      PV/Wind-Leistung in % als MW gelesen (F-04), Konverterkosten auch bei
-      Distanz 0 (F-05), PV-Jahreskosten mit CAPEX statt OPEX (F-07).
+      PV/Wind-Leistung in % als MW gelesen (F-04), PV-Jahreskosten mit CAPEX
+      statt OPEX (F-07). F-05 (Konverter auch bei Distanz 0) ist seit 05.11.2026 behoben.
+    - Lesart: Ergebnis je Zelle = Standortpotenzial für ein einzelnes 100-MW-Projekt.
+      Netzkosten nach Danish Energy Agency (2025) für große HGÜ-Leitungen (4.000 MW) und
+      Konverterstationen (1.500–2.000 MW), verstanden als Anteil des Projekts an gemeinsamer
+      Infrastruktur. Wechselstrom wurde geprüft und weggelassen (Kosten kaum anders,
+      Fehlerprotokoll Nr. 63). Eine eigene 100-MW-Leitung wäre je MW etwa viermal so teuer
+      (Fehlerprotokoll Nr. 63); Elektrolyse am Erzeugungsort fehlt als Option (Nr. 44).
     - Direkt in VS Code oder aus beliebigem Arbeitsordner starten: ``python 04_cost_analysis_h2_morocco.py``
 """
 
@@ -84,9 +92,9 @@ h2_lower_heating_value      = model_parameters['h2_lower_heating_value', 2025]  
 electrolysis_water_demand   = model_parameters['electrolysis_water_demand', 2025]   # [kg Wasser / kg H2]
 pv_lifetime                 = model_parameters['pv_lifetime', 2025]                 # [a]
 wind_lifetime               = model_parameters['wind_lifetime', 2025]               # [a]
-hvdc_line_lifetime          = model_parameters['hvdc_line_lifetime', 2025]          # [a]
-hvdc_converter_lifetime     = model_parameters['hvdc_converter_lifetime', 2025]     # [a]
-hvdc_converter_count        = model_parameters['hvdc_converter_count', 2025]        # [–] je Verbindung
+transmission_lifetime       = model_parameters['transmission_lifetime', 2025]       # [a] HGÜ-Leitung und Konverter
+dc_line_loss_per_100km      = model_parameters['dc_line_loss_per_100km', 2025]      # [1/(100 km)]
+substation_loss             = model_parameters['substation_loss', 2025]             # [–] je Konverterstation
 h2_pipeline_lifetime        = model_parameters['h2_pipeline_lifetime', 2025]        # [a]
 
     # Elektrolyse
@@ -100,11 +108,10 @@ pv_opex_share_2025,             pv_opex_share_2050             = model_parameter
     # Wind
 wind_capex_2025,                wind_capex_2050                = model_parameters['wind_capex'][[2025, 2050]]                 # [€/MW]
 wind_opex_share_2025,           wind_opex_share_2050           = model_parameters['wind_opex_share'][[2025, 2050]]            # [1/a]
-    # HGÜ-Netz
-hvdc_line_capex_2025,           hvdc_line_capex_2050           = model_parameters['hvdc_line_capex'][[2025, 2050]]            # [€/km/MW]
-hvdc_line_opex_share_2025,      hvdc_line_opex_share_2050      = model_parameters['hvdc_line_opex_share'][[2025, 2050]]       # [1/a]
-hvdc_converter_capex_2025,      hvdc_converter_capex_2050      = model_parameters['hvdc_converter_capex'][[2025, 2050]]       # [€/MW]
-hvdc_converter_opex_share_2025, hvdc_converter_opex_share_2050 = model_parameters['hvdc_converter_opex_share'][[2025, 2050]]  # [1/a]
+    # Stromübertragung per HGÜ (Danish Energy Agency 2025)
+dc_line_capex_2025,             dc_line_capex_2050             = model_parameters['dc_line_capex'][[2025, 2050]]              # [€/km/MW]
+dc_substation_capex_2025,       dc_substation_capex_2050       = model_parameters['dc_substation_capex'][[2025, 2050]]        # [€/MW] je Leitungsende
+transmission_opex_share_2025,   transmission_opex_share_2050   = model_parameters['transmission_opex_share'][[2025, 2050]]    # [1/a]
     # H2-Pipeline
 h2_pipeline_capex_2025,         h2_pipeline_capex_2050         = model_parameters['h2_pipeline_capex'][[2025, 2050]]          # [€/km/MW_h2]
 h2_pipeline_opex_share_2025,    h2_pipeline_opex_share_2050    = model_parameters['h2_pipeline_opex_share'][[2025, 2050]]     # [1/a]
@@ -226,23 +233,15 @@ gdf_ref_points['Cost_pv_2050 [EUR/a]']     = pv_annual_cost_2050
 gdf_ref_points['Cost_wind_2050 [EUR/a]']   = wind_annual_cost_2050
 gdf_ref_points['Cost_re_2050 [EUR/a]']     = pv_annual_cost_2050 + wind_annual_cost_2050
 
-# Grid Cost: HGÜ-Leitung (je km) plus je eine Konverterstation an beiden Enden
-    # 2025
-hvdc_line_opex_2025         = hvdc_line_opex_share_2025 * hvdc_line_capex_2025 * electrolyzer_capacity                          # €/km/a
-hvdc_converter_opex_2025    = hvdc_converter_opex_share_2025 * hvdc_converter_capex_2025 * electrolyzer_capacity * hvdc_converter_count  # €/a
-hvdc_line_annuity_2025      = annuity_factor(discount_rate, hvdc_line_lifetime) * hvdc_line_capex_2025 * electrolyzer_capacity  # €/km/a
-hvdc_converter_annuity_2025 = (annuity_factor(discount_rate, hvdc_converter_lifetime)
-                               * electrolyzer_capacity * hvdc_converter_count * hvdc_converter_capex_2025)                  # €/a
-hvdc_converter_annual_cost_2025 = hvdc_converter_annuity_2025 + hvdc_converter_opex_2025                                    # €/a
-hvdc_line_annual_cost_2025      = hvdc_line_annuity_2025 + hvdc_line_opex_2025                                              # €/km/a
-    # 2050
-hvdc_line_opex_2050         = hvdc_line_opex_share_2050 * hvdc_line_capex_2050 * electrolyzer_capacity                          # €/km/a
-hvdc_converter_opex_2050    = hvdc_converter_opex_share_2050 * hvdc_converter_capex_2050 * electrolyzer_capacity * hvdc_converter_count  # €/a
-hvdc_line_annuity_2050      = annuity_factor(discount_rate, hvdc_line_lifetime) * hvdc_line_capex_2050 * electrolyzer_capacity  # €/km/a
-hvdc_converter_annuity_2050 = (annuity_factor(discount_rate, hvdc_converter_lifetime)
-                               * electrolyzer_capacity * hvdc_converter_count * hvdc_converter_capex_2050)                  # €/a
-hvdc_converter_annual_cost_2050 = hvdc_converter_annuity_2050 + hvdc_converter_opex_2050                                    # €/a
-hvdc_line_annual_cost_2050      = hvdc_line_annuity_2050 + hvdc_line_opex_2050                                              # €/km/a
+# Stromübertragung per HGÜ: Jahreskosten (Annuität + Betrieb) je Verbindung mit Leistung des Elektrolyseurs,
+# ein Anteil je km (Leitung) und ein fester Anteil (Konverterstation an jedem Ende).
+def transmission_annual_costs(line_capex, substation_capex, opex_share):
+    """Gibt (€/km/a, €/a) für eine Verbindung mit electrolyzer_capacity zurück."""
+    factor = annuity_factor(discount_rate, transmission_lifetime) + opex_share
+    return factor * line_capex * electrolyzer_capacity, factor * 2 * substation_capex * electrolyzer_capacity
+
+dc_line_annual_cost_2025, dc_stations_annual_cost_2025 = transmission_annual_costs(dc_line_capex_2025, dc_substation_capex_2025, transmission_opex_share_2025)
+dc_line_annual_cost_2050, dc_stations_annual_cost_2050 = transmission_annual_costs(dc_line_capex_2050, dc_substation_capex_2050, transmission_opex_share_2050)
 
 #H2 Pipeline Cost (je km), ausgelegt auf die H2-Leistung
     # 2025
@@ -260,11 +259,6 @@ h2_pipeline_annual_cost_2050 = h2_pipeline_annuity_2050 + h2_pipeline_opex_2050 
 ############################################################
 # 5. Kosten je Zelle
 ############################################################
-# HGÜ: Jahreskosten der Verbindung zwischen je zwei Zellen [€/a]
-# Bekannter Fehler F-05: .where greift nie (keine NaN), die Konverter zählen auch bei Distanz 0
-df_hvdc_cost_2025 = df_distance_km.where(df_distance_km.isnull(), df_distance_km * hvdc_line_annual_cost_2025 + hvdc_converter_annual_cost_2025)
-df_hvdc_cost_2050 = df_distance_km.where(df_distance_km.isnull(), df_distance_km * hvdc_line_annual_cost_2050 + hvdc_converter_annual_cost_2050)
-
 # H2-Pipeline: von jeder Zelle zum nächsten Hafen [€/a]
 df_h2_pipeline_cost_2025 = df_distance_port_km_2025 * h2_pipeline_annual_cost_2025
 df_h2_pipeline_cost_2050 = df_distance_port_km_2050 * h2_pipeline_annual_cost_2050
@@ -287,18 +281,20 @@ for i in range(len(cell_centroids)):
 # 6. H2-Kosten je Bedarfszelle: günstigste Produktionszelle + Wasser
 ############################################################
 def h2_cost_per_cell(year, electrolyzer_annual_cost, electrolyzer_efficiency, cost_re_cells, flh_cells,
-                     df_hvdc_cost, df_h2_pipeline_cost, surface_water, ground_water, cells_with_water_or_coast,
+                     transmission, df_h2_pipeline_cost, surface_water, ground_water, cells_with_water_or_coast,
                      water_surface_cost, water_ground_cost, water_desalination_cost, water_transport_cost):
     """H2-Kosten und Kostenanteile je Bedarfszelle für ein Jahr, als Tabelle mit einer Zeile je Zelle.
 
     Alle Argumente sind die Werte des Jahres ``year`` (Einheiten siehe Abschnitte 1, 4 und 5).
+    ``transmission`` enthält die Jahreskosten der HGÜ-Übertragung (siehe Abschnitt 4).
     Jahresunabhängige Größen (Raster, Küste, Distanzen, electrolyzer_capacity, h2_lower_heating_value,
     electrolysis_water_demand) kommen direkt aus den Abschnitten oben.
     """
     df_results = pd.DataFrame(columns= ['index_source_cell', 'FLH_electrolyzer' ,
                                         'Water_cost [EUR/MWh_h2]', 'Electrolyzer_cost [EUR/MWh_h2]',
                                         'RE_cost [EUR/MWh_h2]', 'Distribution_cost [EUR/MWh_h2]',
-                                        'Pipeline_cost [EUR/MWh_h2]', f'H2_Price_{year} [EUR/MWh_h2]'],
+                                        'Pipeline_cost [EUR/MWh_h2]', f'H2_Price_{year} [EUR/MWh_h2]',
+                                        'Transmission_km'],
                                         index=range(len(gdf_grid)))
 
     print(f'Beginn Schleife {year}')
@@ -307,8 +303,17 @@ def h2_cost_per_cell(year, electrolyzer_annual_cost, electrolyzer_efficiency, co
         if i % 200 == 0:
             print(f'{year}: Berechnung für Zelle {i} von {len(gdf_grid)}')
 
+        # HGÜ von jeder möglichen Produktionszelle j zur Zelle i [€/a].
+        # Verluste: Zelle j muss 1/(1 - Verlust) so viel Strom erzeugen; Mehrkosten = EE-Kosten × Verlust/(1 - Verlust).
+        distance_km = df_distance_km.iloc[:, i].to_numpy()
+        loss        = 2 * substation_loss + dc_line_loss_per_100km * distance_km / 100
+        grid_cost   = (transmission['dc_line'] * distance_km + transmission['dc_stations']
+                       + cost_re_cells.to_numpy() * loss / (1 - loss))
+        grid_cost[distance_km == 0] = 0.0      # Eigenversorgung: keine Leitung, keine Konverter, keine Verluste
+        grid_cost = pd.Series(grid_cost, index=cost_re_cells.index)
+
         # H2-Kosten je MWh_h2 für Zelle i, wenn sie aus jeder möglichen Produktionszelle versorgt wird
-        cost_per_source_cell = ((electrolyzer_annual_cost + df_hvdc_cost[i] + cost_re_cells + df_h2_pipeline_cost.iat[i, 0])
+        cost_per_source_cell = ((electrolyzer_annual_cost + grid_cost + cost_re_cells + df_h2_pipeline_cost.iat[i, 0])
                                 /(flh_cells*electrolyzer_capacity*electrolyzer_efficiency))
         source_cell      = cost_per_source_cell.idxmin()  # günstigste Produktionszelle
         lcoh_excl_water  = cost_per_source_cell.min()     # €/MWh_h2 ohne Wasser
@@ -373,9 +378,10 @@ def h2_cost_per_cell(year, electrolyzer_annual_cost, electrolyzer_efficiency, co
         df_results.at[i, 'Water_cost [EUR/MWh_h2]']          = water_cost/h2_production_mwh
         df_results.at[i, 'Electrolyzer_cost [EUR/MWh_h2]']   = electrolyzer_annual_cost/h2_production_mwh
         df_results.at[i, 'RE_cost [EUR/MWh_h2]']             = cost_re_cells.loc[source_cell]/h2_production_mwh
-        df_results.at[i, 'Distribution_cost [EUR/MWh_h2]']   = df_hvdc_cost[i].loc[source_cell]/h2_production_mwh
+        df_results.at[i, 'Distribution_cost [EUR/MWh_h2]']   = grid_cost.loc[source_cell]/h2_production_mwh   # Netz inkl. Verluste
         df_results.at[i, 'Pipeline_cost [EUR/MWh_h2]']       = df_h2_pipeline_cost.iat[i, 0]/h2_production_mwh
         df_results.at[i, f'H2_Price_{year} [EUR/MWh_h2]']    = lcoh_excl_water + water_cost/h2_production_mwh
+        df_results.at[i, 'Transmission_km']                  = distance_km[cost_re_cells.index.get_loc(source_cell)]
 
     return df_results
 
@@ -386,7 +392,7 @@ df_results_2025 = h2_cost_per_cell(
     electrolyzer_efficiency     = electrolyzer_efficiency_2025,
     cost_re_cells               = df_cell_re_2025['Cost_re_2025 [EUR/a]'],
     flh_cells                   = df_cell_re_2025['FLH_electrolyzer'],
-    df_hvdc_cost                = df_hvdc_cost_2025,
+    transmission                = {'dc_line': dc_line_annual_cost_2025, 'dc_stations': dc_stations_annual_cost_2025},
     df_h2_pipeline_cost         = df_h2_pipeline_cost_2025,
     surface_water               = df_surface_water_2025['water_availability_sw[MCM]'],
     ground_water                = df_ground_water_2025['water_availability_gw[MCM]'],
@@ -403,7 +409,7 @@ df_results_2050 = h2_cost_per_cell(
     electrolyzer_efficiency     = electrolyzer_efficiency_2050,
     cost_re_cells               = df_cell_re_2050['Cost_re_2050 [EUR/a]'],
     flh_cells                   = df_cell_re_2050['FLH_electrolyzer'],
-    df_hvdc_cost                = df_hvdc_cost_2050,
+    transmission                = {'dc_line': dc_line_annual_cost_2050, 'dc_stations': dc_stations_annual_cost_2050},
     df_h2_pipeline_cost         = df_h2_pipeline_cost_2050,
     surface_water               = df_surface_water_2050['water_availability_sw[MCM]'],
     ground_water                = df_ground_water_2050['water_availability_gw[MCM]'],

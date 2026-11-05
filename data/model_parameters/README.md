@@ -6,6 +6,7 @@
 | `conversion_factors.csv` | Inflationsfaktoren auf 2025 und Wechselkurse USD ↔ EUR je Jahr (2000–2025) |
 | `raw_ecb_exr_usd_eur_annual.csv` | Rohdaten EZB, unverändert heruntergeladen |
 | `raw_eurostat_prc_hicp_aind.json` | Rohdaten Eurostat, unverändert heruntergeladen |
+| `dea_energy_transport_datasheet_v8.xlsx` | Danish Energy Agency (2025): Technology Data for Energy Transport, Datenblätter Version 8 (1.7.2025), CC BY 4.0, https://ens.dk/media/7681/download. Quelle der HGÜ-Netzkosten (`dc_*`, `transmission_*`, `substation_loss`). Die älteren Zeilen `hvdc_*` (NEP 2019) liest seit 05.11.2026 kein Skript mehr |
 
 ## `model_parameters.csv`
 

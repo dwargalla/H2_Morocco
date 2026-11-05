@@ -168,9 +168,9 @@ Betrachtet wird ein **100-MW-Elektrolyseur** (PEM), der von PV und Wind gespeist
 
 | Kostenbestandteil | Berechnung |
 |---|---|
-| **Elektrolyseur** | Annuität + O&M; Wirkungsgrad 60 % (2025) bzw. 80 % (2050) |
+| **Elektrolyseur** | Annuität + O&M; Wirkungsgrad 60 % (2025) bzw. 76 % (2050) |
 | **Erneuerbarer Strom** | Annuitäten der PV- und Windanlagen, die je Standort optimal ausgelegt sind (siehe `FLH_el.py`) |
-| **Stromnetz** | HGÜ-Leitung von der Produktions- zur Bedarfszelle (€/km) + zwei Konverter |
+| **Stromnetz** | HGÜ-Freileitung von der Produktions- zur Bedarfszelle (€/km) + zwei Konverterstationen, mit Übertragungsverlusten; Werte der Danish Energy Agency (2025) für große Trassen, verstanden als Anteil an gemeinsamer Infrastruktur. Bei Eigenversorgung keine Netzkosten |
 | **H2-Pipeline** | von der Bedarfszelle zum nächstgelegenen Industriehafen |
 | **Wasser** | 13 kg Wasser je kg H2, bezogen in der Reihenfolge Oberflächenwasser (0,19 €/m³) → Grundwasser (0,05 €/m³) → Entsalzung (1 €/m³, nur an der Küste) → Transport aus der nächsten Zelle mit Wasser (0,0007 €/m³/km) |
 
@@ -180,7 +180,9 @@ Die Kosten werden auf die erzeugte Wasserstoffmenge umgelegt:
 H2-Kosten [€/MWh_H2] = Σ Jahreskosten [€/a] / (Volllaststunden_Elektrolyseur × 100 MW × Wirkungsgrad)
 ```
 
-Alle Kostenannahmen (CAPEX, OPEX, Lebensdauer, Zinssatz 8 %) stehen mit Quellenangabe (IRENA, Wuppertal Institut, NEP) im Kopf von `cost_analysis_h2_morocco.py`.
+Alle Kostenannahmen (CAPEX, OPEX, Lebensdauer, Zinssatz 8 %) stehen mit Quellenangabe in `data/model_parameters/model_parameters.csv`.
+
+**Lesart:** Das Ergebnis je Zelle ist das Standortpotenzial für ein einzelnes 100-MW-Projekt, keine landesweite Ausbauplanung. Viele Zellen können dieselbe Produktionszelle wählen.
 
 ### Pipeline
 
