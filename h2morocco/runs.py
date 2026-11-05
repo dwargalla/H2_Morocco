@@ -12,6 +12,9 @@ Inhalt jedes Laufordners:
     run_info.json            Zeitpunkt, Commit, Branch, geänderte Dateien, Notiz, Skript
     model_parameters.csv     Kopie der Parameter, mit denen gerechnet wurde
     changes.patch            git diff gegenüber dem Commit (nur bei -dirty)
+    inputs.sha256            Prüfsumme jeder Datei in data/interim/ zu Beginn des Laufs; die
+                             Zwischenergebnisse sind nicht versioniert, so bleibt ihr Stand
+                             nachvollziehbar (Vergleich zweier Läufe: diff a/inputs.sha256 b/inputs.sha256)
     ... plus die Ergebnisse des Schritts
 
 Zusätzlich führt results/runs/runs_index.csv eine Zeile je Lauf mit den wichtigsten
@@ -21,6 +24,7 @@ Beispiel:
     run_dir = new_run_dir('cost', note='Wirkungsgrad 2050 auf 0,76')
     df.to_csv(run_dir / 'results_cost_2025.csv', index=False)
 """
+import hashlib
 import json
 import shutil
 import subprocess
@@ -34,6 +38,7 @@ from h2morocco.utils import MODEL_PARAMETERS_CSV
 ROOT = Path(__file__).resolve().parents[1]
 RUNS_DIR = ROOT / 'results' / 'runs'
 RUNS_INDEX = RUNS_DIR / 'runs_index.csv'
+INPUT_DIRS = [ROOT / 'data' / 'interim']   # Ordner, deren Dateistand je Lauf festgehalten wird
 
 
 def _git(*args):
@@ -63,6 +68,20 @@ def git_state():
     }
 
 
+def write_input_hashes(path):
+    """Schreibt die SHA-256-Prüfsumme jeder Datei in INPUT_DIRS nach ``path``.
+
+    Format wie ``shasum -a 256`` (Prüfsumme, zwei Leerzeichen, Pfad ab Projektordner),
+    sortiert nach Pfad. Zwei Läufe lassen sich damit per ``diff`` vergleichen.
+    """
+    lines = []
+    for folder in INPUT_DIRS:
+        for file in sorted(f for f in folder.rglob('*') if f.is_file() and f.name != '.DS_Store'):
+            digest = hashlib.sha256(file.read_bytes()).hexdigest()
+            lines.append(f'{digest}  {file.relative_to(ROOT).as_posix()}')
+    Path(path).write_text('\n'.join(lines) + '\n', encoding='utf-8')
+
+
 def new_run_dir(kind, note='', script=''):
     """Legt einen neuen Laufordner an, dokumentiert Codestand und Parameter und gibt den Pfad zurück.
 
@@ -83,6 +102,7 @@ def new_run_dir(kind, note='', script=''):
     shutil.copy2(MODEL_PARAMETERS_CSV, run_dir / 'model_parameters.csv')
     if git['dirty']:
         (run_dir / 'changes.patch').write_text(_git('diff', 'HEAD'), encoding='utf-8')
+    write_input_hashes(run_dir / 'inputs.sha256')
 
     info = {
         'run': run_dir.name,
