@@ -58,7 +58,5 @@ data/interim/**
 
 # Ausnahmen in data/raw/: kleine Eingabedateien, die kein Skript erzeugen oder neu laden kann.
 # Dieser Block muss am Ende stehen, damit er allgemeine Regeln wie *.csv übersteuert.
-# QGIS-Altdaten aus dem Masterprojekt, Herkunft unbekannt (data/raw/origin_unknown/README.md)
-!data/raw/origin_unknown/cell_flh_re.csv
 # renewables.ninja-Download (Altbestand); 01_re_data.py kann ihn nicht reproduzieren (Fehlerprotokoll Nr. 10)
 !data/raw/renewables_ninja/pv_wind_electricity.csv

@@ -6,7 +6,7 @@ Atlas, räumlicher Join ``intersects``) und bildet je Zelle den Mittelwert von
 
 Eingaben:
     data/interim/grid/grid_morocco_clear.shp
-    data/raw/origin_unknown/Wind_pot_morocco_FLH.shp
+    data/interim/qgis/Wind_pot_morocco_FLH.shp      aus ki_generiert/wind_flh_grid.py (Global Wind Atlas)
 
 Ausgaben:
     data/interim/mca_criteria/results_wind_flh.csv   eine Spalte ``FLH_wind``, zeilengleich mit dem Raster
@@ -32,7 +32,7 @@ import geopandas as gpd
 gdf_grid = gpd.read_file('../data/interim/grid/grid_morocco_clear.shp')
     # Wind
     # Source: Global Wind Atlas
-gdf_wind_morocco_utm29n = gpd.read_file('../data/raw/origin_unknown/Wind_pot_morocco_FLH.shp').to_crs("EPSG:32629")
+gdf_wind_morocco_utm29n = gpd.read_file('../data/interim/qgis/Wind_pot_morocco_FLH.shp').to_crs("EPSG:32629")
 
 # Spatial join: alle Wind-Geometrien auf die Grid-Zellen mappen
 joined = gpd.sjoin(gdf_grid,

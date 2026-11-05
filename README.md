@@ -47,7 +47,7 @@ H2_Morocco/
 │   └── old/                  veraltete Skripte
 ├── Cost_analysis/            nur Code
 │   ├── *.py                  Pipeline der Kostenanalyse (siehe unten)
-│   ├── ki_generiert/         von Claude geschriebene Skripte (01b_flh_re.py)
+│   ├── ki_generiert/         von Claude geschriebene Skripte (01b_flh_re.py, 01c_cell_flh_re.py)
 │   └── 01_old/               veraltete Skripte
 └── requirements.txt
 ```
@@ -258,15 +258,16 @@ Neue Skripte, die Claude (Claude Code) geschrieben hat, liegen in eigenen Untero
 
 | Ordner | Skripte | Übersicht |
 |---|---|---|
-| `MCA/ki_generiert/` | `flow_direction_grid.py`, `pv_yield_polygons.py`, `topography_grid.py` (ersetzen frühere QGIS-Schritte) | `MCA/ki_generiert/README.md` |
-| `Cost_analysis/ki_generiert/` | `01b_flh_re.py` (Volllaststunden aus den Profilen) | `Cost_analysis/ki_generiert/README.md` |
+| `MCA/ki_generiert/` | `flow_direction_grid.py`, `pv_yield_polygons.py`, `wind_flh_grid.py`, `topography_grid.py` (ersetzen frühere QGIS-Schritte) | `MCA/ki_generiert/README.md` |
+| `Cost_analysis/ki_generiert/` | `01b_flh_re.py` (Volllaststunden der Referenzpunkte), `01c_cell_flh_re.py` (PV/Wind je Zelle) | `Cost_analysis/ki_generiert/README.md` |
 
 **Vorhandene Skripte, die Claude am 05.11.2026 inhaltlich geändert hat** (Diff in Git):
 - `MCA/Grid_morocco/grid_morocco.py`: schreibt zusätzlich `grid_morocco_clear.shp` (Zuschnitt auf die Landesgrenze)
 - `MCA/water_forecast.py`: schreibt zusätzlich Wasser 2050 für die Kostenanalyse (Block aus Commit `0ff553c`)
 - `Cost_analysis/01_re_data.py`: nur noch Download nach `data/raw/renewables_ninja/`, Rechenteil nach `01b_flh_re.py`
-- `Cost_analysis/04_cost_analysis_h2_morocco.py`: liest Wasser aus `data/interim/water/`
-- Pfade und Kommentare in `wind_analysis.py`, `water_net.py`, `water_exploitable_{sw,gw}.py`, `no_go_zones.py`, `nogo_maps.py`, `02_FLH_el.py`
+- `Cost_analysis/04_cost_analysis_h2_morocco.py`: liest Wasser aus `data/interim/water/` und `cell_flh_re.csv` aus `data/interim/re_profiles/`
+- `MCA/wind_analysis.py`: liest den Wind-Layer aus `data/interim/qgis/` (Global Wind Atlas)
+- Pfade und Kommentare in `water_net.py`, `water_exploitable_{sw,gw}.py`, `no_go_zones.py`, `nogo_maps.py`, `02_FLH_el.py`
 
 **Ältere KI-generierte Dateien** (laut Git-Commits mit „Co-Authored-By: Claude“; nicht verschoben, weil sie importiert werden bzw. im Hauptordner liegen müssen): `main.ipynb`, `compare_mca_cost.py`, `h2morocco/__init__.py`, `h2morocco/overview.py`, `h2morocco/runs.py`. Commits ohne diesen Vermerk können ebenfalls KI-Anteile enthalten.
 
@@ -274,7 +275,7 @@ Neue Skripte, die Claude (Claude Code) geschrieben hat, liegen in eigenen Untero
 
 ## Bekannte Einschränkungen
 
-1. **Herkunft unbekannt:** Wind-Layer, Küstenlinie und `cell_flh_re.csv` stammen aus QGIS ohne erhaltenen Rechenweg, siehe `data/raw/origin_unknown/README.md`.
+1. **Herkunft unbekannt:** Die Küstenlinie stammt aus QGIS ohne erhaltene Quelle, siehe `data/raw/origin_unknown/README.md`.
 2. **Fließrichtung statt Fließakkumulation:** Das Oberflächenwasser wird nach summierten Richtungscodes verteilt (Fehlerprotokoll Nr. 110).
 3. **Nur 50 von 100 Standorten:** `ki_generiert/01b_flh_re.py` berechnet `flh_re.csv` nur für die ersten 50 von 100 Standorten, die Kostenanalyse ordnet Zellen deshalb nur diesen zu.
 4. **PV-Kosten vermutlich überschätzt:** In `cost_analysis_h2_morocco.py` werden die jährlichen PV-Kosten als `Annuität + CAPEX × Leistung` statt `Annuität + OPEX × Leistung` berechnet.

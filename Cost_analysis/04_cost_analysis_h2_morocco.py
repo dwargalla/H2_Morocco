@@ -21,7 +21,7 @@ Eingaben:
     data/raw/infrastructure/industrial_ports_morocco_{2025,2050}.shp
     data/interim/re_profiles/data_re_flh_electrolyzer.shp   aus 03_assignment_re_data.py
     data/interim/re_profiles/flh_re.csv                     aus ki_generiert/01b_flh_re.py
-    data/raw/origin_unknown/cell_flh_re.csv                FLH je Zelle (nicht per Skript erzeugt, vermutlich QGIS)
+    data/interim/re_profiles/cell_flh_re.csv                FLH_PV, FLH_Wind je Zelle, aus ki_generiert/01c_cell_flh_re.py
     data/raw/origin_unknown/morocco_coast_line.shp
     data/interim/water/water_availability_{sw,gw}{,_2050}.csv   aus water_exploitable_{sw,gw}.py bzw. water_forecast.py
 
@@ -131,7 +131,7 @@ gdf_ref_points              = gpd.read_file('../data/interim/re_profiles/data_re
 pv_capacity                 = gdf_ref_points['PV']      # [MW] je Referenzpunkt (bekannter Fehler F-04: eigentlich Prozent)
 wind_capacity               = gdf_ref_points['Wind']    # [MW] je Referenzpunkt (bekannter Fehler F-04: eigentlich Prozent)
 df_ref_points_flh           = pd.read_csv('../data/interim/re_profiles/flh_re.csv')    # FLH PV und Wind je Referenzpunkt
-df_cell_flh                 = pd.read_csv('../data/raw/origin_unknown/cell_flh_re.csv')      # FLH PV und Wind je Zelle
+df_cell_flh                 = pd.read_csv('../data/interim/re_profiles/cell_flh_re.csv')      # FLH PV und Wind je Zelle
     # Küste und Wasserverfügbarkeit je Zelle [Mio. m³]
 gdf_coast                   = gpd.read_file('../data/raw/origin_unknown/morocco_coast_line.shp').to_crs("EPSG:32629")
 df_surface_water_2025       = pd.read_csv('../data/interim/water/water_availability_sw.csv')
