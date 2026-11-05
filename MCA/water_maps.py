@@ -7,7 +7,7 @@ Eingaben:
     data/raw/boundaries/morocco_Morocco_Country_Boundary.shp
     data/raw/groundwater/Morocco_HG.shp, data/raw/groundwater/WesternSahara_HG.shp
     data/interim/water/water_availability_sw.csv   aus water_exploitable_sw.py
-    data/interim/qgis/flow_direction_grid.shp
+    data/interim/layers/flow_direction_grid.shp
     data/raw/hydrology/watershead_morocco.shp
     data/interim/water/cwb.shp                     aus water_forecast.py (optional, sonst keine CWB-Karte)
 
@@ -55,7 +55,7 @@ gdf_grid = gpd.read_file('../data/interim/grid/grid_morocco_clear.shp')
 df_sw = pd.read_csv('../data/interim/water/water_availability_sw.csv')
 gdf_grid['Surface Water'] = df_sw['water_availability_sw[MCM]']
 
-gdf_water_direction = gpd.read_file('../data/interim/qgis/flow_direction_grid.shp')
+gdf_water_direction = gpd.read_file('../data/interim/layers/flow_direction_grid.shp')
 
 gdf_watershead_morocco = gpd.read_file('../data/raw/hydrology/watershead_morocco.shp')
 

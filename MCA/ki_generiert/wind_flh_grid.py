@@ -15,13 +15,13 @@ Eingaben:
                                                   Kapazitätsfaktor IEC-Klasse III, 250 m, EPSG:4326
 
 Ausgaben:
-    data/interim/qgis/Wind_pot_morocco_FLH.shp     Spalten FID, FLH_wind [h/a]; EPSG:32629
+    data/interim/layers/Wind_pot_morocco_FLH.shp     Spalten FID, FLH_wind [h/a]; EPSG:32629
 
 Hinweise:
     - Quelle wie im Paper (Tabelle 3: Global Wind Atlas). Der frühere QGIS-Layer
-      (jetzt ``data/raw/origin_unknown/``) hatte unbekannte Herkunft und Werte bis
-      7.431 h (Fehlerprotokoll Nr. 71); dieser liegt im Mittel etwa 15 % niedriger,
-      Korrelation mit dem alten Layer 0,98 (Prüfung vom 19.10.2026).
+      (Original in Sciebo) hatte unbekannte Herkunft. Das Wind-Kriterium liegt damit im
+      Mittel 13 % niedriger, Korrelation mit dem alten 0,983, Maximum gleich (7.432 h,
+      kommt aus dem Atlas selbst; Fehlerprotokoll Nr. 71). Geprüft 05.11.2026.
     - **Annahme Turbinenklasse IEC III:** Das Paper nennt keine Klasse. IEC III passt
       zur Referenzturbine der Kostenanalyse (Vestas V136-3.45, Schwachwindklasse IIIA).
     - Direkt in VS Code oder aus beliebigem Arbeitsordner starten: ``python wind_flh_grid.py``
@@ -77,4 +77,4 @@ with np.errstate(invalid='ignore'):
 gdf_wind = gpd.GeoDataFrame({'FID': gdf_grid['FID'], 'FLH_wind': flh_wind},
                             geometry=gdf_grid.geometry.buffer(-1), crs=gdf_grid.crs)
 gdf_wind = gdf_wind[~gdf_wind.geometry.is_empty & gdf_wind['FLH_wind'].notna()]
-gdf_wind.to_file('../../data/interim/qgis/Wind_pot_morocco_FLH.shp', driver='ESRI Shapefile')
+gdf_wind.to_file('../../data/interim/layers/Wind_pot_morocco_FLH.shp', driver='ESRI Shapefile')

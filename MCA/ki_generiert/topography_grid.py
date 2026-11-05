@@ -14,7 +14,7 @@ Eingaben:
     data/raw/dem/copernicus_dem_glo90/*.tif            Copernicus DEM GLO-90, 3″, EPSG:4326
 
 Ausgaben:
-    data/interim/qgis/ToPo_1500.shp                    Spalten FID, _min, _max, Diff, NoGo;
+    data/interim/layers/ToPo_1500.shp                    Spalten FID, _min, _max, Diff, NoGo;
                                                        zeilengleich mit dem Raster
 
 Hinweise:
@@ -81,4 +81,4 @@ gdf_topo = gpd.GeoDataFrame({
     'Diff': elevation_range,
     'NoGo': np.where(np.nan_to_num(elevation_range, nan=0) > MAX_ELEVATION_RANGE_M, 0, 1),
 }, geometry=gdf_grid.geometry, crs=gdf_grid.crs)
-gdf_topo.to_file('../../data/interim/qgis/ToPo_1500.shp', driver='ESRI Shapefile')
+gdf_topo.to_file('../../data/interim/layers/ToPo_1500.shp', driver='ESRI Shapefile')

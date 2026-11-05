@@ -268,7 +268,7 @@ Neue Skripte, die Claude (Claude Code) geschrieben hat, liegen in eigenen Untero
 - `MCA/water_forecast.py`: schreibt zusätzlich Wasser 2050 für die Kostenanalyse (Block aus Commit `0ff553c`)
 - `Cost_analysis/01_re_data.py`: nur noch Download nach `data/raw/renewables_ninja/`, Rechenteil nach `01b_flh_re.py`
 - `Cost_analysis/04_cost_analysis_h2_morocco.py`: liest Wasser aus `data/interim/water/` und `cell_flh_re.csv` aus `data/interim/re_profiles/`
-- `MCA/wind_analysis.py`: liest den Wind-Layer aus `data/interim/qgis/` (Global Wind Atlas)
+- `MCA/wind_analysis.py`: liest den Wind-Layer aus `data/interim/layers/` (Global Wind Atlas)
 - Pfade und Kommentare in `water_net.py`, `water_exploitable_{sw,gw}.py`, `no_go_zones.py`, `nogo_maps.py`, `02_FLH_el.py`
 
 **Ältere KI-generierte Dateien** (laut Git-Commits mit „Co-Authored-By: Claude“; nicht verschoben, weil sie importiert werden bzw. im Hauptordner liegen müssen): `main.ipynb`, `compare_mca_cost.py`, `h2morocco/__init__.py`, `h2morocco/overview.py`, `h2morocco/runs.py`. Commits ohne diesen Vermerk können ebenfalls KI-Anteile enthalten.

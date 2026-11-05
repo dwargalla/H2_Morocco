@@ -55,6 +55,8 @@ Fehlerprotokoll.md
 # Welcher Stand zu einem Ergebnis gehört, steht im Laufordner (results/runs/).
 data/interim/**
 !data/interim/**/
+# leere Platzhalter, damit die Unterordner nach dem Klonen existieren
+!data/interim/**/.gitkeep
 
 # Ausnahmen in data/raw/: kleine Eingabedateien, die kein Skript erzeugen oder neu laden kann.
 # Dieser Block muss am Ende stehen, damit er allgemeine Regeln wie *.csv übersteuert.

@@ -14,7 +14,7 @@ Eingaben:
                                                 PVOUT [kWh/kWp/a], 30″, EPSG:4326
 
 Ausgaben:
-    data/interim/qgis/PV_yeald_clear_ma_we.shp  Spalten fid, pv_yeald; EPSG:4326
+    data/interim/layers/PV_yeald_clear_ma_we.shp  Spalten fid, pv_yeald; EPSG:4326
 
 Hinweise:
     - Nachgerechnet gegen die QGIS-Datei aus dem Masterprojekt (05.11.2026): gleiche
@@ -52,4 +52,4 @@ polygons = [(shape(geom), int(value))
 gdf_pv = gpd.GeoDataFrame({'fid': np.arange(1, len(polygons) + 1, dtype=float),
                            'pv_yeald': [value for _, value in polygons]},
                           geometry=[geom for geom, _ in polygons], crs=crs)
-gdf_pv.to_file('../../data/interim/qgis/PV_yeald_clear_ma_we.shp', driver='ESRI Shapefile')
+gdf_pv.to_file('../../data/interim/layers/PV_yeald_clear_ma_we.shp', driver='ESRI Shapefile')

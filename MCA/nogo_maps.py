@@ -6,7 +6,7 @@ no_go_zones.py).
 Eingaben:
     data/raw/boundaries/morocco_Morocco_Country_Boundary.shp
     data/raw/osm/gis_osm_landuse_a_free_1.shp
-    data/interim/qgis/ToPo_1500.shp
+    data/interim/layers/ToPo_1500.shp
 
 Ausgaben:
     results/figures/mca/morocco_nogos.png
@@ -46,7 +46,7 @@ gdf_nogo_zones = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['military
 gdf_nogo_zones.reset_index(drop=True, inplace=True)
 gdf_nogo_zones.index = range(len(gdf_nogo_zones))
 ###
-gdf_topo_utm29n = gpd.read_file('../data/interim/qgis/ToPo_1500.shp').to_crs("EPSG:32629")   #Already 1 or 0, aus ki_generiert/topography_grid.py
+gdf_topo_utm29n = gpd.read_file('../data/interim/layers/ToPo_1500.shp').to_crs("EPSG:32629")   #Already 1 or 0, aus ki_generiert/topography_grid.py
 
 
 # Map MCA diff

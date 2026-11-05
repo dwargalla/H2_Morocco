@@ -14,7 +14,7 @@ Eingaben:
     data/raw/hydrology/flow_direction_morocco.tif     MERIT Hydro ``dir``, 83 m, EPSG:32629
 
 Ausgaben:
-    data/interim/qgis/flow_direction_grid.shp         Spalten FID, _sum; zeilengleich mit dem Raster
+    data/interim/layers/flow_direction_grid.shp         Spalten FID, _sum; zeilengleich mit dem Raster
 
 Hinweise:
     - **Methodenfehler (Fehlerprotokoll Nr. 110):** Das Raster enthält D8-Fließrichtungs-
@@ -61,4 +61,4 @@ sum_per_cell = np.bincount(cell_id[inside], weights=flow_direction[inside],
 
 gdf_flow = gpd.GeoDataFrame({'FID': gdf_grid['FID'], '_sum': sum_per_cell},
                             geometry=gdf_grid.geometry, crs=gdf_grid.crs)
-gdf_flow.to_file('../../data/interim/qgis/flow_direction_grid.shp', driver='ESRI Shapefile')
+gdf_flow.to_file('../../data/interim/layers/flow_direction_grid.shp', driver='ESRI Shapefile')

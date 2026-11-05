@@ -42,10 +42,10 @@ Alle Eingangs- und Zwischendaten von MCA und Kostenanalyse liegen in diesem Ordn
 |---|---|---|
 | `grid/grid_morocco.shp` | `MCA/Grid_morocco/grid_morocco.py` | Landesgrenze: 10-km-Quadrate, die sie schneiden |
 | `grid/grid_morocco_clear.shp` | `MCA/Grid_morocco/grid_morocco.py` | dieselben Zellen, auf die Landesgrenze zugeschnitten. **Zentrales Raster** (7219 Zellen, EPSG:32629) |
-| `qgis/flow_direction_grid.shp` | `MCA/ki_generiert/flow_direction_grid.py` | `raw/hydrology/flow_direction_morocco.tif`, Summe je Zelle (Fehlerprotokoll Nr. 110) |
-| `qgis/PV_yeald_clear_ma_we.shp` | `MCA/ki_generiert/pv_yield_polygons.py` | `raw/renewables/gsa/PVOUT_Morocco_Complete_Yearly.tif`, gerundet und polygonisiert |
-| `qgis/Wind_pot_morocco_FLH.shp` | `MCA/ki_generiert/wind_flh_grid.py` | `raw/renewables/gwa/`, Kapazitätsfaktor × 8.760 h je Zelle |
-| `qgis/ToPo_1500.shp` | `MCA/ki_generiert/topography_grid.py` | `raw/dem/copernicus_dem_glo90/`, Höhenspanne je Zelle, `NoGo = 0` ab 1.500 m |
+| `layers/flow_direction_grid.shp` | `MCA/ki_generiert/flow_direction_grid.py` | `raw/hydrology/flow_direction_morocco.tif`, Summe je Zelle (Fehlerprotokoll Nr. 110) |
+| `layers/PV_yeald_clear_ma_we.shp` | `MCA/ki_generiert/pv_yield_polygons.py` | `raw/renewables/gsa/PVOUT_Morocco_Complete_Yearly.tif`, gerundet und polygonisiert |
+| `layers/Wind_pot_morocco_FLH.shp` | `MCA/ki_generiert/wind_flh_grid.py` | `raw/renewables/gwa/`, Kapazitätsfaktor × 8.760 h je Zelle |
+| `layers/ToPo_1500.shp` | `MCA/ki_generiert/topography_grid.py` | `raw/dem/copernicus_dem_glo90/`, Höhenspanne je Zelle, `NoGo = 0` ab 1.500 m |
 | `landuse/morocco_landuse_2050.shp` | `MCA/forecast_landuse.py` | GlobCover + `Regions` |
 | `water/water_availability_{sw,gw}.csv` | `MCA/water_exploitable_{sw,gw}.py` | Einzugsgebiete, Fließrichtung, Grundwasser |
 | `water/Water_Consumption_{2025,2050}.csv` | `MCA/water_consumption.py` | Landnutzung |
@@ -56,7 +56,7 @@ Alle Eingangs- und Zwischendaten von MCA und Kostenanalyse liegen in diesem Ordn
 | `re_profiles/FLH_electrolyzer.csv` | `Cost_analysis/02_FLH_el.py` (Gurobi) | Profile |
 | `re_profiles/data_re_flh_electrolyzer.shp` | `Cost_analysis/03_assignment_re_data.py` | `FLH_electrolyzer.csv` + Standorte |
 
-Der Ordnername `qgis/` ist historisch: Die Dateien entstanden früher in QGIS, heute per Skript.
+`layers/` enthält aufbereitete räumliche Layer. Bis 05.11.2026 hieß der Ordner `qgis/`, weil die Dateien früher in QGIS entstanden.
 
 ---
 
