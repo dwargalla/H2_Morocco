@@ -25,10 +25,16 @@ Eingaben:
     data/interim/qgis/morocco_coast_line.shp
     data/interim/water_cost/water_availability_{sw,gw}.csv, data/interim/water_cost/water_availability_{sw,gw}_2050.csv
 
-Ausgaben:
-    results/cost/results_cost_2025.csv   je Zelle: Produktionszelle, FLH, Kostenanteile
-    results/cost/results_cost_2050.csv   (Wasser, Elektrolyse, EE, Netz, Pipeline) und
-                                 Gesamtpreis in €/MWh_H2
+Ausgaben (je Lauf ein neuer Ordner, siehe h2morocco/runs.py):
+    results/runs/<Datum>_<Uhrzeit>_<Commit>[-dirty]_cost/
+        results_cost_2025.csv, results_cost_2050.csv   je Zelle: Produktionszelle, FLH,
+                                 Kostenanteile (Wasser, Elektrolyse, EE, Netz, Pipeline)
+                                 und Gesamtpreis in €/MWh_H2
+        overview.png             Übersicht im Folienformat
+        metrics.csv              Kennzahlen; zusätzlich eine Zeile in results/runs/runs_index.csv
+        run_info.json, model_parameters.csv, changes.patch, FLH_electrolyzer.csv
+                                 Codestand, Parameter und Auslegung dieses Laufs
+    Optional: --note "was geändert wurde"
 
 Hinweise:
     - Die Distanzmatrix und ihre Sortierung brauchen mehrere GB Arbeitsspeicher.
@@ -46,11 +52,23 @@ if __name__ == "__main__":
     _os.chdir(_Path(__file__).resolve().parent)
 
 
+import argparse
+import shutil
+
 import geopandas as gpd
 import numpy as np
 import pandas as pd
 
+from h2morocco.overview import build_overview
+from h2morocco.runs import new_run_dir
 from h2morocco.utils import annuity_factor, read_model_parameters
+
+# Jeder Lauf bekommt einen eigenen Ordner in results/runs/ (Datum, Uhrzeit, Commit).
+# Optional eine Notiz, was geändert wurde:  python 04_cost_analysis_h2_morocco.py --note "CAPEX Elektrolyseur DEA"
+parser = argparse.ArgumentParser()
+parser.add_argument('--note', default='', help='kurze Beschreibung, was in diesem Lauf geändert wurde')
+run_dir = new_run_dir('cost', note=parser.parse_args().note, script='04_cost_analysis_h2_morocco.py')
+print(f'Laufordner: {run_dir}')
 
 
 ############################################################
@@ -402,5 +420,12 @@ df_results_2050 = h2_cost_per_cell(
 ############################################################
 # 7. Ergebnisse speichern
 ############################################################
-df_results_2025.to_csv('../results/cost/results_cost_2025.csv', index=False)
-df_results_2050.to_csv('../results/cost/results_cost_2050.csv', index=False)
+# Alles in den Laufordner, nichts wird überschrieben. Die Auslegung aus 02 wird mitkopiert,
+# damit nachvollziehbar bleibt, mit welchen Volllaststunden gerechnet wurde.
+df_results_2025.to_csv(run_dir / 'results_cost_2025.csv', index=False)
+df_results_2050.to_csv(run_dir / 'results_cost_2050.csv', index=False)
+shutil.copy2('../data/interim/re_profiles/FLH_electrolyzer.csv', run_dir / 'FLH_electrolyzer.csv')
+
+# Übersichtsbild (overview.png) und Kennzahlen (metrics.csv, results/runs/runs_index.csv)
+build_overview(run_dir, gdf_grid, df_results_2025, df_results_2050)
+print(f'Fertig: {run_dir}')

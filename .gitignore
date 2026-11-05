@@ -3,6 +3,7 @@
 data/raw/**
 !data/raw/**/
 !data/raw/**/README*
+results/runs/**
 
 # GIS-Dateien und Abbildungen allgemein (einzelne Dateien sind bewusst getrackt)
 *.tif
@@ -28,6 +29,7 @@ data/raw/**
 *.lyr
 *.avl
 *.qpj
+*.svg
 
 # Lokale Umgebung / System
 .venv/

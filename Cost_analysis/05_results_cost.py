@@ -3,13 +3,16 @@
 Eingaben:
     data/raw/boundaries/morocco_Morocco_Country_Boundary.shp
     data/interim/grid/grid_morocco_clear.shp
-    results/cost/results_cost_{2025,2050}.csv   aus 04_cost_analysis_h2_morocco.py
+    <Laufordner>/results_cost_{2025,2050}.csv   aus 04_cost_analysis_h2_morocco.py
+        Laufordner: neuester in results/runs/*_cost oder als Argument übergeben
 
-Ausgaben:
-    results/figures/cost/cost_map_{2025,2050}.{pdf,png}                 H2-Kosten je Zelle
-    results/figures/cost/bar_cost_components_morocco_seperate.{pdf,png} mittlere Kostenanteile, nebeneinander
-    results/figures/cost/bar_cost_components_morocco.{pdf,png}          mittlere Kostenanteile, gestapelt
-    results/cost/results_cost_morocco_2025_2050.csv             Gesamtpreis 2025 und 2050 je Zelle
+Ausgaben (in denselben Laufordner):
+    figures/cost_map_{2025,2050}.{pdf,png}                 H2-Kosten je Zelle
+    figures/bar_cost_components_morocco_seperate.{pdf,png} mittlere Kostenanteile, nebeneinander
+    figures/bar_cost_components_morocco.{pdf,png}          mittlere Kostenanteile, gestapelt
+    results_cost_morocco_2025_2050.csv                     Gesamtpreis 2025 und 2050 je Zelle
+
+    Die veröffentlichten Ergebnisse in results/cost/ und results/figures/cost/ bleiben unverändert.
 
 Hinweise:
     - ``plt.show()`` blockiert ohne grafische Oberfläche (``MPLBACKEND=Agg`` setzen).
@@ -39,11 +42,23 @@ if not os.getenv('CARTO_API_KEY'):
 basemap = cx.providers.CartoDB.Positron(apikey=os.getenv('CARTO_API_KEY'))
 
 
+# Laufordner aus 04: standardmäßig der neueste, sonst als Argument übergeben:
+#   python 05_results_cost.py ../results/runs/2026-11-05_1530_3c6df83_cost
+import sys
+from pathlib import Path
+from h2morocco.runs import latest_run_dir
+run_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else latest_run_dir('cost')
+if run_dir is None:
+    raise SystemExit('Kein Kostenlauf in results/runs/ gefunden: zuerst 04_cost_analysis_h2_morocco.py ausführen.')
+fig_dir = run_dir / 'figures'
+fig_dir.mkdir(exist_ok=True)
+print(f'Laufordner: {run_dir}')
+
 gdf_morocco_boundary    = gpd.read_file('../data/raw/boundaries/morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
 gdf_grid_morocco        = gpd.read_file('../data/interim/grid/grid_morocco_clear.shp').to_crs("EPSG:32629")
 
-df_res_2025             = pd.read_csv('../results/cost/results_cost_2025.csv')
-df_res_2050             = pd.read_csv('../results/cost/results_cost_2050.csv')
+df_res_2025             = pd.read_csv(run_dir / 'results_cost_2025.csv')
+df_res_2050             = pd.read_csv(run_dir / 'results_cost_2050.csv')
 
 theme_rating = 'jet'
 theme_diff   = 'OrRd_r'
@@ -64,8 +79,8 @@ plt.axis('off')
 cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=10)
 cbar_ax.yaxis.label.set_size(20)
-plt.savefig("../results/figures/cost/cost_map_2025.pdf", format="pdf", bbox_inches='tight', pad_inches=0)#
-plt.savefig("../results/figures/cost/cost_map_2025.png", format="png", dpi = 300, bbox_inches='tight', pad_inches=0)
+plt.savefig(str(fig_dir / "cost_map_2025.pdf"), format="pdf", bbox_inches='tight', pad_inches=0)#
+plt.savefig(str(fig_dir / "cost_map_2025.png"), format="png", dpi = 300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Costs 2050
@@ -77,8 +92,8 @@ plt.axis('off')
 cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=10)
 cbar_ax.yaxis.label.set_size(20)
-plt.savefig("../results/figures/cost/cost_map_2050.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
-plt.savefig("../results/figures/cost/cost_map_2050.png", format="png", dpi = 300, bbox_inches='tight', pad_inches=0)
+plt.savefig(str(fig_dir / "cost_map_2050.pdf"), format="pdf", bbox_inches='tight', pad_inches=0)
+plt.savefig(str(fig_dir / "cost_map_2050.png"), format="png", dpi = 300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Kostenanteile
@@ -98,8 +113,8 @@ ax.legend()
 ax.bar_label(rects1, padding=3)
 ax.bar_label(rects2, padding=3)
 fig.tight_layout()
-plt.savefig("../results/figures/cost/bar_cost_components_morocco_seperate.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
-plt.savefig("../results/figures/cost/bar_cost_components_morocco_seperate.png", format="png", dpi = 300, bbox_inches='tight', pad_inches=0)
+plt.savefig(str(fig_dir / "bar_cost_components_morocco_seperate.pdf"), format="pdf", bbox_inches='tight', pad_inches=0)
+plt.savefig(str(fig_dir / "bar_cost_components_morocco_seperate.png"), format="png", dpi = 300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Gestapeltes Säulendiagramm
@@ -123,10 +138,10 @@ ax.set_xticklabels(['2025', '2050'])
 ax.set_ylabel(r'Cost $\mathrm{[€/MWh_{H_2}]}$')
 ax.legend([b[0] for b in bars], labels, bbox_to_anchor=(1.05, 1), loc='upper left')
 fig.tight_layout()
-plt.savefig("../results/figures/cost/bar_cost_components_morocco.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
-plt.savefig("../results/figures/cost/bar_cost_components_morocco.png", format="png", dpi = 300, bbox_inches='tight', pad_inches=0)
+plt.savefig(str(fig_dir / "bar_cost_components_morocco.pdf"), format="pdf", bbox_inches='tight', pad_inches=0)
+plt.savefig(str(fig_dir / "bar_cost_components_morocco.png"), format="png", dpi = 300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Results export (csv)
 df_res = pd.concat([df_res_2025['H2_Price_2025 [EUR/MWh_h2]'], df_res_2050['H2_Price_2050 [EUR/MWh_h2]']], axis=1)
-df_res.to_csv('../results/cost/results_cost_morocco_2025_2050.csv', index=False)
+df_res.to_csv(run_dir / 'results_cost_morocco_2025_2050.csv', index=False)
