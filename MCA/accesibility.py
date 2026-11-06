@@ -3,8 +3,8 @@
 Fasst OSM-Straßen und -Schienen zusammen, filtert 12 Klassen (motorway …
 unclassified, railway) und summiert je Zelle die Länge [m] jeder Klasse
 innerhalb der Zelle. Die Gewichtung der Klassen erfolgt erst in
-``mca_maps.py`` (``dict_weights_roads``); ``weights_roads`` hier wird nicht
-verwendet.
+``mca_maps.py`` mit den Straßengewichten aus ``data/model_parameters/mca_weights.csv``
+(Gruppe ``roads``).
 
 Eingaben:
     data/interim/grid/grid_morocco_clear.shp
@@ -48,19 +48,6 @@ classes = ['motorway', 'trunk', 'primary', 'secondary',
            'tertiary', 'track', 'track_grade1', 'track_grade2', 
            'track_grade3', 'track_grade4', 'unclassified', 'railway']
 gdf_roads_railsways = gdf_roads_railsways[gdf_roads_railsways['fclass'].isin(classes)]
-
-weights_roads = {'motorway': 0.25,
-                  'trunk': 0.18,
-                  'primary':0.12, 
-                  'secondary':0.09, 
-                  'tertiary':0.06, 
-                  'track':0.01, 
-                  'track_grade1':0.03, 
-                  'track_grade2':0.02, 
-                  'track_grade3':0.01, 
-                  'track_grade4':0.01, 
-                  'unclassified':0.04, 
-                  'railway':0.18}
 
 df_accessibility = pd.DataFrame(columns = classes)
 for i in range(len(gdf_grid)):

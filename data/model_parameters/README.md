@@ -3,6 +3,7 @@
 | Datei | Inhalt |
 |---|---|
 | `model_parameters.csv` | Alle Modellparameter (Literaturwerte und Annahmen): Wert in der Quelle, Umrechnung, Wert in EUR 2025, Quelle |
+| `Annahmen.md` | Liste aller Annahmen im Modell: Wert, Ort im Code, Quelle, ob in einer Parameterdatei oder fest im Code |
 | `mca_weights.csv` | MCA-Gewichte: Hauptkriterien (`group = main`) und Straßenklassen der Erreichbarkeit (`group = roads`), je mit Richtung, Skalierung, Quelle; gelesen über `h2morocco.utils.read_mca_weights()` |
 | `conversion_factors.csv` | Inflationsfaktoren auf 2025 und Wechselkurse USD ↔ EUR je Jahr (2000–2025) |
 | `raw_ecb_exr_usd_eur_annual.csv` | Rohdaten EZB, unverändert heruntergeladen |
