@@ -13,6 +13,7 @@ Ausgaben im Laufordner:
     sources.json           verglichener Kostenlauf und MCA-Stand
     metrics.csv            Kennzahlen (auch als Zeile in results/runs/runs_index.csv)
 """
+import json
 import textwrap
 from pathlib import Path
 
@@ -127,6 +128,32 @@ def comparison_metrics(results, allowed, cost_dir):
     return metrics
 
 
+def mca_label(sources):
+    """Kurzer Text zur MCA-Herkunft: Laufordner, sonst Dateistand von results/mca/."""
+    if sources.get('mca_run'):
+        return sources['mca_run']
+    return f"Dateistand {sources.get('mca_mtime', '–')} (kein Laufordner)"
+
+
+def changed_mca_weights(sources, previous_sources):
+    """Texte 'Kriterium: alt → neu' für geänderte MCA-Gewichte, None wenn ein Lauf keine Gewichte hat."""
+    paths = []
+    for s in (sources, previous_sources):
+        if not s.get('mca_run'):
+            return None
+        path = RUNS_DIR / s['mca_run'] / 'weights.json'
+        if not path.exists():
+            return None
+        paths.append(path)
+    new = json.loads(paths[0].read_text(encoding='utf-8'))
+    old = json.loads(paths[1].read_text(encoding='utf-8'))
+    lines = []
+    for name in sorted(set(new) | set(old)):
+        if new.get(name) != old.get(name):
+            lines.append(f'{name}: {old.get(name)} → {new.get(name)}')
+    return lines
+
+
 def _delta_short(new, old, unit='', digits=1, higher_is_better=None):
     """Kurzer Δ-Text mit Farbe: grün = besser, rot = schlechter, grau = neutral oder kein Vorlauf."""
     if old is None or pd.isna(old):
@@ -144,7 +171,8 @@ def build_comparison_overview(run_dir, gdf_grid, results, allowed, sources, refe
 
     results:  DataFrame je Zelle (zeilengleich mit gdf_grid), Spalten MCA_<Jahr> und LCOH_<Jahr>
     allowed:  Series, True = keine No-Go-Zone (No-Go-Zellen werden in den MCA-Karten grau dargestellt)
-    sources:  dict mit 'cost_run' (Name des Kostenlaufs in results/runs/) und 'mca_mtime' (Dateistand der MCA)
+    sources:  dict mit 'cost_run' (Name des Kostenlaufs in results/runs/), 'mca_run' (Name des MCA-Laufs,
+              leer wenn keiner) und 'mca_mtime' (Dateistand von results/mca/, Ersatz ohne MCA-Lauf)
     reference_dir: Vergleichslauf, gegen den die Δ-Werte gerechnet werden (Standard: der letzte davor)
 
     Speichert im Laufordner results_compare.csv, sources.json und metrics.csv (Bezug für den nächsten
@@ -179,10 +207,10 @@ def build_comparison_overview(run_dir, gdf_grid, results, allowed, sources, refe
     _txt(fig, 0.4, 0.82, 'Notiz: ' + (info['note'] or '–'), 11)
     status = lambda i: 'nicht committet' if i['dirty'] else 'sauber'
     _txt(fig, 0.4, 1.13, f"Jetzt:  Kosten {sources['cost_run']} (Commit {cost_info['commit']}, {status(cost_info)})  ·  "
-                         f"MCA Dateistand {sources['mca_mtime']} (kein Laufordner, Gewichte nicht erfasst)", 8.5, MUTED)
+                         f"MCA {mca_label(sources)}", 8.5, MUTED)
     if previous is not None:
         _txt(fig, 0.4, 1.35, f"Δ-Bezug:  {previous_dir.name}  ·  Kosten {previous_sources.get('cost_run', '–')}  ·  "
-                             f"MCA Dateistand {previous_sources.get('mca_mtime', '–')}", 8.5, MUTED)
+                             f"MCA {mca_label(previous_sources)}", 8.5, MUTED)
     else:
         _txt(fig, 0.4, 1.35, 'Δ-Bezug:  kein früherer Vergleichslauf', 8.5, MUTED)
 
@@ -237,11 +265,18 @@ def build_comparison_overview(run_dir, gdf_grid, results, allowed, sources, refe
         if changed.empty:
             lines.append(('keine geändert', False))
         else:
-            shown = changed.head(3 if len(changed) <= 3 else 2)
+            shown = changed.head(2 if len(changed) <= 2 else 1)
             lines += [(f"{row['variable_name']} {int(row['year'])}: {_number(row['value_eur2025_old'])} → "
                        f"{_number(row['value_eur2025_new'])}", False) for _, row in shown.iterrows()]
             if len(changed) > len(shown):
                 lines.append((f'… und {len(changed) - len(shown)} weitere (model_parameters.csv)', False))
+    weight_lines = changed_mca_weights(sources, previous_sources) if previous is not None else None
+    if weight_lines is None:
+        lines.append(('MCA-Gewichte: kein Bezug mit MCA-Laufordner', False))
+    elif not weight_lines:
+        lines.append(('MCA-Gewichte: unverändert', False))
+    else:
+        lines.append(('MCA-Gewichte: ' + '; '.join(weight_lines), False))
     lines.append(('Eingabedateien (data/interim)', True))
     files = changed_inputs(run_dir, previous_dir) if previous is not None else None
     if files is None:
