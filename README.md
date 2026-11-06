@@ -48,7 +48,8 @@ H2_Morocco/
 ├── MCA/                      nur Code
 │   ├── Grid_morocco/         Rastererzeugung (grid_morocco.py)
 │   ├── custom.py             Hilfsfunktion list_index() für Zell-Verschneidungen
-│   ├── *.py                  Kriterien-, Wasser- und Kartenskripte (siehe unten)
+│   ├── *.py                  Kriterien- und Wasserskripte, mca_maps.py, nogo_maps.py (siehe unten)
+│   ├── MapScripts/           Skripte, die nur Karten zeichnen (Infrastruktur, Landnutzung, PV/Wind, Wasser)
 │   ├── ki_generiert/         von Claude geschriebene Skripte (ersetzen QGIS-Schritte)
 │   └── old/                  veraltete Skripte
 ├── Cost_analysis/            nur Code
@@ -155,7 +156,7 @@ Wasser ist das am stärksten gewichtete Kriterium und hat eine eigene Teilkette:
 
 ### Skripte, die nur Karten erzeugen
 
-`infra_map.py`, `landuse_map.py`, `nogo_maps.py`, `re_potential_map.py` und `water_maps.py` erzeugen nur Abbildungen in `results/figures/mca/` und haben keinen Einfluss auf die Ergebnisse.
+Die Skripte in `MCA/MapScripts/` (`infra_map.py`, `landuse_map.py`, `re_potential_map.py`, `water_maps.py`) sowie `MCA/nogo_maps.py` erzeugen nur Abbildungen in `results/figures/mca/` und haben keinen Einfluss auf die Ergebnisse. Sie brauchen den CARTO-Key (Hintergrundkarte).
 
 ### Endergebnis
 

@@ -37,27 +37,27 @@ import os
 from dotenv import load_dotenv
 
 # Hintergrundkarte: CARTO-Kacheln brauchen einen API-Key (CARTO_API_KEY in H2_Morocco/.env)
-load_dotenv('../.env')
+load_dotenv('../../.env')
 if not os.getenv('CARTO_API_KEY'):
     raise SystemExit('CARTO_API_KEY fehlt: .env.example nach .env kopieren und Key eintragen.')
 basemap = cx.providers.CartoDB.Positron(apikey=os.getenv('CARTO_API_KEY'))
 
-gdf_morocco_boundary    = gpd.read_file('../data/raw/boundaries/morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
+gdf_morocco_boundary    = gpd.read_file('../../data/raw/boundaries/morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
 # Data
-gdf_groundwater_morocco_utm29n = gpd.read_file('../data/raw/groundwater/Morocco_HG.shp').to_crs("EPSG:32629")
-gdf_groundwater_western_sahara_utm29n = gpd.read_file('../data/raw/groundwater/WesternSahara_HG.shp').to_crs("EPSG:32629")
+gdf_groundwater_morocco_utm29n = gpd.read_file('../../data/raw/groundwater/Morocco_HG.shp').to_crs("EPSG:32629")
+gdf_groundwater_western_sahara_utm29n = gpd.read_file('../../data/raw/groundwater/WesternSahara_HG.shp').to_crs("EPSG:32629")
 gdf_groundwater_morocco_concat = pd.concat([gdf_groundwater_morocco_utm29n, gdf_groundwater_western_sahara_utm29n.rename(columns = 
                                                                                      {'WSGLG': 'MorGLG', 'WSHGComb': 'MorHGComb'})], 
                                            ignore_index=True)
 gdf_groundwater = gdf_groundwater_morocco_concat[gdf_groundwater_morocco_concat['MorHGComb'].isin(['CSIF-M/H', 'CSFK-H/VH', 'U-L/H'])]
 
-gdf_grid = gpd.read_file('../data/interim/grid/grid_morocco_clear.shp')
-df_sw = pd.read_csv('../data/interim/water/water_availability_sw.csv')
+gdf_grid = gpd.read_file('../../data/interim/grid/grid_morocco_clear.shp')
+df_sw = pd.read_csv('../../data/interim/water/water_availability_sw.csv')
 gdf_grid['Surface Water'] = df_sw['water_availability_sw[MCM]']
 
-gdf_water_direction = gpd.read_file('../data/interim/layers/flow_direction_grid.shp')
+gdf_water_direction = gpd.read_file('../../data/interim/layers/flow_direction_grid.shp')
 
-gdf_watershead_morocco = gpd.read_file('../data/raw/hydrology/watershead_morocco.shp')
+gdf_watershead_morocco = gpd.read_file('../../data/raw/hydrology/watershead_morocco.shp')
 
 # Map Ground Water
 fig, ax = plt.subplots(figsize=(15, 10))
@@ -73,7 +73,7 @@ legend_handles = [
 ]
 plt.legend(handles=legend_handles, loc='lower right', fontsize=12)
 plt.tight_layout()
-plt.savefig("../results/figures/mca/morocco_groundwater.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("../../results/figures/mca/morocco_groundwater.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Map Surface Water
@@ -92,7 +92,7 @@ cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=14)
 cbar_ax.yaxis.label.set_size(20)
 plt.tight_layout()
-plt.savefig("../results/figures/mca/morocco_surfacewater.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("../../results/figures/mca/morocco_surfacewater.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Map flow direction
@@ -105,7 +105,7 @@ cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=14)
 cbar_ax.yaxis.label.set_size(20)
 plt.tight_layout()
-plt.savefig("../results/figures/mca/morocco_flow_direction.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("../../results/figures/mca/morocco_flow_direction.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Map Watersheds
@@ -118,12 +118,12 @@ cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=14)
 cbar_ax.yaxis.label.set_size(20)
 plt.tight_layout()
-plt.savefig("../results/figures/mca/morocco_watersheds.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("../../results/figures/mca/morocco_watersheds.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Map CWB (nicht im Paper; cwb.shp kommt aus water_forecast.py bzw. als Original aus Sciebo)
-if os.path.exists('../data/interim/water/cwb.shp'):
-    gdf_cwb = gpd.read_file('../data/interim/water/cwb.shp')
+if os.path.exists('../../data/interim/water/cwb.shp'):
+    gdf_cwb = gpd.read_file('../../data/interim/water/cwb.shp')
     fig, ax = plt.subplots(figsize=(15, 10))
     gdf_cwb.plot(ax = ax, column='CWB',alpha=0.9, cmap = 'Blues', legend=True, legend_kwds={"label": "Climate Water Balance [MCM]", "orientation": "vertical"})
     gdf_morocco_boundary.plot(ax=ax, edgecolor='black', facecolor="none", linewidth=1)
@@ -133,7 +133,7 @@ if os.path.exists('../data/interim/water/cwb.shp'):
     cbar_ax.tick_params(labelsize=14)
     cbar_ax.yaxis.label.set_size(20)
     plt.tight_layout()
-    plt.savefig("../results/figures/mca/morocco_cwb.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+    plt.savefig("../../results/figures/mca/morocco_cwb.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
     plt.show()
 else:
     print('cwb.shp fehlt (Klimadaten 2050), CWB-Karte übersprungen.')

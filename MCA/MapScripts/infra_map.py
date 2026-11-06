@@ -33,15 +33,15 @@ import os
 from dotenv import load_dotenv
 
 # Hintergrundkarte: CARTO-Kacheln brauchen einen API-Key (CARTO_API_KEY in H2_Morocco/.env)
-load_dotenv('../.env')
+load_dotenv('../../.env')
 if not os.getenv('CARTO_API_KEY'):
     raise SystemExit('CARTO_API_KEY fehlt: .env.example nach .env kopieren und Key eintragen.')
 basemap = cx.providers.CartoDB.Positron(apikey=os.getenv('CARTO_API_KEY'))
 
 # Data
-gdf_railways_utm29n = gpd.read_file('../data/raw/osm/gis_osm_railways_free_1.shp').to_crs("EPSG:32629")
+gdf_railways_utm29n = gpd.read_file('../../data/raw/osm/gis_osm_railways_free_1.shp').to_crs("EPSG:32629")
 gdf_railways_utm29n['fclass'] = 'railway'
-gdf_roads_utm29n = gpd.read_file('../data/raw/osm/gis_osm_roads_free_1.shp').to_crs("EPSG:32629")
+gdf_roads_utm29n = gpd.read_file('../../data/raw/osm/gis_osm_roads_free_1.shp').to_crs("EPSG:32629")
 
 gdf_roads_railsways = gpd.GeoDataFrame(pd.concat([gdf_roads_utm29n, gdf_railways_utm29n], ignore_index=True), crs=gdf_roads_utm29n.crs)
 
@@ -51,9 +51,9 @@ classes = ['motorway', 'trunk', 'primary', 'secondary',
 gdf_roads_railsways = gdf_roads_railsways[gdf_roads_railsways['fclass'].isin(classes)]
 
 # Comparison of ports in 2025 and 2050
-gdf_morocco_boundary    = gpd.read_file('../data/raw/boundaries/morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
-gdf_ports_2025 = gpd.read_file('../data/raw/infrastructure/industrial_ports_morocco_2025.shp').to_crs("EPSG:32629")
-gdf_ports_2050 = gpd.read_file('../data/raw/infrastructure/industrial_ports_morocco_2050.shp').to_crs("EPSG:32629")
+gdf_morocco_boundary    = gpd.read_file('../../data/raw/boundaries/morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
+gdf_ports_2025 = gpd.read_file('../../data/raw/infrastructure/industrial_ports_morocco_2025.shp').to_crs("EPSG:32629")
+gdf_ports_2050 = gpd.read_file('../../data/raw/infrastructure/industrial_ports_morocco_2050.shp').to_crs("EPSG:32629")
 ports_2025 = set(gdf_ports_2025['name'])
 ports_2050 = set(gdf_ports_2050['name'])
 new_ports = ports_2050 - ports_2025
@@ -98,6 +98,6 @@ cx.add_basemap(ax, crs=gdf_roads_railsways.crs, source=basemap)
 plt.axis('off')
 plt.legend(loc = 'lower right', fontsize = 12)
 plt.tight_layout()
-plt.savefig("../results/figures/mca/morocco_infrastructure.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
-plt.savefig("../results/figures/mca/morocco_infrastructure.eps", format="eps", bbox_inches='tight', pad_inches=0)
+plt.savefig("../../results/figures/mca/morocco_infrastructure.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
+plt.savefig("../../results/figures/mca/morocco_infrastructure.eps", format="eps", bbox_inches='tight', pad_inches=0)
 plt.show()

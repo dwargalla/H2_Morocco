@@ -31,15 +31,15 @@ import os
 from dotenv import load_dotenv
 
 # Hintergrundkarte: CARTO-Kacheln brauchen einen API-Key (CARTO_API_KEY in H2_Morocco/.env)
-load_dotenv('../.env')
+load_dotenv('../../.env')
 if not os.getenv('CARTO_API_KEY'):
     raise SystemExit('CARTO_API_KEY fehlt: .env.example nach .env kopieren und Key eintragen.')
 basemap = cx.providers.CartoDB.Positron(apikey=os.getenv('CARTO_API_KEY'))
 
-gdf_morocco_boundary    = gpd.read_file('../data/raw/boundaries/morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
+gdf_morocco_boundary    = gpd.read_file('../../data/raw/boundaries/morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
 # Data
-gdf_landuse_mar         = gpd.read_file('../data/raw/globcover/mar_gc_adg/mar_gc_adg.shp').to_crs("EPSG:32629") 
-gdf_landuse_wsa         = gpd.read_file('../data/raw/globcover/wsa_gc_adg/wsa_gc_adg.shp').to_crs("EPSG:32629")
+gdf_landuse_mar         = gpd.read_file('../../data/raw/globcover/mar_gc_adg/mar_gc_adg.shp').to_crs("EPSG:32629") 
+gdf_landuse_wsa         = gpd.read_file('../../data/raw/globcover/wsa_gc_adg/wsa_gc_adg.shp').to_crs("EPSG:32629")
 gdf_landuse_concat      = gpd.GeoDataFrame(pd.concat([gdf_landuse_mar, gdf_landuse_wsa]))
 
 gdf_landuse_agri        = gdf_landuse_concat[gdf_landuse_concat['GRIDCODE'].isin([11, 12, 13, 14, 15, 16, 20, 21, 30, 31, 32])]
@@ -50,7 +50,7 @@ gdf_landuse_rural       = gdf_landuse_concat[gdf_landuse_concat['GRIDCODE'].isin
                                                                                   162,170,180,181,185])]
 gdf_landuse_urban       = gdf_landuse_concat[gdf_landuse_concat['GRIDCODE'].isin([190])]
 
-gdf_landuse_utm29n = gpd.read_file('../data/raw/osm/gis_osm_landuse_a_free_1.shp').to_crs("EPSG:32629")
+gdf_landuse_utm29n = gpd.read_file('../../data/raw/osm/gis_osm_landuse_a_free_1.shp').to_crs("EPSG:32629")
 
 gdf_industrie_morocco = gdf_landuse_utm29n[gdf_landuse_utm29n['fclass'].isin(['industrial'])]
 
@@ -72,5 +72,5 @@ legend_handles = [
     mpatches.Patch(color='red', label='Industrial area')]
 plt.legend(handles=legend_handles, loc='lower right', fontsize=12)
 plt.tight_layout()
-plt.savefig("../results/figures/mca/morocco_landuse.png", format="png", bbox_inches='tight', pad_inches=0)
+plt.savefig("../../results/figures/mca/morocco_landuse.png", format="png", bbox_inches='tight', pad_inches=0)
 plt.show()

@@ -21,7 +21,7 @@ Eingaben:
     data/interim/water/Water_Consumption_{2025,2050}.csv
 
 Ausgaben:
-    data/interim/water/cwb.shp                                   klimatische Wasserbilanz (für water_maps.py)
+    data/interim/water/cwb.shp                                   klimatische Wasserbilanz (für MapScripts/water_maps.py)
     data/interim/mca_criteria/results_water_res_availabil_2050.csv   eine Spalte, zeilengleich mit dem Raster
     data/interim/water/water_availability_{gw,sw}_2050.csv       Wasser 2050 je Zelle [Mio. m³] für 04
 

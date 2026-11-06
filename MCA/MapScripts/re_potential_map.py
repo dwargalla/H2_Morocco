@@ -32,18 +32,18 @@ import os
 from dotenv import load_dotenv
 
 # Hintergrundkarte: CARTO-Kacheln brauchen einen API-Key (CARTO_API_KEY in H2_Morocco/.env)
-load_dotenv('../.env')
+load_dotenv('../../.env')
 if not os.getenv('CARTO_API_KEY'):
     raise SystemExit('CARTO_API_KEY fehlt: .env.example nach .env kopieren und Key eintragen.')
 basemap = cx.providers.CartoDB.Positron(apikey=os.getenv('CARTO_API_KEY'))
 
 # Data
-gdf_morocco_boundary    = gpd.read_file('../data/raw/boundaries/morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
-df_pv = pd.read_csv('../data/interim/mca_criteria/results_pv_yeald.csv')
-gdf_grid = gpd.read_file('../data/interim/grid/grid_morocco_clear.shp')
+gdf_morocco_boundary    = gpd.read_file('../../data/raw/boundaries/morocco_Morocco_Country_Boundary.shp').to_crs("EPSG:32629")
+df_pv = pd.read_csv('../../data/interim/mca_criteria/results_pv_yeald.csv')
+gdf_grid = gpd.read_file('../../data/interim/grid/grid_morocco_clear.shp')
 gdf_grid['PV'] = df_pv['pv_yeald']
 
-df_wind = pd.read_csv('../data/interim/mca_criteria/results_wind_flh.csv')
+df_wind = pd.read_csv('../../data/interim/mca_criteria/results_wind_flh.csv')
 gdf_grid['Wind'] = df_wind['FLH_wind']
 
 # Map PV
@@ -55,7 +55,7 @@ cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=14)
 cbar_ax.yaxis.label.set_size(20)
 plt.tight_layout()
-plt.savefig("../results/figures/mca/morocco_photovoltaic_potential.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("../../results/figures/mca/morocco_photovoltaic_potential.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
 
 # Map Wind
@@ -67,5 +67,5 @@ cbar_ax = fig.axes[-1]
 cbar_ax.tick_params(labelsize=14)
 cbar_ax.yaxis.label.set_size(20)
 plt.tight_layout()
-plt.savefig("../results/figures/mca/morocco_wind_potential.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
+plt.savefig("../../results/figures/mca/morocco_wind_potential.png", format="png", dpi=300, bbox_inches='tight', pad_inches=0)
 plt.show()
