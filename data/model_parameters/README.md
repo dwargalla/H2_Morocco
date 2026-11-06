@@ -3,6 +3,7 @@
 | Datei | Inhalt |
 |---|---|
 | `model_parameters.csv` | Alle Modellparameter (Literaturwerte und Annahmen): Wert in der Quelle, Umrechnung, Wert in EUR 2025, Quelle |
+| `mca_weights.csv` | MCA-Gewichte: Hauptkriterien (`group = main`) und Straßenklassen der Erreichbarkeit (`group = roads`), je mit Richtung, Skalierung, Quelle; gelesen über `h2morocco.utils.read_mca_weights()` |
 | `conversion_factors.csv` | Inflationsfaktoren auf 2025 und Wechselkurse USD ↔ EUR je Jahr (2000–2025) |
 | `raw_ecb_exr_usd_eur_annual.csv` | Rohdaten EZB, unverändert heruntergeladen |
 | `raw_eurostat_prc_hicp_aind.json` | Rohdaten Eurostat, unverändert heruntergeladen |
@@ -25,6 +26,20 @@ Eine Zeile je Wert und Szenariojahr.
 | `value_eur2025`, `unit` | Wert im Modell: `value_source` × Wechselkurs × Inflationsfaktor (× Einheitenumrechnung), in EUR 2025 |
 | `source`, `url`, `page` | Vollständige Quelle, Link, Seite oder Abbildung |
 | `note` | Herleitung, Rechenweg, Auffälligkeiten |
+
+## `mca_weights.csv`
+
+Eine Zeile je Gewicht. Je Gruppe ergeben die Gewichte 1 (Hauptkriterien durch Rundung 1,0001).
+
+| Spalte | Bedeutung |
+|---|---|
+| `group` | `main` = Hauptkriterium, `roads` = Straßenklasse innerhalb der Erreichbarkeit |
+| `criterion` | Name im Code (Spalte in `mca_maps.py` bzw. Spalte von `results_accessibility.csv`) |
+| `label_de`, `label_en` | Beschriftung deutsch, englisch (Tortendiagramm) |
+| `weight` | Gewicht (Anteil, nicht Prozent) |
+| `direction` | `positiv` = hoher Rohwert ist gut, `negativ` = hoher Rohwert ist schlecht |
+| `scaling` | wie der Rohwert auf 0–100 gebracht wird |
+| `source`, `note` | Herkunft des Gewichts, Abweichungen zum Paper |
 
 ## `conversion_factors.csv`
 

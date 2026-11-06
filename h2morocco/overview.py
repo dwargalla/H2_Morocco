@@ -148,9 +148,9 @@ def changed_mca_weights(sources, previous_sources):
     new = json.loads(paths[0].read_text(encoding='utf-8'))
     old = json.loads(paths[1].read_text(encoding='utf-8'))
     lines = []
-    for name in sorted(set(new) | set(old)):
-        if new.get(name) != old.get(name):
-            lines.append(f'{name}: {old.get(name)} → {new.get(name)}')
+    for name in sorted(set(new) & set(old)):        # nur Gewichte, die beide Läufe erfasst haben
+        if new[name] != old[name]:
+            lines.append(f'{name}: {old[name]} → {new[name]}')
     return lines
 
 

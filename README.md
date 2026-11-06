@@ -115,7 +115,7 @@ Score(Zelle) = NoGo(Zelle) × Σ  Gewicht_k × Kriterium_k(Zelle)
 
 ### Kriterien und Gewichte
 
-Die Gewichte stehen in `MCA/mca_maps.py` als `dict_weights_category`.
+Die Gewichte stehen in `data/model_parameters/mca_weights.csv` (Hauptkriterien und Straßenklassen der Erreichbarkeit, mit Richtung, Skalierung und Quelle). `mca_maps.py`, das Tortendiagramm und `compare_mca_runs.py` lesen sie von dort.
 
 | Kriterium | Gewicht | Skript | Was berechnet wird | Richtung |
 |---|---|---|---|---|
@@ -282,5 +282,4 @@ Vollständig und mit Status in `Fehlerprotokoll_Code.md` (Code) und `Fehlerproto
 2. **Herkunft unbekannt:** Die Küstenlinie stammt aus QGIS ohne erhaltene Quelle, siehe `data/raw/origin_unknown/README.md`.
 3. **Nur 50 von 100 Standorten:** `ki_generiert/01b_flh_re.py` berechnet `flh_re.csv` nur für die ersten 50 Standorte, die Kostenanalyse ordnet Zellen deshalb nur diesen zu (Nr. 2; zurückgestellt, bis die Profile ggf. aus ERA5 neu entstehen).
 4. **Profile und Orte passen nicht sicher zusammen:** Einige renewables.ninja-Profile sind an verschiedenen Orten identisch (Nr. 41).
-5. **Gewichte im Tortendiagramm:** Das Diagramm in `mca_maps.py` nutzt fest eingetragene Werte, die von `dict_weights_category` abweichen.
-6. **Blockierende Fenster:** Kartenskripte rufen `plt.show()` auf und blockieren ohne grafische Oberfläche; `main.ipynb` setzt deshalb `MPLBACKEND=Agg`.
+5. **Blockierende Fenster:** Kartenskripte rufen `plt.show()` auf und blockieren ohne grafische Oberfläche; `main.ipynb` setzt deshalb `MPLBACKEND=Agg`.

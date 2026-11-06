@@ -1,0 +1,22 @@
+group,criterion,label_de,label_en,weight,direction,scaling,source,note
+main,water_avalibility,Wasser,Water Availability,0.3406,positiv,bereits 0–100 (water_net.py / water_forecast.py),"AHP, Mittel aus drei Perspektiven (Paper Tabelle 2)",im Paper als Grund- und Oberflächenwasser je 17.03 % geführt; im Code ein gemeinsamer Wasser-Score
+main,non_conflict_areas,Nicht-Konfliktgebiet,Sociopolitical Stability,0.1630,positiv,bereits 0–100 (non_conflict.py),"AHP, Mittel aus drei Perspektiven (Paper Tabelle 2)",
+main,industrial_zone_share,Industrie,Industrial Zone Share,0.1446,positiv,min-max 0–100,"AHP, Mittel aus drei Perspektiven (Paper Tabelle 2)",Paper Tabelle 2 nennt 14.13 (Fehlerprotokoll Nr. 76)
+main,avg_windpower,Wind,Wind Energy Yield,0.1237,positiv,min-max 0–100,"AHP, Mittel aus drei Perspektiven (Paper Tabelle 2)",
+main,accessibility,Erreichbarkeit,Accessibility,0.0825,positiv,"je Straßenklasse min-max 0–100, mal Straßengewicht, summiert","AHP, Mittel aus drei Perspektiven (Paper Tabelle 2)",Straßengewichte in Gruppe roads
+main,avg_pv_yeald,PV,PV Yield,0.0619,positiv,min-max 0–100,"AHP, Mittel aus drei Perspektiven (Paper Tabelle 2)",
+main,rural_zone_share,Ländliche Fläche,Rural Zone Share,0.0496,positiv,min-max 0–100,"AHP, Mittel aus drei Perspektiven (Paper Tabelle 2)",Paper Tabelle 2 nennt 5.37 (Fehlerprotokoll Nr. 76)
+main,agricultural_land_share,Landwirtschaft,Agricultural Land Share,0.0194,negativ,min-max 0–100 invertiert,"AHP, Mittel aus drei Perspektiven (Paper Tabelle 2)",Paper Tabelle 2 nennt 1.90 (Fehlerprotokoll Nr. 76)
+main,urban_zone_share,Stadt,Urban Zone Share,0.0148,negativ,min-max 0–100 invertiert,"AHP, Mittel aus drei Perspektiven (Paper Tabelle 2)",Paper Tabelle 2 nennt 1.44 (Fehlerprotokoll Nr. 76)
+roads,motorway,Autobahn,Motorway,0.25,positiv,"Länge je Zelle, min-max 0–100",Paper Tabelle 2,Gewicht innerhalb der Erreichbarkeit; Klassen nach OSM fclass; Paper Tabelle 2 weicht je Klasse um bis zu 0.04 ab (Fehlerprotokoll Nr. 76)
+roads,trunk,Schnellstraße,Trunk road,0.18,positiv,"Länge je Zelle, min-max 0–100",Paper Tabelle 2,
+roads,primary,Hauptstraße,Primary road,0.12,positiv,"Länge je Zelle, min-max 0–100",Paper Tabelle 2,
+roads,secondary,Nebenstraße,Secondary road,0.09,positiv,"Länge je Zelle, min-max 0–100",Paper Tabelle 2,
+roads,tertiary,Verbindungsstraße,Tertiary road,0.06,positiv,"Länge je Zelle, min-max 0–100",Paper Tabelle 2,
+roads,track,Feld- und Waldweg,Track,0.01,positiv,"Länge je Zelle, min-max 0–100",Paper Tabelle 2,
+roads,track_grade1,Weg Klasse 1 (befestigt),Track grade 1,0.03,positiv,"Länge je Zelle, min-max 0–100",Paper Tabelle 2,
+roads,track_grade2,Weg Klasse 2,Track grade 2,0.02,positiv,"Länge je Zelle, min-max 0–100",Paper Tabelle 2,
+roads,track_grade3,Weg Klasse 3,Track grade 3,0.01,positiv,"Länge je Zelle, min-max 0–100",Paper Tabelle 2,
+roads,track_grade4,Weg Klasse 4 (unbefestigt),Track grade 4,0.01,positiv,"Länge je Zelle, min-max 0–100",Paper Tabelle 2,
+roads,unclassified,Unklassifizierte Straße,Unclassified road,0.04,positiv,"Länge je Zelle, min-max 0–100",Paper Tabelle 2,
+roads,railway,Bahnstrecke,Railway,0.18,positiv,"Länge je Zelle, min-max 0–100",Paper Tabelle 2,

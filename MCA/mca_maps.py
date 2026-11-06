@@ -2,12 +2,13 @@
 
 Liest alle Kriterien-CSVs aus ``data/interim/mca_criteria/``, skaliert sie auf 0–100
 (Landwirtschaft und Stadt invertiert; Wasser und Nicht-Konflikt sind bereits
-skaliert), gewichtet sie mit ``dict_weights_category`` und multipliziert die
+skaliert), gewichtet sie mit den Gewichten aus ``data/model_parameters/mca_weights.csv`` und multipliziert die
 Summe mit der No-Go-Maske. Für 2050 ändern sich nur Landnutzung und Wasser.
 
 Eingaben:
     data/interim/grid/grid_morocco_clear.shp
     data/raw/boundaries/morocco_Morocco_Country_Boundary.shp
+    data/model_parameters/mca_weights.csv   Gewichte (Hauptkriterien und Straßenklassen)
     data/interim/mca_criteria/results_*.csv   alle Kriterien (PV, Wind, Erreichbarkeit, Landwirtschaft,
                             Stadt, Industrie, ländlich, Wasser, Nicht-Konflikt, No-Go)
 
@@ -17,10 +18,10 @@ Ausgaben:
     results/figures/mca/pie_chart_weights.{png,pdf}
 
 Hinweise:
-    - Die Werte im Tortendiagramm sind fest eingetragen und weichen von
-      ``dict_weights_category`` ab.
-    - Die Straßengewichte werden rein positionell auf die Spalten von
-      results_accessibility.csv angewandt (Reihenfolge muss stimmen).
+    - Gewichte und Tortendiagramm kommen aus ``mca_weights.csv`` (bis 06.11.2026 fest im Code,
+      das Tortendiagramm mit abweichenden Werten, Fehlerprotokoll Nr. 26). Wasser ist im
+      Diagramm wie im Paper in Grund- und Oberflächenwasser zu je halbem Gewicht geteilt.
+    - Die Straßengewichte werden über den Spaltennamen von results_accessibility.csv zugeordnet.
     - ``plt.show()`` blockiert ohne grafische Oberfläche (``MPLBACKEND=Agg`` setzen).
     - Direkt in VS Code oder aus beliebigem Arbeitsordner starten: ``python mca_maps.py``
 """
@@ -42,6 +43,8 @@ import matplotlib.colors as mcolors
 import os
 from dotenv import load_dotenv
 
+from h2morocco.utils import read_mca_weights
+
 # Min-Max_scale-funtion
 def min_max_scale(df):
     """Skaliert jede Spalte linear auf 0–1 (Minimum → 0, Maximum → 1)."""
@@ -57,29 +60,9 @@ gdf_morocco_boundary    = gpd.read_file('../data/raw/boundaries/morocco_Morocco_
 gdf_mca_morocco_2025 = gpd.read_file('../data/interim/grid/grid_morocco_clear.shp').to_crs("EPSG:32629")
 gdf_mca_morocco_2050 = gdf_mca_morocco_2025.copy()
 
-# weights
-dict_weights_category = {'avg_pv_yeald': 0.0619, 
-                         'avg_windpower': 0.1237, 
-                         'accessibility': 0.0825,
-                         'agricultural_land_share': 0.0194,
-                         'urban_zone_share': 0.0148,
-                         'industrial_zone_share': 0.1446,
-                         'rural_zone_share': 0.0496,
-                         'water_avalibility': 0.3406,
-                         'non_conflict_areas': 0.1630}
-
-dict_weights_roads = {'motorway': 0.25,
-                  'trunk': 0.18,
-                  'primary':0.12, 
-                  'secondary':0.09, 
-                  'tertiary':0.06, 
-                  'track':0.01, 
-                  'track_grade1':0.03, 
-                  'track_grade2':0.02, 
-                  'track_grade3':0.01, 
-                  'track_grade4':0.01, 
-                  'unclassified':0.04, 
-                  'railway':0.18}
+# weights: from data/model_parameters/mca_weights.csv (criterion -> weight)
+dict_weights_category = read_mca_weights('main')    # main criteria
+dict_weights_roads = read_mca_weights('roads')      # road classes within accessibility
 
 # Read results
     # 2025
@@ -113,7 +96,7 @@ df_wind_flh = min_max_scale(df_wind_flh)*100
     # Accessibility. If high, then high score
 df_accessibility -= df_accessibility.min()
 df_accessibility = df_accessibility/(df_accessibility.max()-df_accessibility.min())
-df_accessibility= df_accessibility*100*dict_weights_roads.values()
+df_accessibility = df_accessibility*100*pd.Series(dict_weights_roads)    # weight per road class, matched by column name
 
 ds_accessibility_sum = df_accessibility.sum(axis=1).astype(float)
 
@@ -233,24 +216,26 @@ plt.savefig("../results/figures/mca/mca_morocco_diff.png", format="png", dpi=300
 plt.savefig("../results/figures/mca/mca_morocco_diff.pdf", format="pdf", bbox_inches='tight', pad_inches=0)
 plt.show()
 
-# Pie chart of weights
-labels =[
-    'Ground Water Availability',
-    'Surface Water Availability',
-    'Sociopolitical Stability',
-    'Industrial Zone Share',
-    'Wind Energy Yield',
-    'Accessibility',
-    'PV Yield',
-    'Rural Zone Share',
-    'Agricultural Land Share',
-    'Urban Zone Share'
-]
-sizes = [16.99, 16.99, 16.63, 16, 11.13, 8.31, 5.57, 4.96, 1.94, 1.48]
-colors = ['deepskyblue', 'lightskyblue', 'lightcoral', 
-          'orange', 'limegreen', 'plum', 
-          'yellow', 'sandybrown', 
-          'green', 'gray']
+# Pie chart of weights (values from mca_weights.csv, labels in English for the paper)
+df_weights = pd.read_csv('../data/model_parameters/mca_weights.csv')
+df_weights = df_weights[df_weights['group'] == 'main']
+
+colors_by_criterion = {'water_avalibility': 'deepskyblue', 'non_conflict_areas': 'lightcoral',
+                       'industrial_zone_share': 'orange', 'avg_windpower': 'limegreen',
+                       'accessibility': 'plum', 'avg_pv_yeald': 'yellow', 'rural_zone_share': 'sandybrown',
+                       'agricultural_land_share': 'green', 'urban_zone_share': 'gray'}
+
+labels, sizes, colors = [], [], []
+for _, row in df_weights.iterrows():
+    if row['criterion'] == 'water_avalibility':
+        # The paper shows water as ground and surface water with half the weight each.
+        labels += ['Ground Water Availability', 'Surface Water Availability']
+        sizes += [row['weight'] * 100 / 2, row['weight'] * 100 / 2]
+        colors += ['deepskyblue', 'lightskyblue']
+    else:
+        labels.append(row['label_en'])
+        sizes.append(row['weight'] * 100)
+        colors.append(colors_by_criterion[row['criterion']])
 
 fig, ax = plt.subplots(figsize=(10, 6))
 wedges, texts, autotexts = ax.pie(
@@ -266,12 +251,9 @@ ax.legend(wedges, labels, title="Criteria", bbox_to_anchor=(1, 0.5), loc="center
           fontsize=14, title_fontsize=16)
 plt.subplots_adjust(left=0.05, right=0.75)
 
-# Verschiebe die Prozentzahlen für Agriculture (8) und Urban (9)
-for i, autotext in enumerate(autotexts):
-    if i == 8:
-        autotext.set_position((1.2 * autotext.get_position()[0], 1.2 * autotext.get_position()[1]))
-    if i == 9:
-        autotext.set_position((1.3 * autotext.get_position()[0], 1.3 * autotext.get_position()[1]))
+# Shift the percentages of the two smallest slices (last in the list) outwards, so they do not overlap
+autotexts[-2].set_position((1.2 * autotexts[-2].get_position()[0], 1.2 * autotexts[-2].get_position()[1]))
+autotexts[-1].set_position((1.3 * autotexts[-1].get_position()[0], 1.3 * autotexts[-1].get_position()[1]))
 
 for autotext in autotexts:
     autotext.set_fontsize(12)  # z.B. 16, nach Wunsch anpassen

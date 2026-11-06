@@ -8,7 +8,8 @@ Das Skript baut auf den MCA-Ergebnissen auf und ändert keines der MCA-Skripte. 
 1. **Laufordner anlegen** ``results/runs/<Datum>_<Uhrzeit>_<Commit>[-dirty]_mca/`` mit
        results_mca.csv      MCA-Score je Zelle 2025 und 2050 (Kopie aus results/mca/)
        criteria/            alle Kriterien-CSVs aus data/interim/mca_criteria/ (Kopie)
-       weights.json         Gewichte, wie sie in MCA/mca_maps.py stehen
+       mca_weights.csv      Kopie der Gewichtsdatei (data/model_parameters/mca_weights.csv)
+       weights.json         dieselben Gewichte kurz: Hauptkriterien und 'roads/<Straßenklasse>'
        metrics.csv          Kennzahlen (auch als Zeile in results/runs/runs_index.csv)
        run_info.json, inputs.sha256, changes.patch   wie bei allen Läufen (h2morocco/runs.py)
 2. **Vergleichsfolie** ``overview_mca.png`` im selben Ordner: Kennzahlen, geänderte Gewichte,
@@ -19,14 +20,13 @@ Eingaben:
     results/mca/results_mca_morocco_2025_2050.csv   aus MCA/mca_maps.py
     data/interim/mca_criteria/*.csv                 Kriterien, darunter results_nogo_zones.csv
     data/interim/grid/grid_morocco_clear.shp        für die Karten
-    MCA/mca_maps.py                                 nur gelesen, um die Gewichte zu erfassen
+    data/model_parameters/mca_weights.csv           Gewichte
 
 Aufruf (aus beliebigem Arbeitsordner):
     python compare_mca_runs.py --note "Was wurde geändert"
     python compare_mca_runs.py --reference results/runs/<ordner>_mca
 """
 import argparse
-import ast
 import json
 import shutil
 import textwrap
@@ -41,12 +41,13 @@ from scipy.stats import spearmanr
 
 from h2morocco.overview import (DARK, DOWN, MUTED, TEXT, UP, _axes, _panel, _txt, _width,
                                 changed_inputs)
+from h2morocco.utils import read_mca_weights
 from h2morocco.runs import ROOT, _git, append_to_index, latest_run_dir, new_run_dir, read_run_info
 
 YEARS = [2025, 2050]
 MCA_CSV = ROOT / 'results/mca/results_mca_morocco_2025_2050.csv'
 CRITERIA_DIR = ROOT / 'data/interim/mca_criteria'
-MCA_SCRIPT = ROOT / 'MCA/mca_maps.py'
+MCA_WEIGHTS_CSV = ROOT / 'data/model_parameters/mca_weights.csv'
 
 # Lesbare Namen der Kriterien-Dateien
 CRITERIA_LABELS = {
@@ -71,13 +72,12 @@ CRITERIA_LABELS = {
 # Teil 1: Laufordner anlegen
 # ---------------------------------------------------------------------------
 
-def read_weights_from_mca_script():
-    """Liest das Dictionary ``dict_weights_category`` aus MCA/mca_maps.py, ohne das Skript auszuführen."""
-    text = MCA_SCRIPT.read_text(encoding='utf-8')
-    start = text.index('dict_weights_category = {')
-    end = text.index('}', start)
-    dict_text = text[start + len('dict_weights_category = '):end + 1]
-    return ast.literal_eval(dict_text)          # wandelt den Text sicher in ein Dictionary um
+def read_all_weights():
+    """Alle MCA-Gewichte als ein Dictionary: Hauptkriterien unter ihrem Namen, Straßenklassen als 'roads/<Klasse>'."""
+    weights = read_mca_weights('main')
+    for road_class, weight in read_mca_weights('roads').items():
+        weights['roads/' + road_class] = weight
+    return weights
 
 
 def save_mca_run(note):
@@ -87,7 +87,8 @@ def save_mca_run(note):
     (run_dir / 'criteria').mkdir()
     for csv_file in sorted(CRITERIA_DIR.glob('*.csv')):
         shutil.copy2(csv_file, run_dir / 'criteria' / csv_file.name)
-    weights = read_weights_from_mca_script()
+    shutil.copy2(MCA_WEIGHTS_CSV, run_dir / 'mca_weights.csv')
+    weights = read_all_weights()
     (run_dir / 'weights.json').write_text(json.dumps(weights, indent=2), encoding='utf-8')
     return run_dir
 
@@ -151,11 +152,15 @@ def compare_criteria(run_dir, reference_dir):
 
 
 def changed_weights(weights, weights_ref):
-    """Liste von Texten 'Kriterium: alt → neu' für jedes geänderte Gewicht."""
+    """Liste von Texten 'Kriterium: alt → neu' für jedes geänderte Gewicht.
+
+    Verglichen werden nur Gewichte, die beide Läufe erfasst haben (ältere Läufe kennen
+    die Straßengewichte noch nicht).
+    """
     lines = []
-    for name in sorted(set(weights) | set(weights_ref)):
-        old = weights_ref.get(name)
-        new = weights.get(name)
+    for name in sorted(set(weights) & set(weights_ref)):
+        old = weights_ref[name]
+        new = weights[name]
         if old != new:
             lines.append(f'{name}: {old} → {new}')
     return lines
@@ -258,7 +263,7 @@ def build_slide(run_dir, reference_dir, metrics, metrics_ref):
     else:
         _, _, weights_ref = load_run(reference_dir)
         weight_lines = changed_weights(weights, weights_ref)
-        lines.append(('Gewichte (MCA/mca_maps.py)', True))
+        lines.append(('Gewichte (mca_weights.csv)', True))
         lines += [(line, False) for line in weight_lines] or [('unverändert', False)]
 
         lines.append(('Kriterien (Zellen geändert · Rangkorrelation)', True))
@@ -295,19 +300,25 @@ def build_slide(run_dir, reference_dir, metrics, metrics_ref):
         mca_ref, allowed_ref, _ = load_run(reference_dir)
         both = allowed & allowed_ref
         _txt(fig, 0.5, 5.92, 'Verteilung Δ MCA (Zellen mit |Δ| > 0,1)', 7, TEXT, 'bold')
-        ax = _axes(fig, 0.8, 6.12, 3.4, 0.85)
-        ax.set_zorder(2)                              # vor die graue Fläche legen
-        for year, color in zip(YEARS, [DARK, '#D96C1E']):
+        changed_cells = {}                            # Jahr -> Differenzen der geänderten Zellen
+        for year in YEARS:
             column = f'MCA_Morocco_{year}'
             difference = (mca[column] - mca_ref[column])[both]
-            difference = difference[difference.abs() > 0.1]
-            ax.hist(difference, bins=40, histtype='step', linewidth=1.2, color=color,
-                    label=f'{year}: {len(difference)} Zellen')
-        ax.set_yscale('log')
-        ax.tick_params(labelsize=6.5, colors=MUTED)
-        ax.spines[['top', 'right']].set_visible(False)
-        ax.set_xlabel('Δ Score (jetzt minus Bezug)', fontsize=6.5, color=MUTED)
-        ax.legend(fontsize=6.5, frameon=False)
+            changed_cells[year] = difference[difference.abs() > 0.1]
+
+        if all(len(values) == 0 for values in changed_cells.values()):
+            _txt(fig, 0.5, 6.2, 'keine Zelle hat sich geändert', 7, MUTED)
+        else:
+            ax = _axes(fig, 0.8, 6.12, 3.4, 0.85)
+            ax.set_zorder(2)                          # vor die graue Fläche legen
+            for year, color in zip(YEARS, [DARK, '#D96C1E']):
+                ax.hist(changed_cells[year], bins=40, histtype='step', linewidth=1.2, color=color,
+                        label=f'{year}: {len(changed_cells[year])} Zellen')
+            ax.set_yscale('log')
+            ax.tick_params(labelsize=6.5, colors=MUTED)
+            ax.spines[['top', 'right']].set_visible(False)
+            ax.set_xlabel('Δ Score (jetzt minus Bezug)', fontsize=6.5, color=MUTED)
+            ax.legend(fontsize=6.5, frameon=False)
 
     # --- Karten: Zeilen = Jahre, Spalten = Bezug, jetzt, Differenz ---
     for row, year in enumerate(YEARS):
