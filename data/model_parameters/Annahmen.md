@@ -8,7 +8,7 @@ Ziel: nichts Wichtiges steckt nur im Code. Die Spalte **Ablage** zeigt, wo der W
 - **Methode**: keine einzelne Zahl, sondern eine Modellentscheidung
 
 Zeilenangaben gelten für den Stand oben. Bei Änderungen bitte diese Liste mitpflegen.
-Offene Fragen zu Quellen und Werten stehen im Fehlerprotokoll (Nummer in der letzten Spalte).
+Offene Fragen zu Quellen und Werten stehen im Fehlerprotokoll (Nummer in der letzten Spalte). Kürzel in Klammern sind die Schlüssel in `bibliography.bib` des Papers.
 
 ## 1. Raster und Lesart
 
@@ -54,16 +54,16 @@ Offene Fragen zu Quellen und Werten stehen im Fehlerprotokoll (Nummer in der let
 
 | Annahme | Wert | Wo | Quelle / Begründung | Ablage | Nr. |
 |---|---|---|---|---|---|
-| Oberflächenwasser je Einzugsgebiet 2025 [Mio. m³/a] | Sahara 390, Loukkos 3.600, Moulouya 1.610, Sebou 5.560, Bouregreg 850, Oum Er-Rbia 3.315, Tensift 800, Südatlas 626, Souss-Massa 1.444 | `MCA/water_exploitable_sw.py:42–50` | „Impact of Green Generation, Green Morocco, and Climate Change Programs on Water Resources in Morocco“ (PDF in Teams) | Code | |
+| Oberflächenwasser je Einzugsgebiet 2025 [Mio. m³/a] | Sahara 390, Loukkos 3.600, Moulouya 1.610, Sebou 5.560, Bouregreg 850, Oum Er-Rbia 3.315, Tensift 800, Südatlas 626, Souss-Massa 1.444 | `MCA/water_exploitable_sw.py:42–50` | Benzougagh et al. 2024 (`Benzougagh2024Chapter`), Seite/Tabelle fehlt | Code | 115 |
 | Verteilung des Oberflächenwassers im Einzugsgebiet | nach summierten Fließrichtungs-Codes je Zelle | `MCA/water_exploitable_sw.py:57–58` | Methode offen, mit Prof abstimmen | Methode | 110, 113 |
-| Grundwasser je Einzugsgebiet 2025 [Mio. m³/a] | Sahara 18, Loukkos 110, Moulouya 462, Sebou 1.143, Bouregreg 146, Oum Er-Rbia 457, Tensift 753, Südatlas 208 + 323, Souss-Massa 646 | `MCA/water_exploitable_gw.py:57–65` | „Moroccan Groundwater Resources and Evolution with Global Climate Changes“ (PDF in Teams) | Code | |
+| Grundwasser je Einzugsgebiet 2025 [Mio. m³/a] | Sahara 18, Loukkos 110, Moulouya 462, Sebou 1.143, Bouregreg 146, Oum Er-Rbia 457, Tensift 753, Südatlas 208 + 323, Souss-Massa 646 | `MCA/water_exploitable_gw.py:57–65` | Hssaisoune et al. 2020 (`Hssaisoune2020Geosciences`), Seite/Tabelle fehlt | Code | 115 |
 | Verteilung des Grundwassers | gleichmäßig je Fläche über den Grundwasserleitern im Einzugsgebiet | `MCA/water_exploitable_gw.py` | BGS Africa Groundwater Atlas | Methode | |
-| Wasserverbrauch gesamt [Mrd. m³/a] | 2025: 15,9; 2050: 24,223 | `MCA/water_consumption.py:74` | „Economic concepts to address future water supply–demand imbalances in Iran, Morocco and Saudi Arabia“ | Code | |
-| Sektoranteile Landwirtschaft / Städte / Industrie | 2025: 87 / 10,4 / 2,6 %; 2050: 75 / 22,3 / 2,7 % | `MCA/water_consumption.py:70–72` | wie oben | Code | |
+| Wasserverbrauch gesamt [Mrd. m³/a] | 2025: 15,9; 2050: 24,223 | `MCA/water_consumption.py:74` | Hellegers et al. 2013 (`Hellegers2013JHydrol`), Seite/Tabelle fehlt | Code | 115 |
+| Sektoranteile Landwirtschaft / Städte / Industrie | 2025: 87 / 10,4 / 2,6 %; 2050: 75 / 22,3 / 2,7 % | `MCA/water_consumption.py:70–72` | Hellegers et al. 2013 (`Hellegers2013JHydrol`), Seite/Tabelle fehlt | Code | 115 |
 | Verteilung Agrarwasser | nach tatsächlich bewässerter Fläche (FAO GMIA v5, Stand ca. 2005), 2050 gleich | `MCA/water_consumption.py`, `MCA/ki_generiert/irrigation_grid.py` | Siebert et al. 2013 | Methode | 31 |
 | Verteilung Stadt- und Industriewasser | nach Fläche GlobCover 190 bzw. OSM `industrial` | `MCA/water_consumption.py:81–83` | Festlegung im Projekt | Methode | |
-| Wasserdargebot 2050 [Mio. m³/a] | gesamt 8.535 = Grundwasser 1.636 + Oberflächenwasser 6.899 | `MCA/water_forecast.py:81, 101, 106` | „Economic concepts …“ (wie oben) | Code | 77 |
-| Verteilung des Rückgangs 2050 | nach klimatischer Wasserbilanz je Zelle | `MCA/water_forecast.py` | „Future projection of droughts in Morocco …“ (PDF in Teams) | Methode | 36, Korrekturplan F-23 |
+| Wasserdargebot 2050 [Mio. m³/a] | gesamt 8.535 = Grundwasser 1.636 + Oberflächenwasser 6.899 | `MCA/water_forecast.py:81, 101, 106` | Hellegers et al. 2013 (`Hellegers2013JHydrol`), Seite/Tabelle fehlt | Code | 77, 115 |
+| Verteilung des Rückgangs 2050 | nach klimatischer Wasserbilanz je Zelle | `MCA/water_forecast.py` | Gumus et al. 2024 (`Gumus2024JEnvMan`) | Methode | 36, Korrekturplan F-23 |
 | Wasser-Score | 50 % Dargebot + 50 % Überschuss (Dargebot − Verbrauch), je min-max; 2050 mit 2025 als Maßstab | `MCA/water_net.py:54–57`, `MCA/water_forecast.py:128–132` | Festlegung im Projekt | Code | 70 |
 | Küstenzellen | Wasser-Score pauschal **100** (Entsalzung möglich) | `MCA/water_net.py:68`, `MCA/water_forecast.py:143` | Planungsannahme | Code | 69 |
 
@@ -71,7 +71,7 @@ Offene Fragen zu Quellen und Werten stehen im Fehlerprotokoll (Nummer in der let
 
 | Annahme | Wert | Wo | Quelle / Begründung | Ablage | Nr. |
 |---|---|---|---|---|---|
-| Wachstum der Stadtflächen je Region bis 2050 | Faktor 1,13 (Casablanca-Settat) bis 2,4 (Dakhla) | `MCA/forecast_landuse.py:53–64` | „Urban Sustainability Development in Morocco, a Review“ (MDPI 2024) | Code | Korrekturplan F-24 (jährliche Raten als Gesamtfaktor) |
+| Wachstum der Stadtflächen je Region bis 2050 | Faktor 1,13 (Casablanca-Settat) bis 2,4 (Dakhla) | `MCA/forecast_landuse.py:53–64` | Bounoua et al. 2024 (`Bounoua2024`) | Code | Korrekturplan F-24 (jährliche Raten als Gesamtfaktor) |
 | Genauigkeit der Flächenanpassung | 1 % | `MCA/forecast_landuse.py:69` | Rechentoleranz | Code | |
 
 ## 7. Kostenmodell
